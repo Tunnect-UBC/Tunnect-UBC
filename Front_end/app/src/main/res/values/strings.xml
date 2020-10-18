@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Tunnect</string>
+    <string name="user_name">\tUser Name</string>
+    <string name="user_info">Prefers "genre" Music</string>
+    <string name="like_btn">Like</string>
+    <string name="dislike_btn">Dislike</string>
 </resources>
