@@ -14,25 +14,32 @@
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme" >
+        android:theme="?attr/actionBarTheme">
+
         <Button
             android:id="@+id/messages_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Button"
-            android:layout_gravity="left"/>
+            android:layout_gravity="left"
+            android:drawableTop="@drawable/messaging_icon"
+            android:text="@string/message_btn"
+            tools:ignore="RtlHardcoded" />
+
         <Button
             android:id="@+id/profile_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Button"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center"
+            android:text="@string/profile_btn" />
+
         <Button
             android:id="@+id/settings_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Button"
-            android:layout_gravity="right"/>
+            android:layout_gravity="right"
+            android:layout_marginEnd="15dp"
+            android:drawableTop="@drawable/settings_icon"
+            android:text="@string/settings_btn" />
     </androidx.appcompat.widget.Toolbar>
 
     <ScrollView
@@ -61,7 +68,7 @@
                 android:adjustViewBounds="true"
                 android:scaleType="fitCenter"
                 android:layout_marginTop="10dp"
-                android:src="@drawable/black_tusk"></ImageView>
+                android:src="@drawable/black_tusk" />
 
             <TextView
                 android:id="@+id/second_text"
@@ -79,7 +86,7 @@
                 android:adjustViewBounds="true"
                 android:scaleType="fitCenter"
                 android:layout_marginTop="10dp"
-                android:src="@drawable/garibaldi_glacier"></ImageView>
+                android:src="@drawable/garibaldi_glacier" />
 
         </LinearLayout>
     </ScrollView>
@@ -87,7 +94,7 @@
     <TextView
         android:id="@+id/user_name"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_height="65dp"
         android:layout_weight="0"
         android:text="@string/user_name"
         android:textAlignment="center"
@@ -97,7 +104,7 @@
     <TextView
         android:id="@+id/user_info"
         android:layout_width="match_parent"
-        android:layout_height="30dp"
+        android:layout_height="35dp"
         android:layout_weight="0"
         android:text="@string/user_info"
         android:textAlignment="center"
@@ -114,17 +121,27 @@
             android:id="@+id/dislike_btn"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:text="@string/dislike_btn"
+            android:layout_gravity="left"
             android:layout_weight="1"
-            android:layout_gravity="left"/>
+            android:background="@drawable/dlk_btn"
+            android:fontFamily="sans-serif"
+            android:text="@string/dislike_btn"
+            android:textColor="#A03232"
+            android:textSize="25sp"
+            android:textStyle="bold" />
 
         <Button
             android:id="@+id/like_btn"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_gravity="right"
+            android:layout_weight="1"
+            android:background="@drawable/lk_btn"
+            android:fontFamily="sans-serif"
             android:text="@string/like_btn"
-            android:layout_weight="1"/>
+            android:textColor="#32A032"
+            android:textSize="25sp"
+            android:textStyle="bold" />
     </LinearLayout>
 </LinearLayout>
 
