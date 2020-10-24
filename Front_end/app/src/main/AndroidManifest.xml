@@ -12,19 +12,20 @@
         <meta-data
             android:name="com.google.android.gms.car.application"
             android:resource="@xml/automotive_app_desc" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_launcher_foreground" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/colorPrimary" />
 
-        <service android:name=".MessagingService"></service>
-
-        <receiver android:name=".MessageReadReceiver">
+        <service
+            android:name=".TunnectFirebaseMessagingService"
+            android:exported="false">
             <intent-filter>
-                <action android:name="com.example.tunnect.ACTION_MESSAGE_READ" />
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
-        </receiver>
-        <receiver android:name=".MessageReplyReceiver">
-            <intent-filter>
-                <action android:name="com.example.tunnect.ACTION_MESSAGE_REPLY" />
-            </intent-filter>
-        </receiver>
+        </service>
 
         <activity android:name=".MessagesActivity" />
         <activity android:name=".MainActivity">

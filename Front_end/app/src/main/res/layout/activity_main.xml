@@ -30,6 +30,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:drawableTop="@drawable/profile_icon"
             android:text="@string/profile_btn" />
 
         <Button
