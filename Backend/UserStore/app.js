@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const userDBUrl = 'mongodb://127.0.0.1:27017/userDB';
 
-const userStoreRoutes = require('./api/routes/userstore');
+const userStoreRoutes = require('./routes/userstore');
 
 //Connecting to mongodb
 mongoose.connect(userDBUrl, {
