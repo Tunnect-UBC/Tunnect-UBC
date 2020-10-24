@@ -1,3 +1,15 @@
+/**
+ * This is the actual server that parses requests
+ * 
+ * This file:
+ *      -Connects to mongodb server as specified by userDBURL (currently looks for localhost)
+ *      -Prints notification to display whether or not connection was successful
+ *      -Sets up morgan as logger for easy debugging
+ *      -Adds header to all possible requests, such that we can avoid all CORS errors
+ *      -Specifies route for /userstore, described in ../routes/userstore.js
+ *      -Handles errors for any requests that do not provide a valid endpoint
+ * 
+ */
 const express = require('express');
 const app = express();
 const morgan = require('morgan');
