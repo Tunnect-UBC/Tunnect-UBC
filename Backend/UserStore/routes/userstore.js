@@ -59,7 +59,8 @@ router.post('/', (req, res, next) => {
     const user = new User({
         _id: req.body._id,
         username: req.body.username,
-        top_artist: req.body.top_artist
+        top_artist: req.body.top_artist,
+        icon_colour: req.body.icon_colour
     });
     
     //stores this in the database
