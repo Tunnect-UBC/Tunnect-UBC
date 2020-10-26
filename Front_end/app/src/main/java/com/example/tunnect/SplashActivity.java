@@ -65,7 +65,6 @@ public class SplashActivity extends AppCompatActivity {
                     editor = getSharedPreferences("SPOTIFY", 0).edit();
                     editor.putString("token", response.getAccessToken());
                     Log.d("STARTING", "GOT AUTH TOKEN");
-                    Log.i("fucker", "fuck yeah");
                     editor.apply();
                     waitForUserInfo();
                     break;
@@ -73,7 +72,6 @@ public class SplashActivity extends AppCompatActivity {
                 // Auth flow returned an error
                 case ERROR:
                     // Handle error response
-                    Log.i("fucker", response.getError());
                     break;
 
                 // Most likely auth flow was cancelled
