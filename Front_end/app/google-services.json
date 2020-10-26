@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "651461750788",
+    "firebase_url": "https://tunnect-b7a87.firebaseio.com",
+    "project_id": "tunnect-b7a87",
+    "storage_bucket": "tunnect-b7a87.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:651461750788:android:498ced66d738f11f18c551",
+        "android_client_info": {
+          "package_name": "com.example.tunnect"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "651461750788-no2fulg1ofn4tl161m9gfnh40b6jp1ma.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCQy2tsnUErgjAq7BlVIi_R74heaUXfMwg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "651461750788-no2fulg1ofn4tl161m9gfnh40b6jp1ma.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
