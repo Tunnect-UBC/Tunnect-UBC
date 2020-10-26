@@ -28,7 +28,7 @@
         android:layout_marginTop="4dp" />
 
     <TextView
-        android:id="@+id/text_message_body"
+        android:id="@+id/received_message"
         android:text="hi man, how are you?"
         android:background="@drawable/rounded_rectangle_gray"
         android:layout_width="wrap_content"
@@ -42,13 +42,13 @@
         android:layout_marginLeft="8dp" />
 
     <TextView
-        android:id="@+id/text_message_time"
+        android:id="@+id/received_time"
         android:text="12:69"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="10sp"
-        app:layout_constraintLeft_toRightOf="@+id/text_message_body"
+        app:layout_constraintLeft_toRightOf="@+id/received_message"
         android:layout_marginStart="4dp"
-        app:layout_constraintBottom_toBottomOf="@+id/text_message_body" />
+        app:layout_constraintBottom_toBottomOf="@+id/received_message" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,18 +1,19 @@
 package com.example.tunnect;
 
-
 /*
- * This class represents the data type for a chat message for chats between 2 users.
+ * This class represents the data type for a chat message from a chat between 2 users.
  */
 public class Message {
     private long id;
     private String name;
+    private String message;
     private String timestamp;
-    private String colour;
+    private int colour;
 
-    public Message(long id, String name, String timestamp, String colour) {
-        this.id = id;
-        this.name = name;
+    public Message(long sender_id, String sender_name, String message, String timestamp, int colour) {
+        this.id = sender_id;
+        this.name = sender_name;
+        this.message = message;
         this.timestamp = timestamp;
         this.colour = colour;
     }
@@ -25,11 +26,15 @@ public class Message {
         return name;
     }
 
+    public String getMessage() {
+        return message;
+    }
+
     public String getTimestamp() {
         return timestamp;
     }
 
-    public String getColour() {
+    public int getColour() {
         return colour;
     }
 }

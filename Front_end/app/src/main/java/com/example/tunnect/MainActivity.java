@@ -17,7 +17,7 @@ public class MainActivity extends AppCompatActivity {
         messagesBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent messageIntent = new Intent(MainActivity.this, MessagesActivity.class);
+                Intent messageIntent = new Intent(MainActivity.this, MessageListActivity.class);
                 startActivity(messageIntent);
             }
         });

@@ -1,6 +1,10 @@
 package com.example.tunnect;
 
 import android.content.Context;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.ShapeDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,19 +12,24 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+/*
+ * This class takes information from a list of chats and populates the given recycler view in the
+ * given context with chat option layouts as defined in res/layout/user_chat.xml
+ */
 public class ChatListAdaptor extends RecyclerView.Adapter<ChatListAdaptor.ViewHolder> {
     Context context;
     List<Chat> chatList;
     RecyclerView chatOptions;
     final View.OnClickListener onClickListener = new OpenChat();
+
+    // Class that presents the layout of a chat
     public static class ViewHolder extends RecyclerView.ViewHolder{
-        TextView rowName;
-        TextView rowLastMessage;
-        TextView rowTimestamp;
+        TextView rowName, rowLastMessage, rowTimestamp;
         ImageView rowColour;
 
         public ViewHolder(@NonNull View itemView) {
@@ -34,7 +43,7 @@ public class ChatListAdaptor extends RecyclerView.Adapter<ChatListAdaptor.ViewHo
 
     public ChatListAdaptor(Context context, List<Chat> chatList, RecyclerView chatOptions) {
         this.context = context;
-        this. chatList = chatList;
+        this.chatList = chatList;
         this.chatOptions = chatOptions;
     }
 
@@ -51,25 +60,37 @@ public class ChatListAdaptor extends RecyclerView.Adapter<ChatListAdaptor.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull ChatListAdaptor.ViewHolder holder, int position) {
-        Chat chat = chatOptions.get(position);
+        Chat chat = chatList.get(position);
         holder.rowName.setText(chat.getName());
         holder.rowLastMessage.setText(chat.getLastMessage());
         holder.rowTimestamp.setText(chat.getTimestamp());
-        holder.rowColour.setBackgroundColor(chat.getColour());
+        /*Drawable background = holder.rowColour.getBackground();
+        if (background instanceof ShapeDrawable) {
+            ((ShapeDrawable)background).getPaint().setColor(ContextCompat.getColor(context, chat.getColour()));
+        } else if (background instanceof GradientDrawable) {
+            ((GradientDrawable)background).setColor(ContextCompat.getColor(context, chat.getColour()));
+        } else if (background instanceof ColorDrawable) {
+            ((ColorDrawable)background).setColor(ContextCompat.getColor(context, chat.getColour()));
+        }*/
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return chatList.size();
     }
 
+    /*
+     * This class makes each chat option clickable and able to open a new activity for a chat.
+     */
     private class OpenChat implements View.OnClickListener {
-
         @Override
         public void onClick(View v) {
             int itemPosition = chatOptions.getChildLayoutPosition(v);
-            long
-                    item = chatList.get(itemPosition).getId();
+            long item = chatList.get(itemPosition).getId();
+
+            if (context instanceof MessageListActivity) {
+                ((MessageListActivity)context).openNewChat(item);
+            }
         }
     }
 }
