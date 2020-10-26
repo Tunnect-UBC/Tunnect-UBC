@@ -10,6 +10,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -77,6 +78,14 @@ public class SongService {
                 }, error -> {
 
                 }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                String token = sharedPreferences.getString("token", "");
+                String auth = "Bearer " + token;
+                headers.put("Authorization", auth);
+                return headers;
+            }
         };
         queue.add(jsonObjectRequest);
         return search_songs;
@@ -96,6 +105,18 @@ public class SongService {
             }
         }
         url = url + "&type=track";
+    }
+
+    public static void add_song(Song song) throws JSONException {
+        String add_url = "something idk";
+        JSONObject jsong = new JSONObject();
+        jsong.put("name", song.getName());
+        jsong.put("id", song.getId());
+        jsong.put("album", song.getAlbum());
+        jsong.put("artist", song.getArtist());
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PUT, add_url, jsong, response -> {
+        }, error -> {
+        });
     }
 
 }
