@@ -49,5 +49,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(searchIntent);
             }
         });
+
     }
 }
