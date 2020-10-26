@@ -1,6 +1,7 @@
 package com.example.tunnect;
 
 import android.content.Context;
+import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+/*
+ * This class takes information from a list of messages and populates a recycler view in the
+ * given context with sent_message layouts and received_message layouts, based on the message ID
+ */
 public class MessageListAdaptor extends RecyclerView.Adapter {
     private static final int SENT_MESSAGE = 0;
     private static final int RECEIVED_MESSAGE = 1;
@@ -53,10 +58,10 @@ public class MessageListAdaptor extends RecyclerView.Adapter {
         if (viewType == SENT_MESSAGE) {
             view = LayoutInflater.from(context).inflate(R.layout.sent_message, parent, false);
             return new SentMessageHolder(view);
-        } else {
-            view = LayoutInflater.from(context).inflate(R.layout.received_message, parent, false);
-            return new ReceivedMessageHolder(view);
         }
+
+        view = LayoutInflater.from(context).inflate(R.layout.received_message, parent, false);
+        return new ReceivedMessageHolder(view);
     }
 
     // Passes the message object to a ViewHolder so that the contents can be bound to UI.
@@ -108,8 +113,8 @@ public class MessageListAdaptor extends RecyclerView.Adapter {
             this.message.setText(message.getMessage());
             this.timestamp.setText(message.getTimestamp());
             this.name.setText(message.getName());
-
-            //TODO: Get image icon editing working!
+            GradientDrawable background = (GradientDrawable) this.rowColour.getBackground().mutate();
+            background.setColor(message.getColour());
         }
     }
 }

@@ -1,10 +1,7 @@
 package com.example.tunnect;
 
 import android.content.Context;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.ShapeDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +9,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -64,14 +60,8 @@ public class ChatListAdaptor extends RecyclerView.Adapter<ChatListAdaptor.ViewHo
         holder.rowName.setText(chat.getName());
         holder.rowLastMessage.setText(chat.getLastMessage());
         holder.rowTimestamp.setText(chat.getTimestamp());
-        /*Drawable background = holder.rowColour.getBackground();
-        if (background instanceof ShapeDrawable) {
-            ((ShapeDrawable)background).getPaint().setColor(ContextCompat.getColor(context, chat.getColour()));
-        } else if (background instanceof GradientDrawable) {
-            ((GradientDrawable)background).setColor(ContextCompat.getColor(context, chat.getColour()));
-        } else if (background instanceof ColorDrawable) {
-            ((ColorDrawable)background).setColor(ContextCompat.getColor(context, chat.getColour()));
-        }*/
+        GradientDrawable background = (GradientDrawable) holder.rowColour.getBackground().mutate();
+        background.setColor(chat.getColour());
     }
 
     @Override
@@ -85,11 +75,12 @@ public class ChatListAdaptor extends RecyclerView.Adapter<ChatListAdaptor.ViewHo
     private class OpenChat implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            int itemPosition = chatOptions.getChildLayoutPosition(v);
-            long item = chatList.get(itemPosition).getId();
+            int position = chatOptions.getChildLayoutPosition(v);
+            long id = chatList.get(position).getId();
+            String name = chatList.get(position).getName();
 
             if (context instanceof MessageListActivity) {
-                ((MessageListActivity)context).openNewChat(item);
+                ((MessageListActivity)context).openNewChat(id, name);
             }
         }
     }

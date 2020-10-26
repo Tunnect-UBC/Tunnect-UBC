@@ -2,6 +2,7 @@ package com.example.tunnect;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -14,6 +15,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -44,16 +50,27 @@ import java.util.Objects;
 public class MessagesActivity extends AppCompatActivity {
 
     private static final String BASE_URL = "http://35.236.81.110/time";
+    long receiverID;
     MessageListAdaptor messageAdapter;
     RecyclerView messageHistory;
     private RequestQueue queue;
-    RecyclerView.LayoutManager layoutManager;
+    LinearLayoutManager layoutManager;
     List<Message> messagesList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_messages);
+        // Obtain the extra arguments that were placed in the intent before calling this class
+        receiverID = Objects.requireNonNull(getIntent().getExtras()).getLong("OTHER_USER_ID");
+        String name = Objects.requireNonNull(getIntent().getExtras()).getString("OTHER_USER_NAME");
+
+        // Start by setting up a title for the page
+        ActionBar actionBar = getSupportActionBar();
+        if(actionBar != null) {
+            actionBar.setTitle(name);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         // Must first check if device can send and receive messages
         if (MessagesActivity.this.checkGooglePlayServices()) {
@@ -80,16 +97,36 @@ public class MessagesActivity extends AppCompatActivity {
         queue = Volley.newRequestQueue(this);
         populateMessageHistory();
         messageHistory = findViewById(R.id.messageHistory);
-        messageHistory.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
+        layoutManager.setStackFromEnd(true);
         messageHistory.setLayoutManager(layoutManager);
         messageAdapter = new MessageListAdaptor(this, messagesList, 1010);
         messageHistory.setAdapter(messageAdapter);
 
         // Set up button to send a message
-        //TODO: Implement send button
+        Button sendBtn = findViewById(R.id.send_btn);
+        sendBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EditText editText = findViewById(R.id.edit_text_chatbox);
+                editText.setText("");
+                //TODO: SEND MESSAGE TO THE SERVER THEN UPDATE THE RECYCLER VIEW
+            }
+        });
     }
 
+    // Code to return to last page when the return button on the title bar is hit
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return true;
+    }
 
     /*
      *   This function checks Google Play services to see if the device can receive notifications.
@@ -139,11 +176,15 @@ public class MessagesActivity extends AppCompatActivity {
 
         // these entries are added for testing purposes
         //TODO: Delete this when testing is done!!!!!!!!!!!!!!!!!
-        messagesList.add(new Message(1010, "David Onak", "Hello", "10:33am", 0x44AA44));
-        messagesList.add(new Message(2020, "Jeff", "My name is Jeff", "8:00am", 0x4444AA));
-        messagesList.add(new Message(1010, "David Onak", "I just got the chat display working!", "Oct. 24", 0xAA4444));
-        messagesList.add(new Message(2020, "Jeff", "What a beat David!!!", "Oct. 23", 0x222222));
-        messagesList.add(new Message(3030, "Joe Smith", "Hello, I am Linsay Lohan!", "Oct. 23", 0x222222));
+        messagesList.add(new Message(1010, "David Onak", "Hello", "Oct. 24", 0xFF44AA44));
+        messagesList.add(new Message(2020, "Jeff", "My name is Jeff", "Oct. 23", 0xFF4444AA));
+        messagesList.add(new Message(1010, "David Onak", "I just got the chat display working!", "Oct. 23", 0xFFAA4444));
+        messagesList.add(new Message(2020, "Jeff", "What a beat David!!!", "8:00am", 0xFF222222));
+        messagesList.add(new Message(3030, "Joe Smith", "Hello, I am Linsay Lohan!", "2:04pm", 0xFF222222));
+        messagesList.add(new Message(1010, "David Onak", "HELLLOS!", "3:14pm", 0xFFAA4444));
+        messagesList.add(new Message(2020, "Jeff", "I ment to say beast btw", "3:23pm", 0xFF222222));
+        messagesList.add(new Message(2020, "Jeff", "Hello...", "3:25pm", 0xFF222222));
+        messagesList.add(new Message(2020, "Jeff", "Helloooo!!!", "4:29pm", 0xFF222222));
     }
 /*
     protected void onStart() {
