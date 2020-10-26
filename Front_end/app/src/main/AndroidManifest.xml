@@ -12,8 +12,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".MessageListActivity"></activity>
-
         <meta-data
             android:name="com.google.android.gms.car.application"
             android:resource="@xml/automotive_app_desc" />
@@ -36,9 +34,9 @@
         </service>
 
         <activity android:name=".MessagesActivity" />
-        <activity android:name=".MainActivity">
-
-        <activity android:name=".SearchActivity"></activity>
+        <activity android:name=".MainActivity"/>
+        <activity android:name=".MessageListActivity"/>
+        <activity android:name=".SearchActivity"/>
         <activity android:name=".SplashActivity">
 
             <intent-filter>
@@ -47,7 +45,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity" />
     </application>
 
 </manifest>

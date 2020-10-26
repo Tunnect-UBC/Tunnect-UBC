@@ -53,6 +53,18 @@
             android:layout_height="wrap_content"
             android:orientation="vertical" >
 
+            <Button
+                android:id="@+id/goto_search_btn"
+                android:layout_width="269dp"
+                android:layout_height="85dp"
+                android:fontFamily="sans-serif"
+                android:text="@string/search_page_btn"
+                android:textSize="18sp"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                android:layout_marginStart="65dp"
+                android:background="@drawable/greenblue_grad_ovel" />
+
             <TextView
                 android:id="@+id/first_text"
                 android:layout_width="match_parent"
