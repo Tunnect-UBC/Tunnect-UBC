@@ -49,8 +49,9 @@ import java.util.Objects;
  */
 public class MessagesActivity extends AppCompatActivity {
 
-    private static final String BASE_URL = "http://35.236.81.110/time";
-    long receiverID;
+    private static final String testID = "35i4h34h5j69jk";
+    private static String BASE_URL;
+    String receiverID;
     MessageListAdaptor messageAdapter;
     RecyclerView messageHistory;
     private RequestQueue queue;
@@ -62,8 +63,9 @@ public class MessagesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_messages);
         // Obtain the extra arguments that were placed in the intent before calling this class
-        receiverID = Objects.requireNonNull(getIntent().getExtras()).getLong("OTHER_USER_ID");
+        receiverID = Objects.requireNonNull(getIntent().getExtras()).getString("OTHER_USER_ID");
         String name = Objects.requireNonNull(getIntent().getExtras()).getString("OTHER_USER_NAME");
+        BASE_URL = "http://52.188.167.58:5000/chatservice/"+testID+"?"+receiverID;
 
         // Start by setting up a title for the page
         ActionBar actionBar = getSupportActionBar();
@@ -100,7 +102,7 @@ public class MessagesActivity extends AppCompatActivity {
         layoutManager = new LinearLayoutManager(this);
         layoutManager.setStackFromEnd(true);
         messageHistory.setLayoutManager(layoutManager);
-        messageAdapter = new MessageListAdaptor(this, messagesList, 1010);
+        messageAdapter = new MessageListAdaptor(this, messagesList, testID);
         messageHistory.setAdapter(messageAdapter);
 
         // Set up button to send a message
@@ -156,9 +158,10 @@ public class MessagesActivity extends AppCompatActivity {
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject chat = jsonArray.getJSONObject(i);
 
-                                messagesList.add(new Message(chat.getLong("Id"), chat.getString("Name"),
-                                        chat.getString("Message"), chat.getString("Timestamp"), chat.getInt("Colour")));
-
+                                //messagesList.add(new Message(chat.getString("senderid"), chat.getString("sender_name"),
+                                        //chat.getString("message"), chat.getString("Timestamp"), chat.getInt("sender_colour")));
+                                messagesList.add(new Message(chat.getString("senderid"), chat.getString("sender_name"),
+                                        chat.getString("message"), "12:69am", chat.getInt("sender_colour")));
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -176,15 +179,15 @@ public class MessagesActivity extends AppCompatActivity {
 
         // these entries are added for testing purposes
         //TODO: Delete this when testing is done!!!!!!!!!!!!!!!!!
-        messagesList.add(new Message(1010, "David Onak", "Hello", "Oct. 24", 0xFF44AA44));
-        messagesList.add(new Message(2020, "Jeff", "My name is Jeff", "Oct. 23", 0xFF4444AA));
-        messagesList.add(new Message(1010, "David Onak", "I just got the chat display working!", "Oct. 23", 0xFFAA4444));
-        messagesList.add(new Message(2020, "Jeff", "What a beat David!!!", "8:00am", 0xFF222222));
-        messagesList.add(new Message(3030, "Joe Smith", "Hello, I am Linsay Lohan!", "2:04pm", 0xFF222222));
-        messagesList.add(new Message(1010, "David Onak", "HELLLOS!", "3:14pm", 0xFFAA4444));
-        messagesList.add(new Message(2020, "Jeff", "I ment to say beast btw", "3:23pm", 0xFF222222));
-        messagesList.add(new Message(2020, "Jeff", "Hello...", "3:25pm", 0xFF222222));
-        messagesList.add(new Message(2020, "Jeff", "Helloooo!!!", "4:29pm", 0xFF222222));
+        messagesList.add(new Message(testID, "David Onak", "Hello", "Oct. 24", 0xFF44AA44));
+        messagesList.add(new Message("2020", "Jeff", "My name is Jeff", "Oct. 23", 0xFF4444AA));
+        messagesList.add(new Message(testID, "David Onak", "I just got the chat display working!", "Oct. 23", 0xFFAA4444));
+        messagesList.add(new Message("2020", "Jeff", "What a beat David!!!", "8:00am", 0xFF222222));
+        messagesList.add(new Message("3030", "Joe Smith", "Hello, I am Linsay Lohan!", "2:04pm", 0xFF222222));
+        messagesList.add(new Message(testID, "David Onak", "HELLLOS!", "3:14pm", 0xFFAA4444));
+        messagesList.add(new Message("2020", "Jeff", "I ment to say beast btw", "3:23pm", 0xFF222222));
+        messagesList.add(new Message("2020", "Jeff", "Hello...", "3:25pm", 0xFF222222));
+        messagesList.add(new Message("2020", "Jeff", "Helloooo!!!", "4:29pm", 0xFF222222));
     }
 /*
     protected void onStart() {
