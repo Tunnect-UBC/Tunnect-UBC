@@ -115,7 +115,7 @@
         android:textSize="45sp" />
 
     <TextView
-        android:id="@+id/user_info"
+        android:id="@+id/user_info_button"
         android:layout_width="match_parent"
         android:layout_height="35dp"
         android:layout_weight="0"
