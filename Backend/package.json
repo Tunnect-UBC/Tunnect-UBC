@@ -1,5 +1,5 @@
 {
-  "name": "userstore",
+  "name": "Backend",
   "version": "1.0.0",
   "description": "UserStore responsible for GETTING groups of users, or PUT/PATCH/DELETE/GETTING an individual user",
   "main": "index.js",
