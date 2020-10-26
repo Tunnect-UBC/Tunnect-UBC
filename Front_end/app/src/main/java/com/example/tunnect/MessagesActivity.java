@@ -100,7 +100,7 @@ public class MessagesActivity extends AppCompatActivity {
         layoutManager = new LinearLayoutManager(this);
         layoutManager.setStackFromEnd(true);
         messageHistory.setLayoutManager(layoutManager);
-        messageAdapter = new MessageListAdaptor(this, messagesList, 1010);
+        messageAdapter = new MessageListAdaptor(this, messagesList, "1010");
         messageHistory.setAdapter(messageAdapter);
 
         // Set up button to send a message
@@ -156,7 +156,7 @@ public class MessagesActivity extends AppCompatActivity {
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject chat = jsonArray.getJSONObject(i);
 
-                                messagesList.add(new Message(chat.getLong("Id"), chat.getString("Name"),
+                                messagesList.add(new Message(chat.getString("Id"), chat.getString("Name"),
                                         chat.getString("Message"), chat.getString("Timestamp"), chat.getInt("Colour")));
 
                             }
@@ -176,15 +176,15 @@ public class MessagesActivity extends AppCompatActivity {
 
         // these entries are added for testing purposes
         //TODO: Delete this when testing is done!!!!!!!!!!!!!!!!!
-        messagesList.add(new Message(1010, "David Onak", "Hello", "Oct. 24", 0xFF44AA44));
-        messagesList.add(new Message(2020, "Jeff", "My name is Jeff", "Oct. 23", 0xFF4444AA));
-        messagesList.add(new Message(1010, "David Onak", "I just got the chat display working!", "Oct. 23", 0xFFAA4444));
-        messagesList.add(new Message(2020, "Jeff", "What a beat David!!!", "8:00am", 0xFF222222));
-        messagesList.add(new Message(3030, "Joe Smith", "Hello, I am Linsay Lohan!", "2:04pm", 0xFF222222));
-        messagesList.add(new Message(1010, "David Onak", "HELLLOS!", "3:14pm", 0xFFAA4444));
-        messagesList.add(new Message(2020, "Jeff", "I ment to say beast btw", "3:23pm", 0xFF222222));
-        messagesList.add(new Message(2020, "Jeff", "Hello...", "3:25pm", 0xFF222222));
-        messagesList.add(new Message(2020, "Jeff", "Helloooo!!!", "4:29pm", 0xFF222222));
+        messagesList.add(new Message("1010", "David Onak", "Hello", "Oct. 24", 0xFF44AA44));
+        messagesList.add(new Message("2020", "Jeff", "My name is Jeff", "Oct. 23", 0xFF4444AA));
+        messagesList.add(new Message("1010", "David Onak", "I just got the chat display working!", "Oct. 23", 0xFFAA4444));
+        messagesList.add(new Message("2020", "Jeff", "What a beat David!!!", "8:00am", 0xFF222222));
+        messagesList.add(new Message("3030", "Joe Smith", "Hello, I am Linsay Lohan!", "2:04pm", 0xFF222222));
+        messagesList.add(new Message("1010", "David Onak", "HELLLOS!", "3:14pm", 0xFFAA4444));
+        messagesList.add(new Message("2020", "Jeff", "I ment to say beast btw", "3:23pm", 0xFF222222));
+        messagesList.add(new Message("2020", "Jeff", "Hello...", "3:25pm", 0xFF222222));
+        messagesList.add(new Message("2020", "Jeff", "Helloooo!!!", "4:29pm", 0xFF222222));
     }
 /*
     protected void onStart() {

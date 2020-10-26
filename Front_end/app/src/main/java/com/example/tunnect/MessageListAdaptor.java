@@ -23,10 +23,10 @@ public class MessageListAdaptor extends RecyclerView.Adapter {
 
     private Context context;
     private List<Message> messageList;
-    private long currentUserId;
+    private String currentUserId;
     // an instance of the recycler view must be kept if clicking functionality is added
 
-    public MessageListAdaptor(Context context, List<Message> messageList, long currentUserId) {
+    public MessageListAdaptor(Context context, List<Message> messageList, String currentUserId) {
         this.context = context;
         this.messageList = messageList;
         this.currentUserId = currentUserId;
@@ -42,7 +42,7 @@ public class MessageListAdaptor extends RecyclerView.Adapter {
     public int getItemViewType(int position) {
         Message message = messageList.get(position);
 
-        if (message.getId() == currentUserId) {
+        if (message.getId().equals(currentUserId)) {
             return SENT_MESSAGE;
         } else {
             return RECEIVED_MESSAGE;

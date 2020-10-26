@@ -87,7 +87,7 @@ public class MessageListActivity extends AppCompatActivity {
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject chat = jsonArray.getJSONObject(i);
 
-                                chatsList.add(new Chat(chat.getLong("Id"), chat.getString("Name"),
+                                chatsList.add(new Chat(chat.getString("Id"), chat.getString("Name"),
                                         chat.getString("LastMessage"), chat.getString("Timestamp"), chat.getInt("Colour")));
 
                             }
@@ -107,14 +107,14 @@ public class MessageListActivity extends AppCompatActivity {
 
         // these entries are added for testing purposes
         //TODO: Delete this when testing is done!!!!!!!!!!!!!!!!!
-        chatsList.add(new Chat(0, "David Onak", "That's sus man!", "10:33am", 0xFF44AA44));
-        chatsList.add(new Chat(1, "Jeff", "My name is Jeff", "8:00am", 0xFF4444AA));
-        chatsList.add(new Chat(2, "Nick Hamilton", "Your a beast!", "Oct. 24", 0xFFAA4444));
-        chatsList.add(new Chat(3, "Joe Smith", "Hello, I am Linsay Lohan!", "Oct. 23", 0xFF222222));
+        chatsList.add(new Chat("0", "David Onak", "That's sus man!", "10:33am", 0xFF44AA44));
+        chatsList.add(new Chat("1", "Jeff", "My name is Jeff", "8:00am", 0xFF4444AA));
+        chatsList.add(new Chat("2", "Nick Hamilton", "Your a beast!", "Oct. 24", 0xFFAA4444));
+        chatsList.add(new Chat("3", "Joe Smith", "Hello, I am Linsay Lohan!", "Oct. 23", 0xFF222222));
     }
 
     // With the retrieved user id, opens a chat with that user
-    public void openNewChat(long other_user_id, String other_user_name) {
+    public void openNewChat(String other_user_id, String other_user_name) {
         Intent messageIntent = new Intent(MessageListActivity.this, MessagesActivity.class);
         messageIntent.putExtra("OTHER_USER_ID", other_user_id);
         messageIntent.putExtra("OTHER_USER_NAME", other_user_name);
