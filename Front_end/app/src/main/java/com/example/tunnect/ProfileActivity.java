@@ -32,6 +32,7 @@ public class ProfileActivity extends AppCompatActivity {
         TextView artist_view = (TextView) findViewById(R.id.artist_view);
         TextView colour_view = (TextView) findViewById(R.id.colour_view);
 
+        // Adds a premade user to the user store
         Button add_user_button = findViewById(R.id.user_add_button);
         add_user_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,6 +67,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
+        // Fetches a users info from the database
         Button get_user_button = findViewById(R.id.user_info_button);
         get_user_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,6 +102,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
+        // Delete the premade user account
         Button delete_user_button = findViewById(R.id.user_delete_button);
         delete_user_button.setOnClickListener(new View.OnClickListener() {
             @Override

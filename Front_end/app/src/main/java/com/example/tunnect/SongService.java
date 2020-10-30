@@ -38,7 +38,7 @@ public class SongService {
     }
 
     // Search function: Sends get request to spotify then parses the JSON file it gets back and places the tracks into an array list
-    public ArrayList<Song> search(final VolleyCallBack callBack) {
+    public ArrayList<Song> search() {
         // Clear the search songs array in case it is not the first search
         search_songs = new ArrayList<>();
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
@@ -74,7 +74,6 @@ public class SongService {
                             e.printStackTrace();
                         }
                     }
-                    callBack.onSuccess();
                 }, error -> {
 
                 }) {

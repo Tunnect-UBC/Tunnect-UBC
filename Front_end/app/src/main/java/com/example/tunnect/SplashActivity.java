@@ -28,7 +28,7 @@ public class SplashActivity extends AppCompatActivity {
 
 
     private static final String CLIENT_ID = "b30cb6a307474da78191b84e475f90a6";
-    private static final String REDIRECT_URI = "com.Tunnect://callback";
+    private static final String REDIRECT_URI = "com.example.tunnect://callback";
     private static final int REQUEST_CODE = 1337;
     private static final String SCOPES = "user-read-recently-played,user-library-modify,user-read-email,user-read-private";
 
@@ -149,4 +149,3 @@ interface VolleyCallBack {
 
     void onSuccess();
 }
-
