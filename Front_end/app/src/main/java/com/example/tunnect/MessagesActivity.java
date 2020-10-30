@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatTextView;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,11 +16,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.android.volley.VolleyError;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -32,7 +31,6 @@ import com.google.firebase.iid.InstanceIdResult;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
@@ -48,29 +46,35 @@ import java.util.Objects;
  * The class for the activity that display and handles the chat with another user.
  */
 public class MessagesActivity extends AppCompatActivity {
+    private static final int SENT_MESSAGE = 0;
+    private static final int RECEIVED_MESSAGE = 1;
 
-    private static final String testID = "35i4h34h5j69jk";
+    private static final String userID = "35i4h34h5j69jk";
     private static String BASE_URL;
     String receiverID;
+    String otherUserName;
+    int otherUserColour;
     MessageListAdaptor messageAdapter;
     RecyclerView messageHistory;
     private RequestQueue queue;
     LinearLayoutManager layoutManager;
     List<Message> messagesList = new ArrayList<>();
+    private int err;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_messages);
-        // Obtain the extra arguments that were placed in the intent before calling this class
+
         receiverID = Objects.requireNonNull(getIntent().getExtras()).getString("OTHER_USER_ID");
-        String name = Objects.requireNonNull(getIntent().getExtras()).getString("OTHER_USER_NAME");
-        BASE_URL = "http://52.188.167.58:5000/chatservice/"+testID+"?"+receiverID;
+        otherUserName = Objects.requireNonNull(getIntent().getExtras()).getString("OTHER_USER_NAME");
+        otherUserColour = Objects.requireNonNull(getIntent().getExtras()).getInt("OTHER_USER_COLOUR");
+        BASE_URL = "http://52.188.167.58:5000/chatservice/"+userID+"/"+receiverID;
 
         // Start by setting up a title for the page
         ActionBar actionBar = getSupportActionBar();
         if(actionBar != null) {
-            actionBar.setTitle(name);
+            actionBar.setTitle(otherUserName);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
@@ -102,18 +106,40 @@ public class MessagesActivity extends AppCompatActivity {
         layoutManager = new LinearLayoutManager(this);
         layoutManager.setStackFromEnd(true);
         messageHistory.setLayoutManager(layoutManager);
-        messageAdapter = new MessageListAdaptor(this, messagesList, testID);
+        messageAdapter = new MessageListAdaptor(this, messagesList, userID, receiverID);
         messageHistory.setAdapter(messageAdapter);
 
         // Set up button to send a message
         Button sendBtn = findViewById(R.id.send_btn);
-        sendBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                EditText editText = findViewById(R.id.edit_text_chatbox);
-                editText.setText("");
-                //TODO: SEND MESSAGE TO THE SERVER THEN UPDATE THE RECYCLER VIEW
+        sendBtn.setOnClickListener(view -> {
+            EditText editText = findViewById(R.id.edit_text_chatbox);
+            err = 0;
+            JSONObject user = new JSONObject();
+            try {
+                user.put("senderid", userID);
+                user.put("sender_name", "test_user1");
+                user.put("message", editText.getText());
+                user.put("sender_colour", 0xff222222);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Toast.makeText(getApplicationContext(), "Failed to send your message into the server.", Toast.LENGTH_LONG).show();
+                err ++;
             }
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, BASE_URL, user, response -> {
+            },new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getApplicationContext(), "Failed to send, please check your internet connection.", Toast.LENGTH_LONG).show();
+                        err ++;
+                    }
+            });
+            queue.add(jsonObjectRequest);
+            Toast.makeText(getApplicationContext(), editText.getText().toString(), Toast.LENGTH_LONG).show();
+
+            //if (err == 0) {
+                updateRecyclerView(editText.getText().toString(), SENT_MESSAGE);
+                editText.setText("");
+            //}
         });
     }
 
@@ -135,7 +161,7 @@ public class MessagesActivity extends AppCompatActivity {
      *  @return: returns true if it can receive notifications, false otherwise.
      */
     private boolean checkGooglePlayServices() {
-        int status = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable((Context)this);
+        int status = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
         if (status != ConnectionResult.SUCCESS) {
             Log.e("MainActivity", "Error");
             return false;
@@ -168,35 +194,57 @@ public class MessagesActivity extends AppCompatActivity {
                             Toast.makeText(getApplicationContext(), "Failed to retrieve data from server!", Toast.LENGTH_LONG).show();
                         }
                     }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext(), "Connection to server failed", Toast.LENGTH_LONG).show();
-            }
-        });
+                }, error -> Toast.makeText(getApplicationContext(), "Connection to server failed", Toast.LENGTH_LONG).show());
 
         queue.add(request);
 
         // these entries are added for testing purposes
         //TODO: Delete this when testing is done!!!!!!!!!!!!!!!!!
-        messagesList.add(new Message(testID, "David Onak", "Hello", "Oct. 24", 0xFF44AA44));
+        messagesList.add(new Message(userID, "David Onak", "Hello", "Oct. 24", 0xFF44AA44));
         messagesList.add(new Message("2020", "Jeff", "My name is Jeff", "Oct. 23", 0xFF4444AA));
-        messagesList.add(new Message(testID, "David Onak", "I just got the chat display working!", "Oct. 23", 0xFFAA4444));
+        messagesList.add(new Message(userID, "David Onak", "I just got the chat display working!", "Oct. 23", 0xFFAA4444));
         messagesList.add(new Message("2020", "Jeff", "What a beat David!!!", "8:00am", 0xFF222222));
         messagesList.add(new Message("3030", "Joe Smith", "Hello, I am Linsay Lohan!", "2:04pm", 0xFF222222));
-        messagesList.add(new Message(testID, "David Onak", "HELLLOS!", "3:14pm", 0xFFAA4444));
+        messagesList.add(new Message(userID, "David Onak", "HELLLOS!", "3:14pm", 0xFFAA4444));
         messagesList.add(new Message("2020", "Jeff", "I ment to say beast btw", "3:23pm", 0xFF222222));
         messagesList.add(new Message("2020", "Jeff", "Hello...", "3:25pm", 0xFF222222));
         messagesList.add(new Message("2020", "Jeff", "Helloooo!!!", "4:29pm", 0xFF222222));
     }
-/*
-    protected void onStart() {
-        super.onStart();
-        LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, new IntentFilter("MyData"));
+
+    // A method that updates the recycler view, adding new message entries to the screen
+    private void updateRecyclerView(String message, int sender) {
+        int newMessageIndex = messagesList.size();
+        Message newMessage;
+
+        if (sender == SENT_MESSAGE) {
+            newMessage = new Message(userID, "Test_user", message, "12:69am", 0xff777777);
+        } else {
+            newMessage = new Message(receiverID, otherUserName, message, "12:69am", otherUserColour);
+        }
+
+        messagesList.add(newMessage);
+        messageAdapter.notifyItemInserted(newMessageIndex);
+        messageHistory.scrollToPosition(messagesList.size() - 1);
     }
 
+    // Adds message to screen from received broadcast
+    private final BroadcastReceiver messageReceiver = new BroadcastReceiver() {
+        public void onReceive(@Nullable Context context, @NonNull Intent intent) {
+            String message = Objects.requireNonNull(intent.getExtras()).getString("BROADCAST_MESSAGE");
+            updateRecyclerView(message, RECEIVED_MESSAGE);
+            Toast.makeText(getBaseContext(), "got broadcast", Toast.LENGTH_LONG).show();
+        }
+    };
+
+    // Handles an incoming broadcast
+    protected void onStart() {
+        super.onStart();
+        LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, new IntentFilter("ReceivedMessage"));
+    }
+
+    // Handles a finished broadcast
     protected void onStop() {
         super.onStop();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(messageReceiver);
-    }*/
+    }
 }

@@ -1,9 +1,12 @@
 package com.example.tunnect;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -26,6 +29,14 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
+        // Start by setting up a title for the page
+        ActionBar actionBar = getSupportActionBar();
+        if(actionBar != null) {
+            String title = "Profile";
+            actionBar.setTitle(title);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
         RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
         TextView userid_view = (TextView) findViewById(R.id.userid_view);
         TextView username_view = (TextView) findViewById(R.id.username_view);
@@ -34,37 +45,34 @@ public class ProfileActivity extends AppCompatActivity {
 
         // Adds a premade user to the user store
         Button add_user_button = findViewById(R.id.user_add_button);
-        add_user_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String add_url = "http://52.188.167.58:3000/userstore";
-                JSONObject user = new JSONObject();
-                try {
-                    user.put("_id", "1234567");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    user.put("username", "test_user1");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    user.put("top_artist", "Bearings");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    user.put("icon_colour", "0xffffffff");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-                JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, add_url, user, response -> {
-                }, error -> {
-                });
-                queue.add(jsonObjectRequest);
+        add_user_button.setOnClickListener(view -> {
+            String add_url = "http://52.188.167.58:3000/userstore";
+            JSONObject user = new JSONObject();
+            try {
+                user.put("_id", "1234567");
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
+            try {
+                user.put("username", "test_user1");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            try {
+                user.put("top_artist", "Bearings");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            try {
+                user.put("icon_colour", 0xffffffff);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, add_url, user, response -> {
+            }, error -> {
+            });
+            queue.add(jsonObjectRequest);
         });
 
         // Fetches a users info from the database
@@ -115,6 +123,18 @@ public class ProfileActivity extends AppCompatActivity {
                 queue.add(jsonObjectRequest);
             }
         });
+    }
 
+    // Code to return to last page when the return button on the title bar is hit
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return true;
     }
 }

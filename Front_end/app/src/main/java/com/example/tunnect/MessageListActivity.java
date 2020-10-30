@@ -1,11 +1,17 @@
 package com.example.tunnect;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,6 +30,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /*
  * The class for the activity that displays all of the chats that the user has.
@@ -102,16 +109,39 @@ public class MessageListActivity extends AppCompatActivity {
         // these entries are added for testing purposes
         //TODO: Delete this when testing is done!!!!!!!!!!!!!!!!!
         chatsList.add(new Chat(testID, "David Onak", "That's sus man!", "10:33am", 0xFF44AA44));
-        chatsList.add(new Chat("1", "Jeff", "My name is Jeff", "8:00am", 0xFF4444AA));
+        chatsList.add(new Chat("2020", "Jeff", "My name is Jeff", "8:00am", 0xFF4444AA));
         chatsList.add(new Chat("2", "Nick Hamilton", "Your a beast!", "Oct. 24", 0xFFAA4444));
         chatsList.add(new Chat("3", "Joe Smith", "Hello, I am Linsay Lohan!", "Oct. 23", 0xFF222222));
     }
 
     // With the retrieved user id, opens a chat with that user
-    public void openNewChat(String other_user_id, String other_user_name) {
+    public void openNewChat(String other_user_id, String other_user_name, int other_user_colour) {
         Intent messageIntent = new Intent(MessageListActivity.this, MessagesActivity.class);
         messageIntent.putExtra("OTHER_USER_ID", other_user_id);
         messageIntent.putExtra("OTHER_USER_NAME", other_user_name);
+        messageIntent.putExtra("OTHER_USER_COLOUR", other_user_colour);
         startActivity(messageIntent);
+    }
+
+    // Adds message to screen from received broadcast
+    private final BroadcastReceiver messageReceiver = new BroadcastReceiver() {
+        public void onReceive(@Nullable Context context, @NonNull Intent intent) {
+            String message = Objects.requireNonNull(intent.getExtras()).getString("BROADCAST_MESSAGE");
+            //updateRecyclerView(message, RECEIVED_MESSAGE);
+            //TODO: Setup an update for chats with last message sent
+            Toast.makeText(getBaseContext(), "got broadcast", Toast.LENGTH_LONG).show();
+        }
+    };
+
+    // Handles an incoming broadcast
+    protected void onStart() {
+        super.onStart();
+        LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, new IntentFilter("ReceivedMessage"));
+    }
+
+    // Handles a finished broadcast
+    protected void onStop() {
+        super.onStop();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(messageReceiver);
     }
 }
