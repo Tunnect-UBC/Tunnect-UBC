@@ -36,14 +36,16 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getSupportActionBar().hide();
+        //requestWindowFeature(Window.FEATURE_NO_TITLE);
+        //getSupportActionBar().hide();
         setContentView(R.layout.activity_splash);
 
-        authenticateSpotify();
+        //authenticateSpotify();
 
-        msharedPreferences = this.getSharedPreferences("SPOTIFY", 0);
-        queue = Volley.newRequestQueue(this);
+        //msharedPreferences = this.getSharedPreferences("SPOTIFY", 0);
+        //queue = Volley.newRequestQueue(this);
+
+        startMainActivity();
     }
     private void authenticateSpotify() {
         AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
@@ -65,7 +67,6 @@ public class SplashActivity extends AppCompatActivity {
                     editor = getSharedPreferences("SPOTIFY", 0).edit();
                     editor.putString("token", response.getAccessToken());
                     Log.d("STARTING", "GOT AUTH TOKEN");
-                    Log.i("fucker", "fuck yeah");
                     editor.apply();
                     waitForUserInfo();
                     break;
@@ -73,7 +74,6 @@ public class SplashActivity extends AppCompatActivity {
                 // Auth flow returned an error
                 case ERROR:
                     // Handle error response
-                    Log.i("fucker", response.getError());
                     break;
 
                 // Most likely auth flow was cancelled

@@ -6,13 +6,13 @@ package com.example.tunnect;
  * message that was sent between the 2 users.
  */
 public class Chat {
-    private long id;
+    private String id;
     private String name;
     private String lastMessage;
     private String timestamp;
     private int colour;
 
-    public Chat(long id, String name, String lastMessage, String timestamp, int colour) {
+    public Chat(String id, String name, String lastMessage, String timestamp, int colour) {
         this.id = id;
         this.name = name;
         this.lastMessage = lastMessage;
@@ -20,7 +20,7 @@ public class Chat {
         this.colour = colour;
     }
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 

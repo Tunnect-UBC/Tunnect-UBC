@@ -10,4 +10,5 @@
     <string name="send_btn">SEND</string>
     <string name="message_prompt">Enter message</string>
     <string name="handle_notification_now">We are going to do something with our notification right now!</string>
+    <string name="search_page_btn">Search Songs</string>
 </resources>

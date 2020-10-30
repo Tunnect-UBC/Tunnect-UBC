@@ -20,16 +20,20 @@ import java.util.List;
 public class MessageListAdaptor extends RecyclerView.Adapter {
     private static final int SENT_MESSAGE = 0;
     private static final int RECEIVED_MESSAGE = 1;
+    private static final int ADDITIONAL_RECEIVED_MESSAGE = 2;
 
     private Context context;
     private List<Message> messageList;
-    private long currentUserId;
+    private String currentUserId;
+    private static String lastId = "";
+    private String otherUserId;
     // an instance of the recycler view must be kept if clicking functionality is added
 
-    public MessageListAdaptor(Context context, List<Message> messageList, long currentUserId) {
+    public MessageListAdaptor(Context context, List<Message> messageList, String currentUserId, String otherUserId) {
         this.context = context;
         this.messageList = messageList;
         this.currentUserId = currentUserId;
+        this.otherUserId = otherUserId;
     }
 
     @Override
@@ -42,9 +46,13 @@ public class MessageListAdaptor extends RecyclerView.Adapter {
     public int getItemViewType(int position) {
         Message message = messageList.get(position);
 
-        if (message.getId() == currentUserId) {
+        if (message.getId().equals(currentUserId)) {
+            lastId = "";
             return SENT_MESSAGE;
+        //} else if (lastId.equals(otherUserId)){
+            //return ADDITIONAL_RECEIVED_MESSAGE;
         } else {
+            lastId = otherUserId;
             return RECEIVED_MESSAGE;
         }
     }
@@ -58,10 +66,13 @@ public class MessageListAdaptor extends RecyclerView.Adapter {
         if (viewType == SENT_MESSAGE) {
             view = LayoutInflater.from(context).inflate(R.layout.sent_message, parent, false);
             return new SentMessageHolder(view);
+        } else if (viewType == RECEIVED_MESSAGE) {
+            view = LayoutInflater.from(context).inflate(R.layout.received_message, parent, false);
+            return new ReceivedMessageHolder(view);
         }
 
-        view = LayoutInflater.from(context).inflate(R.layout.received_message, parent, false);
-        return new ReceivedMessageHolder(view);
+        view = LayoutInflater.from(context).inflate(R.layout.addtional_received_message, parent, false);
+        return new ADReceivedMessageHolder(view);
     }
 
     // Passes the message object to a ViewHolder so that the contents can be bound to UI.
@@ -75,6 +86,9 @@ public class MessageListAdaptor extends RecyclerView.Adapter {
                 break;
             case RECEIVED_MESSAGE:
                 ((ReceivedMessageHolder) holder).bind(message);
+                break;
+            case ADDITIONAL_RECEIVED_MESSAGE:
+                ((ADReceivedMessageHolder) holder).bind(message);
         }
     }
 
@@ -108,13 +122,30 @@ public class MessageListAdaptor extends RecyclerView.Adapter {
             rowColour = itemView.findViewById(R.id.image_message_profile);
         }
 
-        // Assigns values to instance of sent message layout
+        // Assigns values to instance of received message layout
         void bind(Message message) {
             this.message.setText(message.getMessage());
             this.timestamp.setText(message.getTimestamp());
             this.name.setText(message.getName());
             GradientDrawable background = (GradientDrawable) this.rowColour.getBackground().mutate();
             background.setColor(message.getColour());
+        }
+    }
+
+    // Class that presents the layout of a subsequent received message
+    private static class ADReceivedMessageHolder extends RecyclerView.ViewHolder {
+        TextView message, timestamp;
+
+        ADReceivedMessageHolder(View itemView) {
+            super(itemView);
+            message = itemView.findViewById(R.id.additional_received_message);
+            timestamp = itemView.findViewById(R.id.additional_received_time);
+        }
+
+        // Assigns values to instance of a subsequent received message layout
+        void bind(Message message) {
+            this.message.setText(message.getMessage());
+            this.timestamp.setText(message.getTimestamp());
         }
     }
 }

@@ -15,30 +15,31 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Button messagesBtn = findViewById(R.id.messages_btn);
-        messagesBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent messageIntent = new Intent(MainActivity.this, MessageListActivity.class);
-                startActivity(messageIntent);
-            }
+        messagesBtn.setOnClickListener(view -> {
+            Intent messageIntent = new Intent(MainActivity.this, MessageListActivity.class);
+            startActivity(messageIntent);
         });
 
         Button profileBtn = findViewById(R.id.profile_btn);
         profileBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Intent profileIntent = new Intent(MainActivity.this, ProfileActivity.class);
-                //startActivity(profileIntent);
+                Intent profileIntent = new Intent(MainActivity.this, ProfileActivity.class);
+                startActivity(profileIntent);
             }
         });
 
         Button settingsBtn = findViewById(R.id.settings_btn);
-        settingsBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
-                //startActivity(settingsIntent);
-            }
+        settingsBtn.setOnClickListener(view -> {
+            //Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
+            //startActivity(settingsIntent);
         });
+
+        Button searchBtn = findViewById(R.id.goto_search_btn);
+        searchBtn.setOnClickListener(view -> {
+            Intent searchIntent = new Intent(MainActivity.this, SearchActivity.class);
+            startActivity(searchIntent);
+        });
+
     }
 }
