@@ -106,7 +106,7 @@ public class MessagesActivity extends AppCompatActivity {
         layoutManager = new LinearLayoutManager(this);
         layoutManager.setStackFromEnd(true);
         messageHistory.setLayoutManager(layoutManager);
-        messageAdapter = new MessageListAdaptor(this, messagesList, userID);
+        messageAdapter = new MessageListAdaptor(this, messagesList, userID, receiverID);
         messageHistory.setAdapter(messageAdapter);
 
         // Set up button to send a message

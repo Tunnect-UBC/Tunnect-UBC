@@ -109,7 +109,7 @@ public class MessageListActivity extends AppCompatActivity {
         // these entries are added for testing purposes
         //TODO: Delete this when testing is done!!!!!!!!!!!!!!!!!
         chatsList.add(new Chat(testID, "David Onak", "That's sus man!", "10:33am", 0xFF44AA44));
-        chatsList.add(new Chat("1", "Jeff", "My name is Jeff", "8:00am", 0xFF4444AA));
+        chatsList.add(new Chat("2020", "Jeff", "My name is Jeff", "8:00am", 0xFF4444AA));
         chatsList.add(new Chat("2", "Nick Hamilton", "Your a beast!", "Oct. 24", 0xFFAA4444));
         chatsList.add(new Chat("3", "Joe Smith", "Hello, I am Linsay Lohan!", "Oct. 23", 0xFF222222));
     }
