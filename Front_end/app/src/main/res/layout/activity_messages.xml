@@ -40,16 +40,16 @@
         app:layout_constraintLeft_toLeftOf="parent">
 
         <EditText
-            android:id="@+id/edit_text_chatbox"
-            android:hint="@string/message_prompt"
-            android:background="@android:color/transparent"
-            android:layout_gravity="center"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:maxLines="6"/>
+        android:id="@+id/edit_text_chatbox"
+        android:hint="@string/message_prompt"
+        android:background="@android:color/transparent"
+        android:layout_gravity="center"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:maxLines="6"/>
 
         <Button
             android:id="@+id/send_btn"
