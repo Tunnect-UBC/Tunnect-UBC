@@ -7,6 +7,7 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
+const axios = require('axios');
 
 
 const Chat = require('../../models/chat');
@@ -29,11 +30,22 @@ router.get('/:userId', (req, res, next) => {
       }
     });
   } else {
-    Chat.find({usrID1: id}, 'usrID2 lastmessage', function(err, result){
+    Chat.find({usrID1: id}, 'usrID2 lastmessage', function(err, result1){
       if(err){
         res.send(err);
-      } else {
-        res.send(result);
+      }
+      else if (!result1.length){
+        Chat.find({usrID2: id}, 'usrID1 lastmessage', function (err, result2) {
+          if(err){
+            res.send(err);
+          }
+          else {
+            res.send(result2);
+          }
+        });
+      }
+      else {
+        res.send(result1);
       }
     });
    }
@@ -50,56 +62,57 @@ router.get('/:userid1/:userid2', (req, res, next) => {
    const id1 = req.params.userid1;
    const id2 = req.params.userid2;
 
-  Chat.find({usrID1: id1}, 'messages', function(err, result1){
-    if (err) {
-      Chat.find({usrID1: id2}, 'messages', function(err, result2){
+  Chat.find({usrID1: id1, usrID2: id2}, 'messages', function (err, result1) {
+    if(!result1.length) {
+      Chat.find({usrID1: id2, usrID2: id1}, 'messages', function (err, result2) {
         if(err){
           res.send(err);
-        } else {
-          res.send(result2);
+        }
+        else {
+          res.status(200).json(result2);
         }
       });
-    } else {
-      res.send(result1);
     }
-  });
+    else if (err){
+      res.send(err);
+    }
+    else {
+      res.status(200).json(result1);
+    }
+   }
+  );
 });
 
-
-///////////////////PUT REQUEST/////////////////////
 
 /**
 *put a message in the messagedb and update the corressponding chat's message list
 **/
 router.post('/:receiverid', (req, res, next) => {
+  //axios.get('http://localhost:3000/userstore/' + req.body.senderid).then((response) => {
+  axios.get('http://localhost:3000/userstore/' + req.body.senderid, {params: {}})
+  .then((response) => {
   const message = new Message({
     senderid: req.body.senderid,
-    sender_name: req.body.sender_name,
-    sender_colour: req.body.sender_colour,
+    sender_name: response.data.username,
+    sender_colour: response.data.icon_colour,
     message: req.body.message
   });
+  console.log(response.data);
   message.save()
-         .then(Chat.update({usrID1: req.body.senderid, usrID2: req.params.recieverid},
-           {$push: {messages : [{senderid: senderid, sender_name: req.body.sender_name, message: req.body.message}]}}))
-         .then(Chat.update({usrID1: req.params.recieverid, usrID2: req.body.senderid},
-           {$push: {messages : [{senderid: senderid, sender_name: req.body.sender_name, message: req.body.message}]}}))
-          .then(Chat.update({usrID1: req.body.senderid, usrID2: req.params.recieverid},
-           {lastmessage: req.body.message}))
-          .then(Chat.update({usrID1: req.params.recieverid, usrID2: req.body.senderid},
-           {lastmessage: req.body.message}))
-          .then(result => {
+         .then(result => {
            console.log(result);
-           res.status(200).json({
-             message: "POST to messagedb",
-             createdMessage: result
-           });
+           res.status(200).json(result);
          })
-         .catch(err => {
-           console.log(err);
-           res.status(500).json({
-             error:err
-           })
-         });
+         .then(result => {Chat.updateOne({usrID1: req.body.senderid, usrID2: req.params.receiverid},
+           {$push: {messages : [{sender_name: response.data.username, message: req.body.message}]}}, function(err, result){})})
+         .then(result => {Chat.updateOne({usrID1: req.params.receiverid, usrID2: req.body.senderid},
+           {$push: {messages : [{sender_name: response.data.username, message: req.body.message}]}}, function(err, result){})})
+          .then(result => {Chat.updateOne({usrID1: req.body.senderid, usrID2: req.params.receiverid},
+           {$set: {lastmessage: req.body.message}}, function(err, result){})})
+          .then(result => {Chat.updateOne({usrID1: req.params.receiverid, usrID2: req.body.senderid},
+           {$set: {lastmessage: req.body.message}}, function(err, result){})});
+
+       });
 });
 
 /**
@@ -130,5 +143,28 @@ router.post('/:usrid1/:usrid2', (req, res, next) => {
          });
 });
 
+/**
+* Deletes a chat(but not all messages tied to the chat)
+**/
+router.delete('/:userId1/:userId2', (req, res, next) => {
+    const id1 = req.params.userId1;
+    const id2 = req.params.userId2;
+    Chat.remove({
+        usrID1: id1,
+        usrID2: id2
+    }).then(res1 => {
+      Chat.remove({
+        usrID1: id2,
+        usrID2: id1
+      })
+    })
+        .then(result => {
+            res.status(200).json(result);
+        })
+        .catch(err => {
+            console.log(err);
+            res.statuts(500).json({error: err});
+        });
+});
 
 module.exports = router;
