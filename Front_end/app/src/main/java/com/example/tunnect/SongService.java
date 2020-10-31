@@ -44,6 +44,7 @@ public class SongService {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                 // Send a get request to spotify
                 (Request.Method.GET, url, null, response -> {
+                    Log.d("Search", "Search Success");
                     JSONObject tracks = null;
                     try {
                         tracks = response.getJSONObject("tracks");
@@ -76,7 +77,7 @@ public class SongService {
                     }
                     callBack.onSuccess();
                 }, error -> {
-
+                    Log.d("Search", "Search Error");
                 }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
