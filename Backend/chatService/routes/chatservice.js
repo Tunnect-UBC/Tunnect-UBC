@@ -123,7 +123,7 @@ router.post('/:usrid1/:usrid2', (req, res, next) => {
   var chat = new Chat({
     usrID1: usr1,
     usrID2: usr2,
-    messages: [{sender_name: "Tunnect", message: "Congrats: you've tunnected! Start a chat and say hi :)"}],
+    messages: [{senderid: "tunnect", sender_name: "Tunnect", message: "Congrats: you've tunnected! Start a chat and say hi :)"}],
     lastmessage: "Congrats: you've tunnected! Start a chat and say hi :)"
   });
   chat.save()
