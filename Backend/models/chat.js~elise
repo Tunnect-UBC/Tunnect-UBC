@@ -5,7 +5,7 @@ const Schema = mongoose.Schema;
 const ChatSchema = new Schema({
   usrID1 : String,
   usrID2 : String,
-  messages :  [{senderid: String, sender_name: String, message: String}],
+  messages :  [{sender_name: String, message: String}],
   lastmessage : String
 });
 
