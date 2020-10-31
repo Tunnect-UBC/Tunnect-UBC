@@ -60,7 +60,8 @@ router.post('/', (req, res, next) => {
         _id: req.body._id,
         username: req.body.username,
         top_artist: req.body.top_artist,
-        icon_colour: req.body.icon_colour
+        icon_colour: req.body.icon_colour,
+        songs: req.body.songs
     });
     
     //stores this in the database

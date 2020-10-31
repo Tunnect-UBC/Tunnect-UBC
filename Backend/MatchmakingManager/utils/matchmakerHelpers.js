@@ -2,11 +2,20 @@ const helpers = {
     getScore: function(user1, user2) {
         let score = 0;
         //console.log(user2.top_artist);
+
+        user1.songs.forEach(song => {
+            if (user2.songs.includes(song)) {
+                score++;
+            }
+        })
+
+        score = score / user1.songs.length;
+
         if (user1.top_artist == user2.top_artist) {
             score++
         }
 
-        return score;
+        return 5 * score;
     },
 
     /**
