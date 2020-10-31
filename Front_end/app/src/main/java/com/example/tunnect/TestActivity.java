@@ -1,12 +1,8 @@
 package com.example.tunnect;
-import com.pes.androidmaterialcolorpickerdialog.ColorPicker;
 
-import androidx.annotation.ColorInt;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,45 +14,27 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.pes.androidmaterialcolorpickerdialog.ColorPickerCallback;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class ProfileActivity extends AppCompatActivity {
+public class TestActivity extends AppCompatActivity {
 
     private JSONObject user_info = new JSONObject();
-    private final String add_url = "http://52.188.167.58:3000/userstore";
-    final ColorPicker cp = new ColorPicker(ProfileActivity.this, 250, 250, 250);
-    private int selectedColorRGB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
+        setContentView(R.layout.activity_test);
 
         // Start by setting up a title for the page
         ActionBar actionBar = getSupportActionBar();
         if(actionBar != null) {
-            String title = "Profile";
+            String title = "ProfileTest";
             actionBar.setTitle(title);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        /* Show color picker dialog */
-        //Button getColour =
-        cp.show();
-
-        cp.enableAutoClose();
-
-        /* Set a new Listener called when user click "select" */
-        cp.setCallback(color -> {
-            selectedColorRGB = cp.getColor();
-            cp.dismiss();
-        });
-
-        /*
         RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
         TextView userid_view = (TextView) findViewById(R.id.userid_view);
         TextView username_view = (TextView) findViewById(R.id.username_view);
@@ -65,7 +43,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         Button add_user_button = findViewById(R.id.user_add_button);
         add_user_button.setOnClickListener(view -> {
-
+            String add_url = "http://52.188.167.58:3000/userstore";
             JSONObject user = new JSONObject();
             try {
                 user.put("_id", "1234567");
@@ -139,7 +117,7 @@ public class ProfileActivity extends AppCompatActivity {
                 });
                 queue.add(jsonObjectRequest);
             }
-        }); */
+        });
     }
 
     // Code to return to last page when the return button on the title bar is hit
