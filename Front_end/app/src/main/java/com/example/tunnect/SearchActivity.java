@@ -66,7 +66,7 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 songService.set_URL(search_bar.getText().toString());
-                songService.search();
+                songService.search(() -> {
                     search_songs = songService.get_search_songs();
                     current_song = 0;
                     if (search_songs == null) {
@@ -77,6 +77,7 @@ public class SearchActivity extends AppCompatActivity {
                     else {
                         dispSong(search_songs.get(current_song));
                     }
+                });
             }
         });
 

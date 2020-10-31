@@ -38,12 +38,13 @@ public class SongService {
     }
 
     // Search function: Sends get request to spotify then parses the JSON file it gets back and places the tracks into an array list
-    public ArrayList<Song> search() {
+    public ArrayList<Song> search(final VolleyCallBack callBack) {
         // Clear the search songs array in case it is not the first search
         search_songs = new ArrayList<>();
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                 // Send a get request to spotify
                 (Request.Method.GET, url, null, response -> {
+                    Log.d("Search", "Search Success");
                     JSONObject tracks = null;
                     try {
                         tracks = response.getJSONObject("tracks");
@@ -74,8 +75,9 @@ public class SongService {
                             e.printStackTrace();
                         }
                     }
+                    callBack.onSuccess();
                 }, error -> {
-
+                    Log.d("Search", "Search Error");
                 }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
