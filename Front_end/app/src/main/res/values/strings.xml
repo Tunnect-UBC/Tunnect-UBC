@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Tunnect</string>
+    <string name="user_name">\tUser Name</string>
+    <string name="user_info">Prefers "Genre" Music</string>
+    <string name="like_btn">Like</string>
+    <string name="dislike_btn">Dislike</string>
+    <string name="message_btn">Messages</string>
+    <string name="profile_btn">Profile</string>
+    <string name="settings_btn">Settings</string>
+    <string name="send_btn">SEND</string>
+    <string name="message_prompt">Enter message</string>
+    <string name="handle_notification_now">We are going to do something with our notification right now!</string>
+    <string name="search_page_btn">Search Songs</string>
+</resources>

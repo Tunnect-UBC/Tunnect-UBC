@@ -1,19 +1,36 @@
 {
   "name": "Backend",
   "version": "1.0.0",
-  "description": "",
-  "main": "test.js",
+  "description": "UserStore responsible for GETTING groups of users, or PUT/PATCH/DELETE/GETTING an individual user",
+  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start-userstore": "nodemon ./UserStore/server.js",
+    "start-matchmaker": "nodemon ./MatchmakingManager/server.js"
   },
-  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nickhamiltonn/Tunnect.git"
+  },
   "author": "",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nickhamiltonn/Tunnect/issues"
+  },
+  "homepage": "https://github.com/nickhamiltonn/Tunnect#readme",
   "dependencies": {
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
+<<<<<<< HEAD
     "mongodb": "^3.6.2",
     "mongoose": "^5.10.10",
     "morgan": "^1.10.0"
+=======
+    "mongoose": "^5.10.10",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.6"
+>>>>>>> b167d16bbf0631f69dc0485ba98f4bb225754ab8
   }
 }
