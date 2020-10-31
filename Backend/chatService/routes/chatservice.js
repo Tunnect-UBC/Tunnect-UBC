@@ -80,9 +80,9 @@ router.post('/:receiverid', (req, res, next) => {
   });
   message.save()
          .then(Chat.update({usrID1: req.body.senderid, usrID2: req.params.recieverid},
-           {$push: {messages : [{sender_name: req.body.sender_name, message: req.body.message}]}}))
+           {$push: {messages : [{senderid: senderid, sender_name: req.body.sender_name, message: req.body.message}]}}))
          .then(Chat.update({usrID1: req.params.recieverid, usrID2: req.body.senderid},
-           {$push: {messages : [{sender_name: req.body.sender_name, message: req.body.message}]}}))
+           {$push: {messages : [{senderid: senderid, sender_name: req.body.sender_name, message: req.body.message}]}}))
           .then(Chat.update({usrID1: req.body.senderid, usrID2: req.params.recieverid},
            {lastmessage: req.body.message}))
           .then(Chat.update({usrID1: req.params.recieverid, usrID2: req.body.senderid},
