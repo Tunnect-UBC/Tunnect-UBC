@@ -21,10 +21,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SplashActivity extends AppCompatActivity {
-    private SharedPreferences.Editor editor;
-    private SharedPreferences msharedPreferences;
-
-    private RequestQueue queue;
 
 
     private static final String CLIENT_ID = "b30cb6a307474da78191b84e475f90a6";
@@ -41,9 +37,6 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash);
 
         authenticateSpotify();
-
-        msharedPreferences = this.getSharedPreferences("SPOTIFY", 0);
-        queue = Volley.newRequestQueue(this);
 
     }
     private void authenticateSpotify() {
@@ -63,11 +56,11 @@ public class SplashActivity extends AppCompatActivity {
             switch (response.getType()) {
                 // Response was successful and contains auth token
                 case TOKEN:
-                    editor = getSharedPreferences("SPOTIFY", 0).edit();
+                    SharedPreferences.Editor editor = getSharedPreferences("SPOTIFY", 0).edit();
                     editor.putString("token", response.getAccessToken());
                     Log.d("spotAuth", "GOT AUTH TOKEN");
                     editor.apply();
-                    waitForUserInfo();
+                    startMainActivity();
                     break;
 
                 // Auth flow returned an error
@@ -82,66 +75,11 @@ public class SplashActivity extends AppCompatActivity {
             }
         }
     }
-    private void waitForUserInfo() {
-        UserService userService = new UserService(queue, msharedPreferences);
-        userService.get(() -> {
-            User user = userService.getUser();
-            editor = getSharedPreferences("SPOTIFY", 0).edit();
-            editor.putString("userid", user.id);
-            Log.d("STARTING", "GOT USER INFORMATION");
-            // We use commit instead of apply because we need the information stored immediately
-            editor.commit();
-            startMainActivity();
-        });
-    }
+
     // Transfers to the main activity
     private void startMainActivity() {
         Intent newintent = new Intent(SplashActivity.this, MainActivity.class);
         startActivity(newintent);
-    }
-}
-
-// User class (barebones right now)
-class User {
-
-    public String id;
-}
-
-// UserService that authorizes the user with spotify
-class UserService {
-
-    private static final String ENDPOINT = "https://api.spotify.com/v1/me";
-    private SharedPreferences msharedPreferences;
-    private RequestQueue mqueue;
-    private User user;
-
-    public UserService(RequestQueue queue, SharedPreferences sharedPreferences) {
-        mqueue = queue;
-        msharedPreferences = sharedPreferences;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void get(final VolleyCallBack callBack) {
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(ENDPOINT, null, response -> {
-            Gson gson = new Gson();
-            user = gson.fromJson(response.toString(), User.class);
-            callBack.onSuccess();
-        }, error -> get(() -> {
-
-        })) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                String token = msharedPreferences.getString("token", "");
-                String auth = "Bearer " + token;
-                headers.put("Authorization", auth);
-                return headers;
-            }
-        };
-        mqueue.add(jsonObjectRequest);
     }
 }
 

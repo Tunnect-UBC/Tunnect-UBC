@@ -13,7 +13,6 @@ import android.view.MotionEvent;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
-    private static final String DEBUG_TAG = "Gestures";
     private GestureDetectorCompat mDetector;
 
 

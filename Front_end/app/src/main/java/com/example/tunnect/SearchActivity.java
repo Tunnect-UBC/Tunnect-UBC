@@ -19,7 +19,6 @@ import java.util.ArrayList;
 public class SearchActivity extends AppCompatActivity {
 
     // UI definitions
-    private TextView userView;
     private TextView song_album;
     private TextView song_title;
     private TextView song_artist;
@@ -48,7 +47,6 @@ public class SearchActivity extends AppCompatActivity {
         }
 
         songService = new SongService(getApplicationContext());
-        userView = (TextView) findViewById(R.id.user);
         song_title = (TextView) findViewById(R.id.song_title);
         song_album = (TextView) findViewById(R.id.song_album);
         song_artist = (TextView) findViewById(R.id.song_artist);
@@ -56,10 +54,6 @@ public class SearchActivity extends AppCompatActivity {
         search_bar = (EditText) findViewById(R.id.search_bar);
         next_song_button = (Button) findViewById(R.id.next_song_button);
         search_button = (Button) findViewById(R.id.search_button);
-
-        // Set the user id to display
-        SharedPreferences sharedPreferences = this.getSharedPreferences("SPOTIFY", 0);
-        userView.setText(sharedPreferences.getString("userid", "No User"));
 
         // Search button functionality
         search_button.setOnClickListener(new View.OnClickListener() {
