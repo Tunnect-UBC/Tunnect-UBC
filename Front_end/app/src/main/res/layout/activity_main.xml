@@ -65,6 +65,18 @@
                 android:layout_marginStart="65dp"
                 android:background="@drawable/greenblue_grad_ovel" />
 
+            <Button
+                android:id="@+id/test"
+                android:layout_width="269dp"
+                android:layout_height="85dp"
+                android:fontFamily="sans-serif"
+                android:text="test"
+                android:textSize="18sp"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                android:layout_marginStart="65dp"
+                android:background="@drawable/greenblue_grad_ovel" />
+
             <TextView
                 android:id="@+id/first_text"
                 android:layout_width="match_parent"

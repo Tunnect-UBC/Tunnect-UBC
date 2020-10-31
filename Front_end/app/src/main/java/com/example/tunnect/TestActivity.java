@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -30,7 +31,7 @@ public class TestActivity extends AppCompatActivity {
         // Start by setting up a title for the page
         ActionBar actionBar = getSupportActionBar();
         if(actionBar != null) {
-            String title = "ProfileTest";
+            String title = "ProfileTest, a page for free testing";
             actionBar.setTitle(title);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
@@ -46,63 +47,61 @@ public class TestActivity extends AppCompatActivity {
             String add_url = "http://52.188.167.58:3000/userstore";
             JSONObject user = new JSONObject();
             try {
-                user.put("_id", "1234567");
+                user.put("_id", "HUEI345397YHEE77");
             } catch (JSONException e) {
                 e.printStackTrace();
             }
             try {
-                user.put("username", "test_user1");
+                user.put("username", "very sad boy");
             } catch (JSONException e) {
                 e.printStackTrace();
             }
             try {
-                user.put("top_artist", "Bearings");
+                user.put("top_artist", "Apple republic");
             } catch (JSONException e) {
                 e.printStackTrace();
             }
             try {
-                user.put("icon_colour", 0xffffffff);
+                user.put("icon_colour", 0xff999900);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, add_url, user, response -> {
             }, error -> {
+                Toast.makeText(getApplicationContext(), "Connection to server failed", Toast.LENGTH_LONG).show();
             });
             queue.add(jsonObjectRequest);
         });
 
         Button get_user_button = findViewById(R.id.user_info_button);
-        get_user_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String get_url = "http://52.188.167.58:3000/userstore/1234567";
-                JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, get_url, null, response -> {
-                    user_info = response;
-                }, error -> {
-                });
-                queue.add(jsonObjectRequest);
+        get_user_button.setOnClickListener(view -> {
+            String get_url = "http://52.188.167.58:3000/userstore/1234567";
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, get_url, null, response -> {
+                user_info = response;
+            }, error -> {
+            });
+            queue.add(jsonObjectRequest);
 
-                try {
-                    userid_view.setText((String) user_info.get("_id"));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    username_view.setText((String) user_info.get("username"));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    artist_view.setText((String) user_info.get("top_artist"));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    colour_view.setText((String) user_info.get("colour"));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+            try {
+                userid_view.setText((String) user_info.get("_id"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            try {
+                username_view.setText((String) user_info.get("username"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            try {
+                artist_view.setText((String) user_info.get("top_artist"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            try {
+                colour_view.setText((String) user_info.get("colour"));
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
         });
 
