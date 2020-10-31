@@ -11,4 +11,11 @@
     <string name="message_prompt">Enter message</string>
     <string name="handle_notification_now">We are going to do something with our notification right now!</string>
     <string name="search_page_btn">Search Songs</string>
+    <string name="new_user">New User</string>
+    <string name="name">Username</string>
+    <string name="enter_name">Enter Username</string>
+    <string name="fave_art">Favourite Artist</string>
+    <string name="enter_fave_art">Enter Favourite Artist</string>
+    <string name="colour">Icon Colour</string>
+    <string name="choose_colour">Choose Icon Colour</string>
 </resources>

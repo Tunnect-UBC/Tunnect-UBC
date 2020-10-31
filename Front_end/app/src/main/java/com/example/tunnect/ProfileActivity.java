@@ -1,20 +1,34 @@
 package com.example.tunnect;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.pes.androidmaterialcolorpickerdialog.ColorPicker;
 
+import androidx.annotation.ColorInt;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.graphics.drawable.DrawableCompat;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.pes.androidmaterialcolorpickerdialog.ColorPickerCallback;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -22,12 +36,33 @@ import org.json.JSONObject;
 
 public class ProfileActivity extends AppCompatActivity {
 
-    private JSONObject user_info = new JSONObject();
+    private RequestQueue queue;
+    JSONObject user_info;
+    private String newTestID = "59379626979347"; //TODO:Replace with real id which will be passed in as a parameter
+    private String RETRIEVE_URL;
+    private final String ADD_URL = "http://52.188.167.58:3000/userstore";
+    private int selectedColorRGB;
+    private Drawable wrappedIconImage;
+    private ImageView iconImage;
+    private EditText username, faveArtist;
+    private TextView profileTitle;
+    private boolean returnVal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+        queue = Volley.newRequestQueue(getApplicationContext());
+        iconImage = findViewById(R.id.profile_icon);
+        username = findViewById(R.id.enter_username);
+        profileTitle = findViewById(R.id.username_title);
+        faveArtist = findViewById(R.id.enter_favourite_artist);
+        Drawable unwrappedIconImage = AppCompatResources.getDrawable(this, R.drawable.profile_circle);
+        wrappedIconImage = DrawableCompat.wrap(unwrappedIconImage);
+        selectedColorRGB = 0;
+        ColorPicker cp = new ColorPicker(ProfileActivity.this, 66, 170, 170);
+
+        RETRIEVE_URL = ADD_URL+newTestID;
 
         // Start by setting up a title for the page
         ActionBar actionBar = getSupportActionBar();
@@ -37,79 +72,32 @@ public class ProfileActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
-        TextView userid_view = (TextView) findViewById(R.id.userid_view);
-        TextView username_view = (TextView) findViewById(R.id.username_view);
-        TextView artist_view = (TextView) findViewById(R.id.artist_view);
-        TextView colour_view = (TextView) findViewById(R.id.colour_view);
-
-        // Adds a premade user to the user store
-        Button add_user_button = findViewById(R.id.user_add_button);
-        add_user_button.setOnClickListener(view -> {
-            String add_url = "http://52.188.167.58:3000/userstore";
-            JSONObject user = new JSONObject();
-            try {
-                user.put("_id", "1234567");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            try {
-                user.put("username", "test_user1");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            try {
-                user.put("top_artist", "Bearings");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            try {
-                user.put("icon_colour", 0xffffffff);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, add_url, user, response -> {
-            }, error -> {
-            });
-            queue.add(jsonObjectRequest);
+        /* Show color picker dialog */
+        Button getColour = findViewById(R.id.enter_colour);
+        getColour.setOnClickListener(view -> {
+            cp.show();
+            cp.enableAutoClose();
         });
 
-        // Fetches a users info from the database
-        Button get_user_button = findViewById(R.id.user_info_button);
-        get_user_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String get_url = "http://52.188.167.58:3000/userstore/1234567";
-                JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, get_url, null, response -> {
-                    user_info = response;
-                }, error -> {
-                });
-                queue.add(jsonObjectRequest);
+        /* Set a new Listener called when user click "select" */
+        cp.setCallback(color -> {
+            selectedColorRGB = color;
+            DrawableCompat.setTint(wrappedIconImage, color);
+            iconImage.setImageDrawable(wrappedIconImage);
+        });
 
-                try {
-                    userid_view.setText((String) user_info.get("_id"));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    username_view.setText((String) user_info.get("username"));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    artist_view.setText((String) user_info.get("top_artist"));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    colour_view.setText((String) user_info.get("colour"));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+        // save changes into profile
+        Button saveBtn = findViewById(R.id.save_profile);
+        saveBtn.setOnClickListener(view -> {
+            if(saveProfileEntries()) {
+                Intent mainIntent = new Intent(ProfileActivity.this, MainActivity.class);
+                startActivity(mainIntent);
             }
         });
 
+        // Read information on current user if it exists and fill screen entries
+        loadProfileEntries();
+/*
         // Delete the premade user account
         Button delete_user_button = findViewById(R.id.user_delete_button);
         delete_user_button.setOnClickListener(new View.OnClickListener() {
@@ -122,7 +110,69 @@ public class ProfileActivity extends AppCompatActivity {
                 });
                 queue.add(jsonObjectRequest);
             }
+        }); */
+    }
+
+    // Will attempt to read existing data on current user and fill screen entries
+    private void loadProfileEntries() {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, RETRIEVE_URL, null, response -> {
+            user_info = response;
+        }, error -> {
         });
+        queue.add(jsonObjectRequest);
+
+        if (user_info != null) {
+            try {
+                profileTitle.setText((String) user_info.get("username"));
+                username.setText((String) user_info.get("username"));
+                faveArtist.setText((String) user_info.get("top_artist"));
+                DrawableCompat.setTint(wrappedIconImage, (int) user_info.get("colour"));
+                iconImage.setImageDrawable(wrappedIconImage);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        } else {
+            DrawableCompat.setTint(wrappedIconImage, 0xFF66AAAA);
+            iconImage.setImageDrawable(wrappedIconImage);
+        }
+    }
+
+    // If entries are correct, will create a profile for the current user
+    // TODO: Allow this function to append the profile if it exists already
+    private boolean saveProfileEntries() {
+        String selectedUsername = username.getText().toString().trim();
+        String selectedArtist = faveArtist.getText().toString().trim();
+        if (selectedUsername.equals("")) {
+            Toast.makeText(getApplicationContext(), "Please enter a username", Toast.LENGTH_LONG).show();
+            return false;
+        } else if (selectedArtist.equals("")) {
+            Toast.makeText(getApplicationContext(), "Please enter a favourite artist", Toast.LENGTH_LONG).show();
+            return false;
+        } else if (selectedColorRGB == 0) {
+            Toast.makeText(getApplicationContext(), "Please select a profile icon colour", Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        returnVal = true;
+
+        // Add the user to the server
+        JSONObject user = new JSONObject();
+        try {
+            user.put("_id", newTestID);
+            user.put("username", selectedUsername);
+            user.put("top_artist", selectedArtist);
+            user.put("icon_colour", selectedColorRGB);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, ADD_URL, user, response -> {
+        }, error -> {
+            Toast.makeText(getApplicationContext(), "Failed to add profile to the server!", Toast.LENGTH_LONG).show();
+            //returnVal = false;
+        });
+        queue.add(jsonObjectRequest);
+
+        return returnVal;
     }
 
     // Code to return to last page when the return button on the title bar is hit
