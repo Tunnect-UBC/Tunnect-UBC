@@ -143,23 +143,42 @@ router.post('/:usrid1/:usrid2', (req, res, next) => {
   var chat = new Chat({
     usrID1: usr1,
     usrID2: usr2,
-    messages: [{sender_name: "Tunnect", message: "Congrats: you've tunnected! Start a chat and say hi :)"}],
+    messages: [{senderid: "tunnect", sender_name: "Tunnect", message: "Congrats: you've tunnected! Start a chat and say hi :)"}],
     lastmessage: "Congrats: you've tunnected! Start a chat and say hi :)"
   });
-  chat.save()
-         .then(result => {
-           console.log(result);
-           res.status(200).json({
-             message: "POST to chatdb",
-             createdMessage: result
-           });
-         })
-         .catch(err => {
-           console.log(err);
-           res.status(500).json({
-             error:err
-           })
-         });
+  Chat.find({usrID1: usr1, usrID2: usr2}, function(err, result1){
+    if(!result1.length){
+      Chat.find({usrID1: usr2, usrID2: usr1}, function(err, result2){
+        if(!result2.length){
+          chat.save()
+                 .then(result => {
+                   console.log(result);
+                   res.status(200).json({
+                     message: "POST to chatdb",
+                     createdMessage: result
+                   });
+                 })
+                 .catch(err => {
+                   console.log(err);
+                   res.status(500).json({
+                     error:err
+                   })
+                 });
+        }
+        else {
+          console.log("chat already exists");
+          res.status(200).json({
+            message: "chat already exists"
+          })
+        }
+      })
+    } else {
+      console.log("chat already exists");
+      res.status(200).json({
+        message: "chat already exists"
+      })
+    }
+  });
 });
 
 /**
@@ -171,13 +190,16 @@ router.delete('/:userId1/:userId2', (req, res, next) => {
     Chat.remove({
         usrID1: id1,
         usrID2: id2
-    }).then(res1 => {
-      Chat.remove({
-        usrID1: id2,
-        usrID2: id1
-      })
     })
         .then(result => {
+          if (!result.deletedCount){
+            Chat.remove({
+              usrID1: id2,
+              usrID2: id1
+            }).then(result => {
+              res.status(200).json(result);
+            })
+          }
             res.status(200).json(result);
         })
         .catch(err => {
