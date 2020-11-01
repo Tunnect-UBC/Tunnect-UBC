@@ -24,7 +24,9 @@ router.get('/:userId', (req, res, next) => {
   if (id === 'all'){
     Chat.find({}, function(err, result){
       if(err){
-        res.send(err);
+        res.status(500).json({
+          error: err
+        });
       } else {
         res.send(result);
       }
@@ -32,12 +34,16 @@ router.get('/:userId', (req, res, next) => {
   } else {
     Chat.find({usrID1: id}, 'usrID2 lastmessage', function(err, result1){
       if(err){
-        res.send(err);
+        res.status(500).json({
+          error: err
+        });
       }
       else if (!result1.length){
         Chat.find({usrID2: id}, 'usrID1 lastmessage', function (err, result2) {
           if(err){
-            res.send(err);
+            res.status(500).json({
+              error: err
+            });
           }
           else {
             res.send(result2);
@@ -66,7 +72,9 @@ router.get('/:userid1/:userid2', (req, res, next) => {
     if(!result1.length) {
       Chat.find({usrID1: id2, usrID2: id1}, 'messages', function (err, result2) {
         if(err){
-          res.send(err);
+          res.status(500).json({
+            error: err
+          });
         }
         else {
           res.status(200).json(result2);
@@ -74,7 +82,9 @@ router.get('/:userid1/:userid2', (req, res, next) => {
       });
     }
     else if (err){
-      res.send(err);
+      res.status(500).json({
+        error: err
+      });
     }
     else {
       res.status(200).json(result1);
@@ -109,10 +119,20 @@ router.post('/:receiverid', (req, res, next) => {
           .then(result => {Chat.updateOne({usrID1: req.body.senderid, usrID2: req.params.receiverid},
            {$set: {lastmessage: req.body.message}}, function(err, result){})})
           .then(result => {Chat.updateOne({usrID1: req.params.receiverid, usrID2: req.body.senderid},
-           {$set: {lastmessage: req.body.message}}, function(err, result){})});
+           {$set: {lastmessage: req.body.message}}, function(err, result){})})
+           .catch(err => {
+             res.status(500).json({
+               error: err
+             })
+           });
+      })
+      .catch(err => {
+        res.status(404).json({
+          message: "User does not exist"
+          });
+      });
 
-       });
-});
+  });
 
 /**
 *add a chat to the chatsdb
