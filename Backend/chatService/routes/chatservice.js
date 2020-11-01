@@ -171,13 +171,16 @@ router.delete('/:userId1/:userId2', (req, res, next) => {
     Chat.remove({
         usrID1: id1,
         usrID2: id2
-    }).then(res1 => {
-      Chat.remove({
-        usrID1: id2,
-        usrID2: id1
-      })
     })
         .then(result => {
+          if (!result.deletedCount){
+            Chat.remove({
+              usrID1: id2,
+              usrID2: id1
+            }).then(result => {
+              res.status(200).json(result);
+            })
+          }
             res.status(200).json(result);
         })
         .catch(err => {
