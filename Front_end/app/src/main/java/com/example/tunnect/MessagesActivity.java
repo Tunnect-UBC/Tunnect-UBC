@@ -61,13 +61,14 @@ public class MessagesActivity extends AppCompatActivity {
     private RequestQueue queue;
     private List<Message> messagesList = new ArrayList<>();
     private boolean err;
-    private JSONArray messages = new JSONArray();
+    private  EditText editText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_messages);
 
+        editText = findViewById(R.id.edit_text_chatbox);
         receiverID = Objects.requireNonNull(getIntent().getExtras()).getString("OTHER_USER_ID");
         otherUserName = Objects.requireNonNull(getIntent().getExtras()).getString("OTHER_USER_NAME");
         otherUserColour = Objects.requireNonNull(getIntent().getExtras()).getInt("OTHER_USER_COLOUR");
@@ -94,7 +95,7 @@ public class MessagesActivity extends AppCompatActivity {
 
                     // To know if connection works, we want to see the resulting token
                     String token = Objects.requireNonNull(task.getResult()).getToken();
-                    Toast.makeText(getApplicationContext(), token, Toast.LENGTH_LONG).show();
+                    //Toast.makeText(getApplicationContext(), token, Toast.LENGTH_LONG).show();
                     Log.d("user", token);
                 }
             });
@@ -105,17 +106,13 @@ public class MessagesActivity extends AppCompatActivity {
         // Fill the recycler view with the history of chat messages
         queue = Volley.newRequestQueue(this);
         populateMessageHistory();
-        messageHistory = findViewById(R.id.messageHistory);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        layoutManager.setStackFromEnd(true);
-        messageHistory.setLayoutManager(layoutManager);
-        messageAdapter = new MessageListAdaptor(this, messagesList, userID, receiverID);
-        messageHistory.setAdapter(messageAdapter);
 
         // Set up button to send a message
         Button sendBtn = findViewById(R.id.send_btn);
         sendBtn.setOnClickListener(view -> {
-            sendMessage();
+            if (!editText.getText().toString().equals("")) {
+                sendMessage();
+            }
         });
     }
 
@@ -149,37 +146,39 @@ public class MessagesActivity extends AppCompatActivity {
 
     // Using a Volley connection, send a message to the server
     private void sendMessage() {
-        EditText editText = findViewById(R.id.edit_text_chatbox);
-        err = false;
         JSONObject message = new JSONObject();
         try {
             message.put("senderid", userID);
-            message.put("message", editText.getText());
+            message.put("message", editText.getText().toString());
         } catch (JSONException e) {
             e.printStackTrace();
             Toast.makeText(getApplicationContext(), "Failed to send your message into the server.", Toast.LENGTH_LONG).show();
-            err = true;
         }
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, SEND_URL, message, response -> {
+            updateRecyclerView(editText.getText().toString(), SENT_MESSAGE);
+            editText.setText("");
         }, error -> {
             error.printStackTrace();
             Toast.makeText(getApplicationContext(), "Failed to send, please check your internet connection.", Toast.LENGTH_LONG).show();
             err = true;
         });
         queue.add(jsonObjectRequest);
-
-        if (!err) {
-            updateRecyclerView(editText.getText().toString(), SENT_MESSAGE);
-            editText.setText("");
-        }
     }
 
     // Using a Volley connection, this method adds entries in the messagesList from the provided server data
     private void populateMessageHistory() {
+        // these entries are added for testing purposes
+        //TODO: Delete this when testing is done!!!!!!!!!!!!!!!!!
+        messagesList.add(new Message(userID, "David Onak", "Hello", "Oct. 24", 0xFF44AA44));
+        messagesList.add(new Message(receiverID, "Jeff", "My name is Jeff", "Oct. 23", 0xFF4444AA));
+        messagesList.add(new Message(receiverID, "Jeff", "Hello...", "3:25pm", 0xFF222222));
+        messagesList.add(new Message(receiverID, "Jeff", "Helloooo!!!", "4:29pm", 0xFF222222));
+
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, BASE_URL, null,
                 response -> {
                     try {
-                        messages = response;
+                        JSONObject content = response.getJSONObject(0);
+                        JSONArray messages = content.getJSONArray("messages");
 
                         for (int i = 0; i < messages.length(); i++) {
                             JSONObject message = messages.getJSONObject(i);
@@ -191,6 +190,13 @@ public class MessagesActivity extends AppCompatActivity {
                             messagesList.add(new Message(message.getString("senderid"), message.getString("sender_name"),
                                     message.getString("message"), "12:69am", 0xff705533));
                         }
+
+                        messageHistory = findViewById(R.id.messageHistory);
+                        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+                        layoutManager.setStackFromEnd(true);
+                        messageHistory.setLayoutManager(layoutManager);
+                        messageAdapter = new MessageListAdaptor(this, messagesList, userID, receiverID);
+                        messageHistory.setAdapter(messageAdapter);
                     } catch (JSONException e) {
                         e.printStackTrace();
                         Toast.makeText(getApplicationContext(), "Failed to retrieve data from server!", Toast.LENGTH_LONG).show();
@@ -198,18 +204,6 @@ public class MessagesActivity extends AppCompatActivity {
                 }, error -> Toast.makeText(getApplicationContext(), "Connection to server failed", Toast.LENGTH_LONG).show());
 
         queue.add(request);
-
-        // these entries are added for testing purposes
-        //TODO: Delete this when testing is done!!!!!!!!!!!!!!!!!
-        messagesList.add(new Message(userID, "David Onak", "Hello", "Oct. 24", 0xFF44AA44));
-        messagesList.add(new Message(receiverID, "Jeff", "My name is Jeff", "Oct. 23", 0xFF4444AA));
-        messagesList.add(new Message(userID, "David Onak", "I just got the chat display working!", "Oct. 23", 0xFFAA4444));
-        messagesList.add(new Message(receiverID, "Jeff", "What a beat David!!!", "8:00am", 0xFF222222));
-        messagesList.add(new Message(receiverID, "Joe Smith", "Hello, I am Linsay Lohan!", "2:04pm", 0xFF222222));
-        messagesList.add(new Message(userID, "David Onak", "HELLLOS!", "3:14pm", 0xFFAA4444));
-        messagesList.add(new Message(receiverID, "Jeff", "I ment to say beast btw", "3:23pm", 0xFF222222));
-        messagesList.add(new Message(receiverID, "Jeff", "Hello...", "3:25pm", 0xFF222222));
-        messagesList.add(new Message(receiverID, "Jeff", "Helloooo!!!", "4:29pm", 0xFF222222));
     }
 
     // A method that updates the recycler view, adding new message entries to the screen
