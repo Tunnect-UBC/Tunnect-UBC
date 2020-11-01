@@ -10,25 +10,52 @@ import android.view.GestureDetector;
 import android.view.View;
 import android.widget.Button;
 import android.view.MotionEvent;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
     private GestureDetectorCompat mDetector;
-
+    private TextView user_name;
+    private TextView score_view;
+    private JSONObject matches;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
+
         mDetector = new GestureDetectorCompat(this, new MyGestureListener());
+        user_name = findViewById(R.id.user_name);
+        score_view = findViewById(R.id.user_info_button);
+        UserService currUser = new UserService();
+
+        /*
+        try {
+            getMatches("1234567");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+         */
+
+        Button likeBtn = findViewById(R.id.like_btn);
+        likeBtn.setOnClickListener(view -> {
+            currUser.like(getApplicationContext());
+        });
+
+        Button dislikeBtn = findViewById(R.id.dislike_btn);
+        dislikeBtn.setOnClickListener(view -> {
+            currUser.dislike(getApplicationContext());
+        });
 
         Button messagesBtn = findViewById(R.id.messages_btn);
         messagesBtn.setOnClickListener(view -> {
@@ -65,6 +92,25 @@ public class MainActivity extends AppCompatActivity {
             });
             queue.add(jsonObjectRequest);
         });
+    }
+
+    private void dispMatch(String username, String score) {
+        user_name.setText(username);
+        score_view.setText(score);
+    }
+
+    private void getMatches(String user_id) throws JSONException {
+        String match_url = "http://52.188.167.58:3001/matchmaker";
+        RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
+        JSONObject hostId = new JSONObject();
+        hostId.put("hostId", "696969696");
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, match_url, hostId, response -> {
+            matches = response;
+        }, error -> {
+            Log.d("matches", "failure");
+        });
+        queue.add(jsonObjectRequest);
     }
 
     @Override
@@ -128,25 +174,17 @@ public class MainActivity extends AppCompatActivity {
 
         private void onSwipe(int direction) {
             //Detect the swipe gestures and display toast
-            String showToastMessage = "";
+            UserService currUser = new UserService();
 
             switch (direction) {
 
                 case SWIPE_RIGHT:
-                    showToastMessage = "You have Swiped Right.";
+                    currUser.like(getApplicationContext());
                     break;
                 case SWIPE_LEFT:
-                    showToastMessage = "You have Swiped Left.";
+                    currUser.dislike(getApplicationContext());
                     break;
-                case SWIPE_DOWN:
-                    showToastMessage = "You have Swiped Down.";
-                    break;
-                case SWIPE_UP:
-                    showToastMessage = "You have Swiped Up.";
-                    break;
-
             }
-            Toast.makeText(getApplicationContext(), showToastMessage, Toast.LENGTH_SHORT).show();
         }
     }
 
