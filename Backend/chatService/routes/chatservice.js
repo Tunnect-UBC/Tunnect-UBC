@@ -88,7 +88,6 @@ router.get('/:userid1/:userid2', (req, res, next) => {
 *put a message in the messagedb and update the corressponding chat's message list
 **/
 router.post('/:receiverid', (req, res, next) => {
-  //axios.get('http://localhost:3000/userstore/' + req.body.senderid).then((response) => {
   axios.get('http://localhost:3000/userstore/' + req.body.senderid, {params: {}})
   .then((response) => {
   const message = new Message({
@@ -104,9 +103,9 @@ router.post('/:receiverid', (req, res, next) => {
            res.status(200).json(result);
          })
          .then(result => {Chat.updateOne({usrID1: req.body.senderid, usrID2: req.params.receiverid},
-           {$push: {messages : [{sender_name: response.data.username, message: req.body.message}]}}, function(err, result){})})
+           {$push: {messages : [{senderid: req.body.senderid, sender_name: response.data.username, message: req.body.message}]}}, function(err, result){})})
          .then(result => {Chat.updateOne({usrID1: req.params.receiverid, usrID2: req.body.senderid},
-           {$push: {messages : [{sender_name: response.data.username, message: req.body.message}]}}, function(err, result){})})
+           {$push: {messages : [{senderid: req.body.senderid, sender_name: response.data.username, message: req.body.message}]}}, function(err, result){})})
           .then(result => {Chat.updateOne({usrID1: req.body.senderid, usrID2: req.params.receiverid},
            {$set: {lastmessage: req.body.message}}, function(err, result){})})
           .then(result => {Chat.updateOne({usrID1: req.params.receiverid, usrID2: req.body.senderid},
@@ -124,7 +123,7 @@ router.post('/:usrid1/:usrid2', (req, res, next) => {
   var chat = new Chat({
     usrID1: usr1,
     usrID2: usr2,
-    messages: [{sender_name: "Tunnect", message: "Congrats: you've tunnected! Start a chat and say hi :)"}],
+    messages: [{senderid: "tunnect", sender_name: "Tunnect", message: "Congrats: you've tunnected! Start a chat and say hi :)"}],
     lastmessage: "Congrats: you've tunnected! Start a chat and say hi :)"
   });
   Chat.find({usrID1: usr1, usrID2: usr2}, function(err, result1){
