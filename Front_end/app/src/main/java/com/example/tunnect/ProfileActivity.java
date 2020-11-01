@@ -98,6 +98,7 @@ public class ProfileActivity extends AppCompatActivity {
         // Read information on current user if it exists and fill screen entries
         loadProfileEntries();
 /*
+        // Delete the premade user account
         Button delete_user_button = findViewById(R.id.user_delete_button);
         delete_user_button.setOnClickListener(new View.OnClickListener() {
             @Override
