@@ -32,6 +32,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 /*
  * The class for the activity that displays all of the chats that the user has.
@@ -45,8 +46,6 @@ public class MessageListActivity extends AppCompatActivity {
     ChatListAdaptor chatListAdaptor;
     RecyclerView.LayoutManager layoutManager;
     List<Chat> chatsList = new ArrayList<>();
-    private JSONArray chats = new JSONArray();
-    private boolean ready;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,13 +64,6 @@ public class MessageListActivity extends AppCompatActivity {
         queue = Volley.newRequestQueue(this);
 
         populateChatList();
-
-        chatOptions = findViewById(R.id.chatOptions);
-        chatOptions.setHasFixedSize(true);
-        layoutManager = new LinearLayoutManager(this);
-        chatOptions.setLayoutManager(layoutManager);
-        chatListAdaptor = new ChatListAdaptor(this, chatsList, chatOptions);
-        chatOptions.setAdapter(chatListAdaptor);
     }
 
     // Code to return to last page when the return button on the title bar is hit
@@ -91,18 +83,13 @@ public class MessageListActivity extends AppCompatActivity {
     private void populateChatList() {
         // these entries are added for testing purposes
         //TODO: Delete this when testing is done!!!!!!!!!!!!!!!!!
-        chatsList.add(new Chat(testID, "David Onak", "That's sus man!", "10:33am", 0xFF44AA44));
-        chatsList.add(new Chat("1234567", "Jeff", "My name is Jeff", "8:00am", 0xFF4444AA));
-        chatsList.add(new Chat("2", "Nick Hamilton", "Your a beast!", "Oct. 24", 0xFFAA4444));
-        chatsList.add(new Chat("3", "Joe Smith", "Hello, I am Linsay Lohan!", "Oct. 23", 0xFF222222));
+        chatsList.add(new Chat("1234567", "Jeff (Frontend entry)", "My name is Jeff", "8:00am", 0xFF4444AA));
 
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, BASE_URL, null,
                 response -> {
                     try {
-                        chats = response;
-
-                        for (int i = 0; i < chats.length(); i++) {
-                            JSONObject chat = chats.getJSONObject(i);
+                        for (int i = 0; i < response.length(); i++) {
+                            JSONObject chat = response.getJSONObject(i);
 
                             //chatsList.add(new Chat(chat.getString("user_id"), chat.getString("user_colour"),
                                     //chat.getString("last_message"), chat.getString("Timestamp"), chat.getInt("Colour")));
@@ -110,10 +97,15 @@ public class MessageListActivity extends AppCompatActivity {
                                     //chat.getString("last_message"), "12:69am", chat.getInt("user_colour")));
                             chatsList.add(new Chat(chat.getString("usrID2"), "TestName", chat.getString("lastmessage"), "12:69am", 0xff346327));
                         }
+                        chatOptions = findViewById(R.id.chatOptions);
+                        chatOptions.setHasFixedSize(true);
+                        layoutManager = new LinearLayoutManager(this);
+                        chatOptions.setLayoutManager(layoutManager);
+                        chatListAdaptor = new ChatListAdaptor(this, chatsList, chatOptions);
+                        chatOptions.setAdapter(chatListAdaptor);
                     } catch (JSONException e) {
                         e.printStackTrace();
                         Toast.makeText(getApplicationContext(), "Failed to retrieve data from server!", Toast.LENGTH_LONG).show();
-
                     }
                 }, error -> {
             Toast.makeText(getApplicationContext(), "Connection to server failed", Toast.LENGTH_LONG).show();
