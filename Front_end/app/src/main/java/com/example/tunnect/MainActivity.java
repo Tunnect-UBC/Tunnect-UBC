@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
         Button profileBtn = findViewById(R.id.profile_btn);
         profileBtn.setOnClickListener(view -> {
             Intent profileIntent = new Intent(MainActivity.this, ProfileActivity.class);
+            profileIntent.putExtra("FROM_MENU", true);
             startActivity(profileIntent);
         });
 

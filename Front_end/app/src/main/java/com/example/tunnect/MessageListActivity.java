@@ -19,20 +19,16 @@ import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 /*
  * The class for the activity that displays all of the chats that the user has.
@@ -46,11 +42,13 @@ public class MessageListActivity extends AppCompatActivity {
     ChatListAdaptor chatListAdaptor;
     RecyclerView.LayoutManager layoutManager;
     List<Chat> chatsList = new ArrayList<>();
+    private Date date;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message_list);
+        date = new Date();
 
         // Start by setting up a title for the page
         ActionBar actionBar = getSupportActionBar();
@@ -83,7 +81,7 @@ public class MessageListActivity extends AppCompatActivity {
     private void populateChatList() {
         // these entries are added for testing purposes
         //TODO: Delete this when testing is done!!!!!!!!!!!!!!!!!
-        chatsList.add(new Chat("1234567", "Jeff (Frontend entry)", "My name is Jeff", "8:00am", 0xFF4444AA));
+        chatsList.add(new Chat("1234567", "Jeff (Frontend entry)", "My name is Jeff", date.getTime(), 0xFF4444AA));
 
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, BASE_URL, null,
                 response -> {
@@ -95,7 +93,7 @@ public class MessageListActivity extends AppCompatActivity {
                                     //chat.getString("last_message"), chat.getString("Timestamp"), chat.getInt("Colour")));
                             //chatsList.add(new Chat(chat.getString("user_id"), chat.getString("user_name"),
                                     //chat.getString("last_message"), "12:69am", chat.getInt("user_colour")));
-                            chatsList.add(new Chat(chat.getString("usrID2"), "TestName", chat.getString("lastmessage"), "12:69am", 0xff346327));
+                            chatsList.add(new Chat(chat.getString("usrID2"), "TestName", chat.getString("lastmessage"), date.getTime(), 0xff346327)); // TODO: eventually get timestamp from server
                         }
                         chatOptions = findViewById(R.id.chatOptions);
                         chatOptions.setHasFixedSize(true);

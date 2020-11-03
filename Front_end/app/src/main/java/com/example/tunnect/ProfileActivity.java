@@ -25,10 +25,12 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Objects;
+
 public class ProfileActivity extends AppCompatActivity {
 
     private RequestQueue queue;
-    JSONObject user_info;
+    private JSONObject user_info;
     private String newTestID = "59379626979347"; //TODO:Replace with real id which will be passed in as a parameter
     private String RETRIEVE_URL;
     private final String ADD_URL = "http://52.188.167.58:3000/userstore";
@@ -58,8 +60,10 @@ public class ProfileActivity extends AppCompatActivity {
         // Start by setting up a title for the page
         ActionBar actionBar = getSupportActionBar();
         if(actionBar != null) {
-            String title = "Profile";
+            String title = "Set Profile";
             actionBar.setTitle(title);
+        }
+        if (Objects.requireNonNull(getIntent().getExtras()).getBoolean("FROM_MENU")) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
@@ -85,44 +89,28 @@ public class ProfileActivity extends AppCompatActivity {
 
         // Read information on current user if it exists and fill screen entries
         loadProfileEntries();
-/*
-        // Delete the premade user account
-        Button delete_user_button = findViewById(R.id.user_delete_button);
-        delete_user_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String delete_url = "http://52.188.167.58:3000/userstore/1234567";
-                JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.DELETE, delete_url, null, response -> {
-                    user_info = response;
-                }, error -> {
-                });
-                queue.add(jsonObjectRequest);
-            }
-        }); */
     }
 
     // Will attempt to read existing data on current user and fill screen entries
     private void loadProfileEntries() {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, RETRIEVE_URL, null, response -> {
-            user_info = response;
+            if (response != null) {
+                try {
+                    profileTitle.setText((String) response.get("username"));
+                    username.setText((String) response.get("username"));
+                    faveArtist.setText((String) response.get("top_artist"));
+                    DrawableCompat.setTint(wrappedIconImage, (int) response.get("colour"));
+                    iconImage.setImageDrawable(wrappedIconImage);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                DrawableCompat.setTint(wrappedIconImage, 0xFF66AAAA);
+                iconImage.setImageDrawable(wrappedIconImage);
+            }
         }, error -> {
         });
         queue.add(jsonObjectRequest);
-
-        if (user_info != null) {
-            try {
-                profileTitle.setText((String) user_info.get("username"));
-                username.setText((String) user_info.get("username"));
-                faveArtist.setText((String) user_info.get("top_artist"));
-                DrawableCompat.setTint(wrappedIconImage, (int) user_info.get("colour"));
-                iconImage.setImageDrawable(wrappedIconImage);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        } else {
-            DrawableCompat.setTint(wrappedIconImage, 0xFF66AAAA);
-            iconImage.setImageDrawable(wrappedIconImage);
-        }
     }
 
     // If entries are correct, will create a profile for the current user
