@@ -4,7 +4,7 @@
   "description": "UserStore responsible for GETTING groups of users, or PUT/PATCH/DELETE/GETTING an individual user",
   "main": "index.js",
   "scripts": {
-    "test": "__tests__/matchmaker.tests.js",
+    "test": "jest",
     "start-userstore": "nodemon ./UserStore/server.js",
     "start-matchmaker": "nodemon ./MatchmakingManager/server.js"
   },
