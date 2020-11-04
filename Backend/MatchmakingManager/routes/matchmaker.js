@@ -9,7 +9,7 @@ const express = require('express');
 const router = express.Router();
 const helpers = require('../utils/matchmakerHelpers');
 
-const userstoreMock = require('../../__tests__/userstore.mock');
+const userstoreMock = require('../../Mocks/userstore.mock');
 
 const userStoreUrl = 'http:/localhost:3000/userstore';
 
