@@ -1,3 +1,5 @@
+const jest = require('jest-mock');
+
 const users = [
     {
         _id: "67guyh4i",

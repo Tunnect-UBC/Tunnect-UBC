@@ -9,7 +9,9 @@ const helpers = {
             }
         })
 
-        score = score / user1.songs.length;
+	if (user1.songs.length != 0) {    
+            score = score / user1.songs.length;
+	}
 
         if (user1.top_artist == user2.top_artist) {
             score++
