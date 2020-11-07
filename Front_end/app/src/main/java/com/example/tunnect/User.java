@@ -1,9 +1,19 @@
 package com.example.tunnect;
 
+import java.util.List;
+
 public class User {
     private String userId;
     private String username;
     private String top_artist;
+    private List<Song> songs;
+
+    public User(String userId, String username, String top_artist, List<Song> songs) {
+        this.userId = userId;
+        this.username = username;
+        this.top_artist = top_artist;
+        this.songs = songs;
+    }
 
     public void updateUserId(String userId) {
         this.userId = userId;
@@ -28,4 +38,6 @@ public class User {
     public String getTopArtist() {
         return top_artist;
     }
+
+    public List<Song> getSongs() { return songs; }
 }

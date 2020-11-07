@@ -2,6 +2,8 @@ package com.example.tunnect;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GestureDetectorCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -23,11 +25,19 @@ import com.google.gson.JsonObject;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
     private GestureDetectorCompat mDetector;
     private TextView user_name;
     private TextView score_view;
     private JSONObject matches;
+
+    // RecyclerView definitions
+    private RecyclerView recyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager layoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,13 +49,39 @@ public class MainActivity extends AppCompatActivity {
         score_view = findViewById(R.id.user_info_button);
         UserService currUser = new UserService();
 
+        recyclerView = findViewById(R.id.match_list);
+        recyclerView.setHasFixedSize(true);
+        layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+
         /*
         try {
             getMatches("1234567");
         } catch (JSONException e) {
             e.printStackTrace();
         }
-         */
+        */
+
+        // TODO: Delete all this once getMatches works
+        Song song1 = new Song("song1", "Song1", "Artist1", "Album1");
+        Song song2 = new Song("song2", "Song2", "Artist2", "Album2");
+        Song song3 = new Song("song3", "Song3", "Artist3", "Album3");
+        Song song4 = new Song("song4", "Song4", "Artist4", "Album4");
+        Song song5 = new Song("song5", "Song5", "Artist5", "Album5");
+        Song song6 = new Song("song6", "Song6", "Artist6", "Album6");
+        Song song7 = new Song("song7", "Song7", "Artist7", "Album7");
+        Song song8 = new Song("song8", "Song8", "Artist8", "Album8");
+        List<Song> fakeSongs = new ArrayList<>();
+        fakeSongs.add(song1);
+        fakeSongs.add(song2);
+        fakeSongs.add(song3);
+        fakeSongs.add(song4);
+        fakeSongs.add(song5);
+        fakeSongs.add(song6);
+        fakeSongs.add(song7);
+        fakeSongs.add(song8);
+        User fakeUser = new User("fakeId", "ExampleUser", "Example", fakeSongs);
+        dispMatch(fakeUser);
 
         Button likeBtn = findViewById(R.id.like_btn);
         likeBtn.setOnClickListener(view -> {
@@ -94,16 +130,19 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void dispMatch(String username, String score) {
-        user_name.setText(username);
-        score_view.setText(score);
+    private void dispMatch(User user) {
+        user_name.setText(user.getUsername());
+        score_view.setText(user.getTopArtist());
+
+        mAdapter = new SongListAdaptor(this, user.getSongs(), recyclerView);
+        recyclerView.setAdapter(mAdapter);
     }
 
     private void getMatches(String user_id) throws JSONException {
         String match_url = "http://52.188.167.58:3001/matchmaker";
         RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
         JSONObject hostId = new JSONObject();
-        hostId.put("hostId", "696969696");
+        hostId.put("hostId", "35i4h34h5j69jk");
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, match_url, hostId, response -> {
             matches = response;
