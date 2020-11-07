@@ -46,7 +46,7 @@ router.get('/', (req, res, next) => {
             //need to call helper function to calculate rank users, based on score
             const jsonRankings = helpers.rank(JSON.parse(data), hostId);
             console.log(jsonRankings);
-            res.status(200).json(jsonRankings);
+            res.status(200).json({jsonRankings});
         })
     })
         .on("error", err=> {
