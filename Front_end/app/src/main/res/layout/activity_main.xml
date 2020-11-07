@@ -8,6 +8,7 @@
     android:background="#252525"
     tools:context=".MainActivity" >
 
+
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -43,66 +44,34 @@
             android:text="@string/settings_btn" />
     </androidx.appcompat.widget.Toolbar>
 
-    <ScrollView
+    <Button
+        android:id="@+id/test"
+        android:layout_width="269dp"
+        android:layout_height="21dp"
+        android:layout_marginStart="65dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp"
+        android:background="@drawable/greenblue_grad_ovel"
+        android:fontFamily="sans-serif"
+        android:text="test"
+        android:textSize="18sp" />
+
+    <Button
+        android:id="@+id/goto_search_btn"
+        android:layout_width="269dp"
+        android:layout_height="25dp"
+        android:layout_marginStart="65dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp"
+        android:background="@drawable/greenblue_grad_ovel"
+        android:fontFamily="sans-serif"
+        android:text="@string/search_page_btn"
+        android:textSize="18sp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/match_list"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_weight="5">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" >
-
-            <Button
-                android:id="@+id/goto_search_btn"
-                android:layout_width="269dp"
-                android:layout_height="85dp"
-                android:fontFamily="sans-serif"
-                android:text="@string/search_page_btn"
-                android:textSize="18sp"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="15dp"
-                android:layout_marginStart="65dp"
-                android:background="@drawable/greenblue_grad_ovel" />
-
-            <TextView
-                android:id="@+id/first_text"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="10dp"
-                android:scaleType="fitCenter"
-                android:text="This is a test"
-                android:textColor="#FFFFFF" />
-
-            <ImageView
-                android:id="@+id/black_tusk"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:adjustViewBounds="true"
-                android:scaleType="fitCenter"
-                android:layout_marginTop="10dp"
-                android:src="@drawable/black_tusk" />
-
-            <TextView
-                android:id="@+id/second_text"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="10dp"
-                android:scaleType="fitCenter"
-                android:text="More Test"
-                android:textColor="#FFFFFF" />
-
-            <ImageView
-                android:id="@+id/garibaldi_glacier"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:adjustViewBounds="true"
-                android:scaleType="fitCenter"
-                android:layout_marginTop="10dp"
-                android:src="@drawable/garibaldi_glacier" />
-
-        </LinearLayout>
-    </ScrollView>
+        android:layout_height="289dp" />
 
     <TextView
         android:id="@+id/user_name"
@@ -115,7 +84,7 @@
         android:textSize="45sp" />
 
     <TextView
-        android:id="@+id/user_info"
+        android:id="@+id/user_info_button"
         android:layout_width="match_parent"
         android:layout_height="35dp"
         android:layout_weight="0"

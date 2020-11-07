@@ -76,11 +76,12 @@ public class ChatListAdaptor extends RecyclerView.Adapter<ChatListAdaptor.ViewHo
         @Override
         public void onClick(View v) {
             int position = chatOptions.getChildLayoutPosition(v);
-            long id = chatList.get(position).getId();
+            String id = chatList.get(position).getId();
             String name = chatList.get(position).getName();
+            int colour = chatList.get(position).getColour();
 
             if (context instanceof MessageListActivity) {
-                ((MessageListActivity)context).openNewChat(id, name);
+                ((MessageListActivity)context).openNewChat(id, name, colour);
             }
         }
     }
