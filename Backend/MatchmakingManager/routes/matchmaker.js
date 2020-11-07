@@ -26,14 +26,14 @@ router.get('/', (req, res, next) => {
     //hostId is the id of the user who is looking for a match
     const hostId = req.body.hostId;
     
-    const jsonRankings = helpers.rank(userstoreMock(), hostId);
+    /*const jsonRankings = helpers.rank(userstoreMock(), hostId);
     console.log(jsonRankings);
-    res.status(200).json(jsonRankings);
+    res.status(200).json(jsonRankings);*/
     //this is all code that relys on userstore.get, hence we can replace this
     //by a call to mock
 
     //this is to get the list of all users, such that we can rank them
-    /*http.get(userStoreUrl, resp => {
+    http.get(userStoreUrl, resp => {
         let data = "";
 
         //A chunk of data has been received
@@ -54,7 +54,7 @@ router.get('/', (req, res, next) => {
             res.status(500).json({
                 error: err
             });
-        })*/
+        })
 
 });
 
