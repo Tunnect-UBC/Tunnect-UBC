@@ -1,23 +1,16 @@
 package com.example.tunnect;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.pes.androidmaterialcolorpickerdialog.ColorPicker;
 
-import androidx.annotation.ColorInt;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.graphics.drawable.DrawableCompat;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -28,9 +21,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.pes.androidmaterialcolorpickerdialog.ColorPickerCallback;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -89,10 +80,7 @@ public class ProfileActivity extends AppCompatActivity {
         // save changes into profile
         Button saveBtn = findViewById(R.id.save_profile);
         saveBtn.setOnClickListener(view -> {
-            if(saveProfileEntries()) {
-                Intent mainIntent = new Intent(ProfileActivity.this, MainActivity.class);
-                startActivity(mainIntent);
-            }
+            saveProfileEntries();
         });
 
         // Read information on current user if it exists and fill screen entries
@@ -139,21 +127,19 @@ public class ProfileActivity extends AppCompatActivity {
 
     // If entries are correct, will create a profile for the current user
     // TODO: Allow this function to append the profile if it exists already
-    private boolean saveProfileEntries() {
+    private void saveProfileEntries() {
         String selectedUsername = username.getText().toString().trim();
         String selectedArtist = faveArtist.getText().toString().trim();
         if (selectedUsername.equals("")) {
             Toast.makeText(getApplicationContext(), "Please enter a username", Toast.LENGTH_LONG).show();
-            return false;
+            return;
         } else if (selectedArtist.equals("")) {
             Toast.makeText(getApplicationContext(), "Please enter a favourite artist", Toast.LENGTH_LONG).show();
-            return false;
+            return;
         } else if (selectedColorRGB == 0) {
             Toast.makeText(getApplicationContext(), "Please select a profile icon colour", Toast.LENGTH_LONG).show();
-            return false;
+            return;
         }
-
-        returnVal = true;
 
         // Add the user to the server
         JSONObject user = new JSONObject();
@@ -166,13 +152,12 @@ public class ProfileActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, ADD_URL, user, response -> {
+            Intent mainIntent = new Intent(ProfileActivity.this, MainActivity.class);
+            startActivity(mainIntent);
         }, error -> {
             Toast.makeText(getApplicationContext(), "Failed to add profile to the server!", Toast.LENGTH_LONG).show();
-            //returnVal = false;
         });
         queue.add(jsonObjectRequest);
-
-        return returnVal;
     }
 
     // Code to return to last page when the return button on the title bar is hit
