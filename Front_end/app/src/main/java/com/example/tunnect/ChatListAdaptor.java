@@ -22,7 +22,6 @@ public class ChatListAdaptor extends RecyclerView.Adapter<ChatListAdaptor.ViewHo
     private List<Chat> chatList;
     private RecyclerView chatOptions;
     private final View.OnClickListener onClickListener = new OpenChat();
-    private MessageTime actualTime;
 
     // Class that presents the layout of a chat
     public static class ViewHolder extends RecyclerView.ViewHolder{
@@ -60,7 +59,7 @@ public class ChatListAdaptor extends RecyclerView.Adapter<ChatListAdaptor.ViewHo
     @Override
     public void onBindViewHolder(@NonNull ChatListAdaptor.ViewHolder holder, int position) {
         Chat chat = chatList.get(position);
-        actualTime = new MessageTime(chat.getTimestamp());
+        MessageTime actualTime = new MessageTime(chat.getTimestamp());
         holder.rowName.setText(chat.getName());
         holder.rowLastMessage.setText(chat.getLastMessage());
         holder.rowTimestamp.setText(actualTime.getTimeDate());
