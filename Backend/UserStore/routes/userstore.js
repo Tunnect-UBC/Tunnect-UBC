@@ -104,7 +104,7 @@ router.get("/:userId", (req, res, next) => {
                 res.status(404).json({messgae: "No valid entry found for provided ID"});
             }
         })
-        .catch(err => {
+        .catch((err) => {
             //console.log(err);
             res.statuts(500).json({error: err});
         });
@@ -147,7 +147,7 @@ router.patch("/:userId", (req, res, next) => {
             //console.log(res);
             res.status(200).json(result);
         })
-        .catch(err => {
+        .catch((err) => {
             //console.log(err);
             res.status(500).json({
                 error: err
@@ -169,10 +169,10 @@ router.delete("/:userId", (req, res, next) => {
         _id: id
     })
         .exec()
-        .then(result => {
+        .then((result) => {
             res.status(200).json(result);
         })
-        .catch(err => {
+        .catch((err) => {
             //console.log(err);
             res.statuts(500).json({error: err});
         });
