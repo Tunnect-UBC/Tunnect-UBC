@@ -23,7 +23,7 @@ const User = require("../../models/users");
  * 
  * User schema described in ../../models/Users
  */
-router.get('/', (req, res, next) => {
+router.get("/", (req, res, next) => {
     User.find()
         .exec()
         .then((users) => {
@@ -73,8 +73,8 @@ router.post("/", (req, res, next) => {
                 createdUser: result
             });
         })
-        .catch(err => {
-            console.log(err);
+        .catch((err) => {
+            //console.log(err);
             res.status(500).json({
                 error:err
             });
@@ -143,7 +143,7 @@ router.patch("/:userId", (req, res, next) => {
 
     User.update({ _id: id }, { $set: updateOps })
         .exec()
-        .then(result => {
+        .then((result) => {
             //console.log(res);
             res.status(200).json(result);
         })
@@ -151,8 +151,8 @@ router.patch("/:userId", (req, res, next) => {
             //console.log(err);
             res.status(500).json({
                 error: err
-            })
-        })
+            });
+        });
 });
 
 
