@@ -20,11 +20,32 @@ const userStoreRoutes = require("./routes/userstore");
 helpers.connectMongo(imports.mongoose, userDBUrl);
 helpers.connectMorgan(imports.app, imports.morgan, imports.bodyParser);
 
-helpers.setHeaders(imports.app);
+imports.app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "*");
+    if (req.method === "OPTIONS") {
+        res.header("Access-Control-Allow-Methods", "PUT, POST, GET, DELETE, PATCH");
+        return res.status(200).json({});
+    }
+    next();   
+});
 
 imports.app.use("/userstore", userStoreRoutes);
 
-helpers.setEntryError(imports.app);
-helpers.setErrorHandle(imports.app);
+imports.app.use((req, res, next) => {
+    const error = new Error("Not found");
+    error.status = 404;
+    next(error);
+});
+
+imports.app.use((error, req, res, next) => {
+    res.status(error.status || 500);
+    res.json({
+        error: {
+            message: error.message,
+            status: error.status
+        }
+    });
+});
 
 module.exports = imports.app;
