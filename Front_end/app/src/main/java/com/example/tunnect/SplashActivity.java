@@ -47,9 +47,6 @@ public class SplashActivity extends AppCompatActivity {
 
         authenticateSpotify();
 
-        msharedPreferences = this.getSharedPreferences("SPOTIFY", 0);
-        queue = Volley.newRequestQueue(this);
-
     }
     private void authenticateSpotify() {
         AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
@@ -68,11 +65,11 @@ public class SplashActivity extends AppCompatActivity {
             switch (response.getType()) {
                 // Response was successful and contains auth token
                 case TOKEN:
-                    editor = getSharedPreferences("SPOTIFY", 0).edit();
+                    SharedPreferences.Editor editor = getSharedPreferences("SPOTIFY", 0).edit();
                     editor.putString("token", response.getAccessToken());
                     Log.d("spotAuth", "GOT AUTH TOKEN");
                     editor.apply();
-                    waitForUserInfo();
+                    startMainActivity();
                     break;
 
                 // Auth flow returned an error
@@ -87,6 +84,7 @@ public class SplashActivity extends AppCompatActivity {
             }
         }
     }
+  
     private void waitForUserInfo() {
         UserService userService = new UserService(queue, msharedPreferences);
         userService.get(() -> {
@@ -124,50 +122,6 @@ public class SplashActivity extends AppCompatActivity {
         newIntent.putExtra("FROM_MENU", false);
         newIntent.putExtra("USER_ID", CLIENT_ID);
         startActivity(newIntent);
-    }
-}
-
-// User class (barebones right now)
-class User {
-
-    public String id;
-}
-
-// UserService that authorizes the user with spotify
-class UserService {
-
-    private static final String ENDPOINT = "https://api.spotify.com/v1/me";
-    private SharedPreferences msharedPreferences;
-    private RequestQueue mqueue;
-    private User user;
-
-    public UserService(RequestQueue queue, SharedPreferences sharedPreferences) {
-        mqueue = queue;
-        msharedPreferences = sharedPreferences;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void get(final VolleyCallBack callBack) {
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(ENDPOINT, null, response -> {
-            Gson gson = new Gson();
-            user = gson.fromJson(response.toString(), User.class);
-            callBack.onSuccess();
-        }, error -> get(() -> {
-
-        })) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                String token = msharedPreferences.getString("token", "");
-                String auth = "Bearer " + token;
-                headers.put("Authorization", auth);
-                return headers;
-            }
-        };
-        mqueue.add(jsonObjectRequest);
     }
 }
 
