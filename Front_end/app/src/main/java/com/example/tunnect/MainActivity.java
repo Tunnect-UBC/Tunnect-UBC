@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
@@ -31,7 +32,13 @@ public class MainActivity extends AppCompatActivity {
     private static String USER_ID;
     private TextView user_name;
     private TextView score_view;
-    //private JSONObject matches;
+    private List<String> matches;
+    private List<Integer> scores;
+    JSONObject currObject;
+    private int currMatch;
+
+    // TODO: Delete this when we can get songs
+    private User fakeUser;
 
     // RecyclerView definitions
     private RecyclerView recyclerView;
@@ -55,21 +62,22 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
 
         try {
-            getMatches("1234567");
+            // TODO: Change this from being hardcoded to taking the current users id
+            getMatches("35i4h34h5j69jk");
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        dispMatch(createFakeUser());
-
         Button likeBtn = findViewById(R.id.like_btn);
         likeBtn.setOnClickListener(view -> {
             currUser.like(getApplicationContext());
+            dispNextMatch();
         });
 
         Button dislikeBtn = findViewById(R.id.dislike_btn);
         dislikeBtn.setOnClickListener(view -> {
             currUser.dislike(getApplicationContext());
+            dispNextMatch();
         });
 
         Button messagesBtn = findViewById(R.id.messages_btn);
@@ -89,8 +97,7 @@ public class MainActivity extends AppCompatActivity {
 
         Button settingsBtn = findViewById(R.id.settings_btn);
         settingsBtn.setOnClickListener(view -> {
-            Intent settingsIntent = new Intent(MainActivity.this, TestActivity.class);
-            startActivity(settingsIntent);
+            Toast.makeText(getApplicationContext(), "No settings", Toast.LENGTH_LONG).show();
         });
 
         Button searchBtn = findViewById(R.id.goto_search_btn);
@@ -142,26 +149,54 @@ public class MainActivity extends AppCompatActivity {
         return fakeUser;
     }
 
-    private void dispMatch(User user) {
-        user_name.setText(user.getUsername());
-        score_view.setText(user.getTopArtist());
+    private void dispMatch(String username, Integer score) {
+        user_name.setText(username);
+        score_view.setText(score.toString());
 
-        RecyclerView.Adapter mAdapter = new SongListAdaptor(this, user.getSongs());
+        // TODO: Change this from fakeUser
+        RecyclerView.Adapter mAdapter = new SongListAdaptor(this, fakeUser.getSongs());
         recyclerView.setAdapter(mAdapter);
     }
 
-    private void getMatches(String userId) throws JSONException {
-        String match_url = "http://52.188.167.58:3001/matchmaker";
-        RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
-        JSONObject hostId = new JSONObject();
-        hostId.put("hostId", userId);
+    private void dispNextMatch() {
+        currMatch++;
+        dispMatch(matches.get(currMatch), scores.get(currMatch));
+        // TODO: Deal with currMatch getting to end of the list
+    }
 
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, match_url, hostId, response -> {
-            //matches = response;
+    private void getMatches(String userId) throws JSONException {
+        String match_url = "http://52.188.167.58:3001/matchmaker/" + userId;
+        RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
+
+        matches = new ArrayList<>();
+        scores = new ArrayList<>();
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, match_url, null, response -> {
+            for (int i = 0; i < response.length(); i++) {
+                try {
+                    currObject = response.getJSONObject(i);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    matches.add(i, currObject.get("user").toString());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    scores.add(i, (Integer) currObject.get("score"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            // TODO: Get rid of this once matchmaker is more robust
+            fakeUser = createFakeUser();
+            currMatch = 0;
+            dispMatch(matches.get(currMatch), scores.get(currMatch));
         }, error -> {
             Log.d("matches", "failure");
         });
-        queue.add(jsonObjectRequest);
+        queue.add(jsonArrayRequest);
     }
 
     @Override
@@ -230,12 +265,13 @@ public class MainActivity extends AppCompatActivity {
             UserService currUser = new UserService();
 
             switch (direction) {
-
                 case SWIPE_RIGHT:
                     currUser.like(getApplicationContext());
+                    dispNextMatch();
                     break;
                 case SWIPE_LEFT:
                     currUser.dislike(getApplicationContext());
+                    dispNextMatch();
                     break;
                 default:
                     break;
