@@ -31,5 +31,6 @@ public class ExampleInstrumentedTest {
     public void listGoesOverTheFold() {
         onView(withId(R.id.profile_btn)).perform(click());
         onView(withText("Favourite Artist")).check(matches(isDisplayed()));
+        assert(true);
     }
 }

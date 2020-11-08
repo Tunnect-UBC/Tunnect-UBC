@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -55,6 +56,7 @@ public class SearchActivity extends AppCompatActivity {
                     search_songs = songService.getSearchSongs();
                     if (search_songs == null) {
                         //TODO: Handle no search results
+                        Log.d("search", "Song list empty");
                     }
                     else {
                         dispSongs();

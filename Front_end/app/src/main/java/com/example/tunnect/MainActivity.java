@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private static String USER_ID;
     private TextView user_name;
     private TextView score_view;
-    private JSONObject matches;
+    //private JSONObject matches;
 
     // RecyclerView definitions
     private RecyclerView recyclerView;
@@ -154,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
         hostId.put("hostId", userId);
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, match_url, hostId, response -> {
-            matches = response;
+            //matches = response;
         }, error -> {
             Log.d("matches", "failure");
         });
