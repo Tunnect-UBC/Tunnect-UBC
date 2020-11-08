@@ -95,6 +95,7 @@ public class MessageListAdaptor extends RecyclerView.Adapter {
     // Class that presents the layout of a sent message
     private static class SentMessageHolder extends RecyclerView.ViewHolder {
         TextView message, timestamp;
+        MessageTime actualTime;
 
         SentMessageHolder(View itemView) {
             super(itemView);
@@ -104,8 +105,9 @@ public class MessageListAdaptor extends RecyclerView.Adapter {
 
         // Assigns values to instance of sent message layout
         void bind(Message message) {
+            actualTime = new MessageTime(message.getTimestamp());
             this.message.setText(message.getMessage());
-            this.timestamp.setText(message.getTimestamp());
+            this.timestamp.setText(actualTime.getTimeDate());
         }
     }
 
@@ -113,6 +115,7 @@ public class MessageListAdaptor extends RecyclerView.Adapter {
     private static class ReceivedMessageHolder extends RecyclerView.ViewHolder {
         TextView message, timestamp, name;
         ImageView rowColour;
+        MessageTime actualTime;
 
         ReceivedMessageHolder(View itemView) {
             super(itemView);
@@ -124,8 +127,9 @@ public class MessageListAdaptor extends RecyclerView.Adapter {
 
         // Assigns values to instance of received message layout
         void bind(Message message) {
+            actualTime = new MessageTime(message.getTimestamp());
             this.message.setText(message.getMessage());
-            this.timestamp.setText(message.getTimestamp());
+            this.timestamp.setText(actualTime.getTimeDate());
             this.name.setText(message.getName());
             GradientDrawable background = (GradientDrawable) this.rowColour.getBackground().mutate();
             background.setColor(message.getColour());
@@ -135,6 +139,7 @@ public class MessageListAdaptor extends RecyclerView.Adapter {
     // Class that presents the layout of a subsequent received message
     private static class ADReceivedMessageHolder extends RecyclerView.ViewHolder {
         TextView message, timestamp;
+        MessageTime actualTime;
 
         ADReceivedMessageHolder(View itemView) {
             super(itemView);
@@ -144,8 +149,9 @@ public class MessageListAdaptor extends RecyclerView.Adapter {
 
         // Assigns values to instance of a subsequent received message layout
         void bind(Message message) {
+            actualTime = new MessageTime(message.getTimestamp());
             this.message.setText(message.getMessage());
-            this.timestamp.setText(message.getTimestamp());
+            this.timestamp.setText(actualTime.getTimeDate());
         }
     }
 }

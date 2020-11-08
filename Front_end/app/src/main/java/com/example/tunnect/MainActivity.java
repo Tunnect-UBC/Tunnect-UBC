@@ -20,11 +20,15 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.Date;
+import java.util.Objects;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private GestureDetectorCompat mDetector;
+    private static String USER_ID;
     private TextView user_name;
     private TextView score_view;
     private JSONObject matches;
@@ -35,6 +39,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        USER_ID = Objects.requireNonNull(getIntent().getExtras()).getString("USER_ID");
+
         setContentView(R.layout.activity_main);
 
         mDetector = new GestureDetectorCompat(this, new MyGestureListener());
@@ -87,12 +94,15 @@ public class MainActivity extends AppCompatActivity {
         Button messagesBtn = findViewById(R.id.messages_btn);
         messagesBtn.setOnClickListener(view -> {
             Intent messageIntent = new Intent(MainActivity.this, MessageListActivity.class);
+            messageIntent.putExtra("USER_ID", USER_ID);
             startActivity(messageIntent);
         });
 
         Button profileBtn = findViewById(R.id.profile_btn);
         profileBtn.setOnClickListener(view -> {
             Intent profileIntent = new Intent(MainActivity.this, ProfileActivity.class);
+            profileIntent.putExtra("FROM_MENU", true);
+            profileIntent.putExtra("USER_ID", USER_ID);
             startActivity(profileIntent);
         });
 
@@ -105,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
         Button searchBtn = findViewById(R.id.goto_search_btn);
         searchBtn.setOnClickListener(view -> {
             Intent searchIntent = new Intent(MainActivity.this, SearchActivity.class);
+            searchIntent.putExtra("USER_ID", USER_ID);
             startActivity(searchIntent);
         });
 
@@ -113,6 +124,13 @@ public class MainActivity extends AppCompatActivity {
             String testurl = "http://52.188.167.58:5000/chatservice/35i4h34h5j69jk/1234567";
             RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
             JSONObject user = new JSONObject();
+            try {
+                Date date = new Date();
+                user.put("timeStamp", date.getTime());
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Toast.makeText(getApplicationContext(), "Failed to add profile to the server!", Toast.LENGTH_LONG).show();
+            }
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, testurl, user, response -> {
             }, error -> {
                 Toast.makeText(getApplicationContext(), "BADDDDD", Toast.LENGTH_LONG).show();

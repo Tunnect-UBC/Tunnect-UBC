@@ -22,6 +22,7 @@ public class ChatListAdaptor extends RecyclerView.Adapter<ChatListAdaptor.ViewHo
     List<Chat> chatList;
     RecyclerView chatOptions;
     final View.OnClickListener onClickListener = new OpenChat();
+    MessageTime actualTime;
 
     // Class that presents the layout of a chat
     public static class ViewHolder extends RecyclerView.ViewHolder{
@@ -57,9 +58,10 @@ public class ChatListAdaptor extends RecyclerView.Adapter<ChatListAdaptor.ViewHo
     @Override
     public void onBindViewHolder(@NonNull ChatListAdaptor.ViewHolder holder, int position) {
         Chat chat = chatList.get(position);
+        actualTime = new MessageTime(chat.getTimestamp());
         holder.rowName.setText(chat.getName());
         holder.rowLastMessage.setText(chat.getLastMessage());
-        holder.rowTimestamp.setText(chat.getTimestamp());
+        holder.rowTimestamp.setText(actualTime.getTimeDate());
         GradientDrawable background = (GradientDrawable) holder.rowColour.getBackground().mutate();
         background.setColor(chat.getColour());
     }
