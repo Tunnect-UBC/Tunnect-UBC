@@ -8,11 +8,11 @@
  *      PATCH  localhost:3000/userstore/{id} - Patches the user specified by id, and updates fields (line 134)
  *      DELETE localhost:3000/userstore/{id} - Deletes the user specified by id, from the database (line 164)
  */
-const express = require('express');
-const router = express.Router();
-const mongoose = require('mongoose');
+const express = require("express");
+const router = new express.Router();
+const mongoose = require("mongoose");
 
-const User = require('../../models/users');
+const User = require("../../models/users");
 
 
 /**
@@ -26,14 +26,14 @@ const User = require('../../models/users');
 router.get('/', (req, res, next) => {
     User.find()
         .exec()
-        .then(users => {
-            console.log(users);
+        .then((users) => {
+            //console.log(users);
             if (users.length >= 0) {
                 res.status(200).json(users);
             }
         })
-        .catch(err => {
-            console.log(err);
+        .catch((err) => {
+            //console.log(err);
             res.status(500).json({
                 error: err
             });
@@ -54,20 +54,20 @@ router.get('/', (req, res, next) => {
  * Response is json error on error with status 500
  * User schema described in ../../models/Users
  */
-router.post('/', (req, res, next) => {
+router.post("/", (req, res, next) => {
     //an example of how one might extract info about user from body
     const user = new User({
         _id: req.body._id,
         username: req.body.username,
-        top_artist: req.body.top_artist,
-        icon_colour: req.body.icon_colour,
+        topArtist: req.body.topArtist,
+        iconColour: req.body.iconColour,
         songs: req.body.songs
     });
     
     //stores this in the database
     user.save()
-        .then(result => {
-            console.log(result);
+        .then((result) => {
+            //console.log(result);
             res.status(200).json({
                 message: "Handling POST requests to /userstore",
                 createdUser: result
@@ -77,7 +77,7 @@ router.post('/', (req, res, next) => {
             console.log(err);
             res.status(500).json({
                 error:err
-            })
+            });
         });
     
     
@@ -92,20 +92,20 @@ router.post('/', (req, res, next) => {
  * 
  * User schema described in ../../models/Users
  */
-router.get('/:userId', (req, res, next) => {
+router.get("/:userId", (req, res, next) => {
     const id = req.params.userId;
     User.findById(id)
         .exec()
-        .then(user => {
-            console.log(user);
+        .then((user) => {
+            //console.log(user);
             if (user) {
                 res.status(200).json(user);
             } else {
-                res.status(404).json({messgae: 'No valid entry found for provided ID'});
+                res.status(404).json({messgae: "No valid entry found for provided ID"});
             }
         })
         .catch(err => {
-            console.log(err);
+            //console.log(err);
             res.statuts(500).json({error: err});
         });
 });
@@ -133,7 +133,7 @@ router.get('/:userId', (req, res, next) => {
  * Response is json error on error with status 500
  * User schema described in ../../models/Users
  */
-router.patch('/:userId', (req, res, next) => {
+router.patch("/:userId", (req, res, next) => {
     const id = req.params.userId;
     const updateOps = {};
     
@@ -144,11 +144,11 @@ router.patch('/:userId', (req, res, next) => {
     User.update({ _id: id }, { $set: updateOps })
         .exec()
         .then(result => {
-            console.log(res);
+            //console.log(res);
             res.status(200).json(result);
         })
         .catch(err => {
-            console.log(err);
+            //console.log(err);
             res.status(500).json({
                 error: err
             })
@@ -163,7 +163,7 @@ router.patch('/:userId', (req, res, next) => {
  * 
  * User schema described in ../../models/Users
  */
-router.delete('/:userId', (req, res, next) => {
+router.delete("/:userId", (req, res, next) => {
     const id = req.params.userId;
     User.remove({
         _id: id
@@ -173,7 +173,7 @@ router.delete('/:userId', (req, res, next) => {
             res.status(200).json(result);
         })
         .catch(err => {
-            console.log(err);
+            //console.log(err);
             res.statuts(500).json({error: err});
         });
 });

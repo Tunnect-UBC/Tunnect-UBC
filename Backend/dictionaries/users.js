@@ -8,8 +8,8 @@ const users = {
         {
             _id: "67guyh4i",
             username: "nickham",
-            top_artist: "liluzi",
-            icon_colour: "0xfff000",
+            topArtist: "liluzi",
+            iconColour: "0xfff000",
             songs: [
                 "Fuzzybrain",
                 "Pretty Girl"
@@ -19,8 +19,8 @@ const users = {
         {
             _id: "9876yh",
             username: "david0",
-            top_artist: "liluzi",
-            icon_colour: "0xf0f0f0",
+            topArtist: "liluzi",
+            iconColour: "0xf0f0f0",
             songs: [
                 "Heroes",
                 "Pretty Girl",
@@ -33,8 +33,8 @@ const users = {
         {
             _id: "5443erwf",
             username: "elises",
-            top_artist: "pinkfloyd",
-            icon_colour: "0xffffff",
+            topArtist: "pinkfloyd",
+            iconColour: "0xffffff",
             songs: [
                 "Have a cigar",
                 "Wish you were here"
@@ -45,8 +45,8 @@ const users = {
         {
             _id: "ertete",
             username: "james",
-            top_artist: "pinkfloyd",
-            icon_colour: "0xffffff",
+            topArtist: "pinkfloyd",
+            iconColour: "0xffffff",
             songs: [
                 "Have a cigar",
                 "Wish you were here"
@@ -57,8 +57,8 @@ const users = {
         {
             _id: "hgt54ef",
             username: "rapper",
-            top_artist: "liluzi",
-            icon_colour: "0xfff000",
+            topArtist: "liluzi",
+            iconColour: "0xfff000",
             songs: [
                 "Nice for what",
                 "Molly"
@@ -69,14 +69,14 @@ const users = {
         {
             _id: "hgfcbht54e",
             username: "drakefan11",
-            top_artist: "drake",
-            icon_colour: "0xf0f0f0",
+            topArtist: "drake",
+            iconColour: "0xf0f0f0",
             songs: [
                 "Heroes",
                 "Pretty Girl",
                 "Nice to have"
             ]
         }
-}
+};
 
 module.exports = users;
