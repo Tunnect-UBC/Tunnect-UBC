@@ -196,7 +196,7 @@ router.delete("/:userId1/:userId2", (req, res, next) => {
               usrID2: id1
             }).then((result) => {
               res.status(200).json(result);
-            })
+            });
           }
             res.status(200).json(result);
         })
