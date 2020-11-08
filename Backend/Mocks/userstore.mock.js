@@ -1,11 +1,11 @@
-const jest = require('jest-mock');
+const jest = require("jest-mock");
 
 const users = [
     {
         _id: "67guyh4i",
         username: "nickham",
-        top_artist: "liluzi",
-        icon_colour: "0xfff000",
+        topArtist: "liluzi",
+        iconColour: "0xfff000",
         songs: [
             "Fuzzybrain",
             "Pretty Girl",
@@ -14,8 +14,8 @@ const users = [
     {
         _id: "9876yh",
         username: "david0",
-        top_artist: "liluzi",
-        icon_colour: "0xf0f0f0",
+        topArtist: "liluzi",
+        iconColour: "0xf0f0f0",
         songs: [
             "Heroes",
             "Pretty Girl",
@@ -25,14 +25,14 @@ const users = [
     {
         _id: "5443erwf",
         username: "elises",
-        top_artist: "pinkfloyd",
-        icon_colour: "0xffffff",
+        topArtist: "pinkfloyd",
+        iconColour: "0xffffff",
         songs: [
             "Have a cigar",
             "Wish you were here"
         ]
     }
-]
+];
 
 const userstoreMock = jest.fn(() => {
     return users;
