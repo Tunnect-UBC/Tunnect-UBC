@@ -162,12 +162,12 @@ router.post("/:usrid1/:usrid2", (req, res, next) => {
             message: "chat already exists"
           });
         }
-      })
+      });
     } else {
       //console.log("chat already exists");
       res.status(200).json({
         message: "chat already exists"
-      })
+      });
     }
   });
  })
