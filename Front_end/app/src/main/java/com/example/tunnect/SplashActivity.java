@@ -7,18 +7,9 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Window;
-
-import com.android.volley.AuthFailureError;
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
-import com.google.gson.Gson;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -72,6 +63,7 @@ public class SplashActivity extends AppCompatActivity {
                 default:
                     // Handle other cases
                     Log.d("spotAuth", "Auth flow cancelled");
+                    break;
             }
         }
     }

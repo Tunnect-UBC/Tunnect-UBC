@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
-import android.view.View;
 import android.widget.Button;
 import android.view.MotionEvent;
 import android.widget.TextView;
@@ -19,12 +18,8 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,13 +49,11 @@ public class MainActivity extends AppCompatActivity {
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
-        /*
         try {
             getMatches("1234567");
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        */
 
         // TODO: Delete all this once getMatches works
         Song song1 = new Song("song1", "Song1", "Artist1", "Album1");
@@ -181,16 +174,17 @@ public class MainActivity extends AppCompatActivity {
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
             final float xDistance = Math.abs(e1.getX() - e2.getX());
             final float yDistance = Math.abs(e1.getY() - e2.getY());
+            float absVelocityX, absVelocityY;
 
             if (xDistance > this.swipe_Max_Distance
                     || yDistance > this.swipe_Max_Distance)
                 return false;
 
-            velocityX = Math.abs(velocityX);
-            velocityY = Math.abs(velocityY);
+            absVelocityX = Math.abs(velocityX);
+            absVelocityY = Math.abs(velocityY);
             boolean result = false;
 
-            if (velocityX > this.swipe_Min_Velocity
+            if (absVelocityX > this.swipe_Min_Velocity
                     && xDistance > this.swipe_Min_Distance) {
                 if (e1.getX() > e2.getX()) // right to left
                     this.onSwipe(SWIPE_LEFT);
@@ -198,7 +192,7 @@ public class MainActivity extends AppCompatActivity {
                     this.onSwipe(SWIPE_RIGHT);
 
                 result = true;
-            } else if (velocityY > this.swipe_Min_Velocity
+            } else if (absVelocityY > this.swipe_Min_Velocity
                     && yDistance > this.swipe_Min_Distance) {
                 if (e1.getY() > e2.getY()) // bottom to up
                     this.onSwipe(SWIPE_UP);
@@ -223,6 +217,9 @@ public class MainActivity extends AppCompatActivity {
                 case SWIPE_LEFT:
                     currUser.dislike(getApplicationContext());
                     break;
+                default:
+                    break;
+
             }
         }
     }
