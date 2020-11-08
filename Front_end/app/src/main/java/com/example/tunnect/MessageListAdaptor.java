@@ -49,11 +49,12 @@ public class MessageListAdaptor extends RecyclerView.Adapter {
         if (message.getId().equals(currentUserId)) {
             //lastId = "";
             return SENT_MESSAGE;
-        //} else if (lastId.equals(otherUserId)){
-            //return ADDITIONAL_RECEIVED_MESSAGE;
+        } else if (message.getId().equals(otherUserId)){
+            return RECEIVED_MESSAGE;
+
         } else {
             //lastId = otherUserId;
-            return RECEIVED_MESSAGE;
+            return ADDITIONAL_RECEIVED_MESSAGE;
         }
     }
 
@@ -87,7 +88,7 @@ public class MessageListAdaptor extends RecyclerView.Adapter {
             case RECEIVED_MESSAGE:
                 ((ReceivedMessageHolder) holder).bind(message);
                 break;
-            case ADDITIONAL_RECEIVED_MESSAGE:
+            default:
                 ((ADReceivedMessageHolder) holder).bind(message);
                 break;
         }
@@ -95,8 +96,8 @@ public class MessageListAdaptor extends RecyclerView.Adapter {
 
     // Class that presents the layout of a sent message
     private static class SentMessageHolder extends RecyclerView.ViewHolder {
-        private TextView message, timestamp;
-        private MessageTime actualTime;
+        private TextView message;
+        private TextView timestamp;
 
         SentMessageHolder(View itemView) {
             super(itemView);
@@ -105,8 +106,8 @@ public class MessageListAdaptor extends RecyclerView.Adapter {
         }
 
         // Assigns values to instance of sent message layout
-        void bind(Message message) {
-            actualTime = new MessageTime(message.getTimestamp());
+        private void bind(Message message) {
+            MessageTime actualTime = new MessageTime(message.getTimestamp());
             this.message.setText(message.getMessage());
             this.timestamp.setText(actualTime.getTimeDate());
         }
@@ -114,9 +115,10 @@ public class MessageListAdaptor extends RecyclerView.Adapter {
 
     // Class that presents the layout of a received message
     private static class ReceivedMessageHolder extends RecyclerView.ViewHolder {
-        private TextView message, timestamp, name;
+        private TextView message;
+        private TextView timestamp;
+        private TextView name;
         private ImageView rowColour;
-        private MessageTime actualTime;
 
         ReceivedMessageHolder(View itemView) {
             super(itemView);
@@ -127,8 +129,8 @@ public class MessageListAdaptor extends RecyclerView.Adapter {
         }
 
         // Assigns values to instance of received message layout
-        void bind(Message message) {
-            actualTime = new MessageTime(message.getTimestamp());
+        private void bind(Message message) {
+            MessageTime actualTime = new MessageTime(message.getTimestamp());
             this.message.setText(message.getMessage());
             this.timestamp.setText(actualTime.getTimeDate());
             this.name.setText(message.getName());
@@ -139,8 +141,8 @@ public class MessageListAdaptor extends RecyclerView.Adapter {
 
     // Class that presents the layout of a subsequent received message
     private static class ADReceivedMessageHolder extends RecyclerView.ViewHolder {
-        private TextView message, timestamp;
-        private MessageTime actualTime;
+        private TextView message;
+        private TextView timestamp;
 
         ADReceivedMessageHolder(View itemView) {
             super(itemView);
@@ -149,8 +151,8 @@ public class MessageListAdaptor extends RecyclerView.Adapter {
         }
 
         // Assigns values to instance of a subsequent received message layout
-        void bind(Message message) {
-            actualTime = new MessageTime(message.getTimestamp());
+        private void bind(Message message) {
+            MessageTime actualTime = new MessageTime(message.getTimestamp());
             this.message.setText(message.getMessage());
             this.timestamp.setText(actualTime.getTimeDate());
         }
