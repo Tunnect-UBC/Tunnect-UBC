@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private static String USER_ID;
     private TextView user_name;
     private TextView score_view;
-    private JSONObject matches;
+    //private JSONObject matches;
 
     // RecyclerView definitions
     private RecyclerView recyclerView;
@@ -60,26 +60,7 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        // TODO: Delete all this once getMatches works
-        Song song1 = new Song("song1", "Song1", "Artist1", "Album1");
-        Song song2 = new Song("song2", "Song2", "Artist2", "Album2");
-        Song song3 = new Song("song3", "Song3", "Artist3", "Album3");
-        Song song4 = new Song("song4", "Song4", "Artist4", "Album4");
-        Song song5 = new Song("song5", "Song5", "Artist5", "Album5");
-        Song song6 = new Song("song6", "Song6", "Artist6", "Album6");
-        Song song7 = new Song("song7", "Song7", "Artist7", "Album7");
-        Song song8 = new Song("song8", "Song8", "Artist8", "Album8");
-        List<Song> fakeSongs = new ArrayList<>();
-        fakeSongs.add(song1);
-        fakeSongs.add(song2);
-        fakeSongs.add(song3);
-        fakeSongs.add(song4);
-        fakeSongs.add(song5);
-        fakeSongs.add(song6);
-        fakeSongs.add(song7);
-        fakeSongs.add(song8);
-        User fakeUser = new User("fakeId", "ExampleUser", "Example", fakeSongs);
-        dispMatch(fakeUser);
+        dispMatch(createFakeUser());
 
         Button likeBtn = findViewById(R.id.like_btn);
         likeBtn.setOnClickListener(view -> {
@@ -139,6 +120,28 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private User createFakeUser() {
+        Song song1 = new Song("song1", "Song1", "Artist1", "Album1");
+        Song song2 = new Song("song2", "Song2", "Artist2", "Album2");
+        Song song3 = new Song("song3", "Song3", "Artist3", "Album3");
+        Song song4 = new Song("song4", "Song4", "Artist4", "Album4");
+        Song song5 = new Song("song5", "Song5", "Artist5", "Album5");
+        Song song6 = new Song("song6", "Song6", "Artist6", "Album6");
+        Song song7 = new Song("song7", "Song7", "Artist7", "Album7");
+        Song song8 = new Song("song8", "Song8", "Artist8", "Album8");
+        List<Song> fakeSongs = new ArrayList<>();
+        fakeSongs.add(song1);
+        fakeSongs.add(song2);
+        fakeSongs.add(song3);
+        fakeSongs.add(song4);
+        fakeSongs.add(song5);
+        fakeSongs.add(song6);
+        fakeSongs.add(song7);
+        fakeSongs.add(song8);
+        User fakeUser = new User("fakeId", "ExampleUser", "Example", fakeSongs);
+        return fakeUser;
+    }
+
     private void dispMatch(User user) {
         user_name.setText(user.getUsername());
         score_view.setText(user.getTopArtist());
@@ -154,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
         hostId.put("hostId", userId);
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, match_url, hostId, response -> {
-            matches = response;
+            //matches = response;
         }, error -> {
             Log.d("matches", "failure");
         });

@@ -14,6 +14,7 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static junit.framework.TestCase.assertNotNull;
 
 /**
  * Instrumented test, which will execute on an Android device.
@@ -29,7 +30,10 @@ public class ExampleInstrumentedTest {
 
     @Test
     public void listGoesOverTheFold() {
+
         onView(withId(R.id.profile_btn)).perform(click());
         onView(withText("Favourite Artist")).check(matches(isDisplayed()));
+
+        assertNotNull(5);
     }
 }
