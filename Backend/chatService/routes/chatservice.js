@@ -105,7 +105,7 @@ router.post("/:receiverid", (req, res, next) => {
            {$push: {messages : [{senderid: req.body.senderid, message: req.body.message, timeStamp: req.body.timeStamp}]},
            $set: {lastMessage: req.body.message, lastTime: req.body.timeStamp}}, function(err, result){})})
           .then((result) => {
-            res.status(200).json({})
+            res.status(200).json({});
           })
           .catch((err) => {
              res.status(500).json({
@@ -144,7 +144,6 @@ router.post("/:usrid1/:usrid2", (req, res, next) => {
         if(!result2.length){
           chat.save()
                  .then((result) => {
-                   console.log(result);
                    res.status(200).json({
                      message: "POST to chatdb",
                      createdMessage: result
@@ -154,7 +153,7 @@ router.post("/:usrid1/:usrid2", (req, res, next) => {
                    //console.log(err);
                    res.status(500).json({
                      error:err
-                   })
+                   });
                  });
         }
         else {
@@ -165,14 +164,14 @@ router.post("/:usrid1/:usrid2", (req, res, next) => {
         }
       })
     } else {
-      console.log("chat already exists");
+      //console.log("chat already exists");
       res.status(200).json({
         message: "chat already exists"
       })
     }
   });
  })
- .catch(err => {
+ .catch((err) => {
    res.status(404).json({
      message: "User2 does not exist"
      });
@@ -195,14 +194,14 @@ router.delete("/:userId1/:userId2", (req, res, next) => {
             Chat.remove({
               usrID1: id2,
               usrID2: id1
-            }).then(result => {
+            }).then((result) => {
               res.status(200).json(result);
             })
           }
             res.status(200).json(result);
         })
         .catch((err) => {
-            console.log(err);
+            //console.log(err);
             res.statuts(500).json({error: err});
         });
 });
