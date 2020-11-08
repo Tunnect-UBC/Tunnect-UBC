@@ -31,8 +31,6 @@ public class MainActivity extends AppCompatActivity {
 
     // RecyclerView definitions
     private RecyclerView recyclerView;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager layoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.match_list);
         recyclerView.setHasFixedSize(true);
-        layoutManager = new LinearLayoutManager(this);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
         try {
@@ -127,15 +125,15 @@ public class MainActivity extends AppCompatActivity {
         user_name.setText(user.getUsername());
         score_view.setText(user.getTopArtist());
 
-        mAdapter = new SongListAdaptor(this, user.getSongs(), recyclerView);
+        RecyclerView.Adapter mAdapter = new SongListAdaptor(this, user.getSongs());
         recyclerView.setAdapter(mAdapter);
     }
 
-    private void getMatches(String user_id) throws JSONException {
+    private void getMatches(String userId) throws JSONException {
         String match_url = "http://52.188.167.58:3001/matchmaker";
         RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
         JSONObject hostId = new JSONObject();
-        hostId.put("hostId", "35i4h34h5j69jk");
+        hostId.put("hostId", userId);
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, match_url, hostId, response -> {
             matches = response;
@@ -174,7 +172,8 @@ public class MainActivity extends AppCompatActivity {
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
             final float xDistance = Math.abs(e1.getX() - e2.getX());
             final float yDistance = Math.abs(e1.getY() - e2.getY());
-            float absVelocityX, absVelocityY;
+            float absVelocityX;
+            float absVelocityY;
 
             if (xDistance > this.swipe_Max_Distance
                     || yDistance > this.swipe_Max_Distance)

@@ -79,7 +79,7 @@ public class SearchActivity extends AppCompatActivity {
 
     // Displays the info of the given song
     private void dispSongs() {
-        RecyclerView.Adapter mAdapter = new SongListAdaptor(this, search_songs, recyclerView);
+        RecyclerView.Adapter mAdapter = new SongListAdaptor(this, search_songs);
         recyclerView.setAdapter(mAdapter);
     }
 

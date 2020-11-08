@@ -14,7 +14,6 @@ import java.util.List;
 public class SongListAdaptor extends RecyclerView.Adapter<SongListAdaptor.ViewHolder> {
     private Context context;
     private List<Song> songs;
-    private RecyclerView songList;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView songTitle;
@@ -27,10 +26,9 @@ public class SongListAdaptor extends RecyclerView.Adapter<SongListAdaptor.ViewHo
         }
     }
 
-    public SongListAdaptor(Context context, List<Song> songs, RecyclerView songList) {
+    public SongListAdaptor(Context context, List<Song> songs) {
         this.context = context;
         this.songs = songs;
-        this.songList = songList;
     }
 
     @Override
