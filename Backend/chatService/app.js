@@ -21,10 +21,10 @@ var messageDB = mongoose.connect("mongodb://127.0.0.1:27017/messagedb", {
 
 mongoose.connection.once("open", (_) => {
   //console.log("Connected to MongoDB")
-})
+});
 mongoose.connection.on("error", (err) => {
   //console.error('Connection error ', err)
-})
+});
 
 //used for logging requests made
 app.use(morgan("dev"));
@@ -35,7 +35,7 @@ app.use(bodyParser.json());
 app.use((req,res,next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "*");
-  if (req.method == "OPTIONS") {
+  if (req.method === "OPTIONS") {
     res.header("Access-Control-Allow-Methods", "PUT, POST, GET, DELETE, PATCH");
     return res.status(200).json({});
   }
