@@ -30,7 +30,7 @@ public class SplashActivity extends AppCompatActivity {
     private SharedPreferences.Editor editor;
     private SharedPreferences msharedPreferences;
     private RequestQueue queue;
-
+    // https://m.youtube.com/watch?v=dQw4w9WgXcQ , the secret function...
     //private static final String CLIENT_ID = "35i4h34h5j69jk";
     private static final String CLIENT_ID = "b30cb6a307474da78191b84e475f90a6";
     private static final String REDIRECT_URI = "com.example.tunnect://callback";

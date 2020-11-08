@@ -17,8 +17,10 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Date;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
@@ -68,6 +70,13 @@ public class MainActivity extends AppCompatActivity {
             String testurl = "http://52.188.167.58:5000/chatservice/35i4h34h5j69jk/1234567";
             RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
             JSONObject user = new JSONObject();
+            try {
+                Date date = new Date();
+                user.put("timeStamp", date.getTime());
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Toast.makeText(getApplicationContext(), "Failed to add profile to the server!", Toast.LENGTH_LONG).show();
+            }
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, testurl, user, response -> {
             }, error -> {
                 Toast.makeText(getApplicationContext(), "BADDDDD", Toast.LENGTH_LONG).show();

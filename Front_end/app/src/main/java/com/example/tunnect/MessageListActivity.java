@@ -91,12 +91,11 @@ public class MessageListActivity extends AppCompatActivity {
                     try {
                         for (int i = 0; i < response.length(); i++) {
                             JSONObject chat = response.getJSONObject(i);
-
-                            //chatsList.add(new Chat(chat.getString("user_id"), chat.getString("user_colour"),
-                                    //chat.getString("last_message"), chat.getString("Timestamp"), chat.getInt("Colour")));
-                            //chatsList.add(new Chat(chat.getString("user_id"), chat.getString("user_name"),
-                                    //chat.getString("last_message"), "12:69am", chat.getInt("user_colour")));
-                            chatsList.add(new Chat(chat.getString("usrID2"), "TestName", chat.getString("lastmessage"), date.getTime(), 0xff346327)); // TODO: eventually get timestamp from server
+                            if (chat.has("usrID1")) {
+                                chatsList.add(new Chat(chat.getString("usrID1"), chat.getString("usrName1"), chat.getString("lastMessage"), chat.getLong("lastTime"), chat.getInt("usrColour1")));
+                            } else {
+                                chatsList.add(new Chat(chat.getString("usrID2"), chat.getString("usrName2"), chat.getString("lastMessage"), chat.getLong("lastTime"), chat.getInt("usrColour2")));
+                            }
                         }
                         chatOptions = findViewById(R.id.chatOptions);
                         chatOptions.setHasFixedSize(true);
@@ -108,9 +107,7 @@ public class MessageListActivity extends AppCompatActivity {
                         e.printStackTrace();
                         Toast.makeText(getApplicationContext(), "Failed to retrieve data from server!", Toast.LENGTH_LONG).show();
                     }
-                }, error -> {
-            Toast.makeText(getApplicationContext(), "Connection to server failed", Toast.LENGTH_LONG).show();
-        });
+                }, error -> Toast.makeText(getApplicationContext(), "Connection to server failed", Toast.LENGTH_LONG).show());
         queue.add(request);
     }
 

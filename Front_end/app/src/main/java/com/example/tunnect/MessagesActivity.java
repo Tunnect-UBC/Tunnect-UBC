@@ -151,7 +151,7 @@ public class MessagesActivity extends AppCompatActivity {
         try {
             message.put("senderid", USER_ID);
             message.put("message", editText.getText().toString());
-            //message.put("timestamp", date.getTime());
+            message.put("timeStamp", date.getTime());
         } catch (JSONException e) {
             e.printStackTrace();
             Toast.makeText(getApplicationContext(), "Failed to send your message into the server.", Toast.LENGTH_LONG).show();
@@ -184,12 +184,8 @@ public class MessagesActivity extends AppCompatActivity {
                         for (int i = 0; i < messages.length(); i++) {
                             JSONObject message = messages.getJSONObject(i);
 
-                            //messagesList.add(new Message(chat.getString("senderid"), chat.getString("sender_name"),
-                                    //chat.getString("message"), chat.getString("Timestamp"), chat.getInt("sender_colour")));
-                            //messagesList.add(new Message(chat.getString("senderid"), chat.getString("sender_name"),
-                                    //chat.getString("message"), "12:69am", chat.getInt("sender_colour")));
-                            messagesList.add(new Message(message.getString("senderid"), message.getString("sender_name"),
-                                    message.getString("message"), date.getTime(), 0xff705533)); // TODO: Change timestamp to message.getLong("timestamp") when server has included it
+                            messagesList.add(new Message(message.getString("senderid"), otherUserName,
+                                    message.getString("message"), message.getLong("timeStamp"), otherUserColour));
                         }
 
                         messageHistory = findViewById(R.id.messageHistory);
