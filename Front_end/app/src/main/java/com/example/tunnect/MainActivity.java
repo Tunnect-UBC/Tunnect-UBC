@@ -19,14 +19,18 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONObject;
 
+import java.util.Objects;
+
 public class MainActivity extends AppCompatActivity {
     private static final String DEBUG_TAG = "Gestures";
     private GestureDetectorCompat mDetector;
+    private static String USER_ID;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        USER_ID = Objects.requireNonNull(getIntent().getExtras()).getString("USER_ID");
 
         setContentView(R.layout.activity_main);
         mDetector = new GestureDetectorCompat(this, new MyGestureListener());
@@ -34,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
         Button messagesBtn = findViewById(R.id.messages_btn);
         messagesBtn.setOnClickListener(view -> {
             Intent messageIntent = new Intent(MainActivity.this, MessageListActivity.class);
+            messageIntent.putExtra("USER_ID", USER_ID);
             startActivity(messageIntent);
         });
 
@@ -41,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
         profileBtn.setOnClickListener(view -> {
             Intent profileIntent = new Intent(MainActivity.this, ProfileActivity.class);
             profileIntent.putExtra("FROM_MENU", true);
+            profileIntent.putExtra("USER_ID", USER_ID);
             startActivity(profileIntent);
         });
 
@@ -53,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
         Button searchBtn = findViewById(R.id.goto_search_btn);
         searchBtn.setOnClickListener(view -> {
             Intent searchIntent = new Intent(MainActivity.this, SearchActivity.class);
+            searchIntent.putExtra("USER_ID", USER_ID);
             startActivity(searchIntent);
         });
 

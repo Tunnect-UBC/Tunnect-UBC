@@ -49,8 +49,8 @@ public class MessagesActivity extends AppCompatActivity {
     private static final int SENT_MESSAGE = 0;
     private static final int RECEIVED_MESSAGE = 1;
 
-    private static final String userID = "35i4h34h5j69jk";
-    private String SEND_URL;
+    private static String USER_ID;
+    private static String SEND_URL;
     private static String BASE_URL;
     private String receiverID;
     private String otherUserName;
@@ -59,7 +59,6 @@ public class MessagesActivity extends AppCompatActivity {
     private RecyclerView messageHistory;
     private RequestQueue queue;
     private List<Message> messagesList = new ArrayList<>();
-    private boolean err;
     private  EditText editText;
     private Date date;
 
@@ -72,7 +71,8 @@ public class MessagesActivity extends AppCompatActivity {
         receiverID = Objects.requireNonNull(getIntent().getExtras()).getString("OTHER_USER_ID");
         otherUserName = Objects.requireNonNull(getIntent().getExtras()).getString("OTHER_USER_NAME");
         otherUserColour = Objects.requireNonNull(getIntent().getExtras()).getInt("OTHER_USER_COLOUR");
-        BASE_URL = "http://52.188.167.58:5000/chatservice/"+userID+"/"+receiverID;
+        USER_ID = Objects.requireNonNull(getIntent().getExtras()).getString("USER_ID");
+        BASE_URL = "http://52.188.167.58:5000/chatservice/"+USER_ID+"/"+receiverID;
         SEND_URL = "http://52.188.167.58:5000/chatservice/"+receiverID;
         date = new Date();
 
@@ -149,7 +149,7 @@ public class MessagesActivity extends AppCompatActivity {
     private void sendMessage() {
         JSONObject message = new JSONObject();
         try {
-            message.put("senderid", userID);
+            message.put("senderid", USER_ID);
             message.put("message", editText.getText().toString());
             //message.put("timestamp", date.getTime());
         } catch (JSONException e) {
@@ -162,7 +162,6 @@ public class MessagesActivity extends AppCompatActivity {
         }, error -> {
             error.printStackTrace();
             Toast.makeText(getApplicationContext(), "Failed to send, please check your internet connection.", Toast.LENGTH_LONG).show();
-            err = true;
         });
         queue.add(jsonObjectRequest);
     }
@@ -171,7 +170,7 @@ public class MessagesActivity extends AppCompatActivity {
     private void populateMessageHistory() {
         // these entries are added for testing purposes
         //TODO: Delete this when testing is done!!!!!!!!!!!!!!!!!
-        messagesList.add(new Message(userID, "David Onak", "Hello", date.getTime(), 0xFF44AA44));
+        messagesList.add(new Message(USER_ID, "David Onak", "Hello", date.getTime(), 0xFF44AA44));
         messagesList.add(new Message(receiverID, "Jeff", "My name is Jeff", date.getTime(), 0xFF4444AA));
         messagesList.add(new Message(receiverID, "Jeff", "Hello...", date.getTime(), 0xFF222222));
         messagesList.add(new Message(receiverID, "Jeff", "Helloooo!!!", date.getTime(), 0xFF222222));
@@ -197,7 +196,7 @@ public class MessagesActivity extends AppCompatActivity {
                         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
                         layoutManager.setStackFromEnd(true);
                         messageHistory.setLayoutManager(layoutManager);
-                        messageAdapter = new MessageListAdaptor(this, messagesList, userID, receiverID);
+                        messageAdapter = new MessageListAdaptor(this, messagesList, USER_ID, receiverID);
                         messageHistory.setAdapter(messageAdapter);
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -214,7 +213,7 @@ public class MessagesActivity extends AppCompatActivity {
         Message newMessage;
 
         if (sender == SENT_MESSAGE) {
-            newMessage = new Message(userID, "Test_user", message, date.getTime(), 0xff777777);
+            newMessage = new Message(USER_ID, "Test_user", message, date.getTime(), 0xff777777);
         } else {
             newMessage = new Message(receiverID, otherUserName, message, date.getTime(), otherUserColour);
         }

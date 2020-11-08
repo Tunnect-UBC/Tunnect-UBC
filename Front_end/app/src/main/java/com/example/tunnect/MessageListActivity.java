@@ -35,8 +35,9 @@ import java.util.Objects;
  */
 public class MessageListActivity extends AppCompatActivity {
 
-    private static final String testID = "35i4h34h5j69jk";
-    private static final String BASE_URL = "http://52.188.167.58:5000/chatservice/35i4h34h5j69jk";
+    private static String USER_ID;
+    private static final String BASE_URL = "http://52.188.167.58:5000/chatservice/";
+    private static String LOAD_URL;
     private RequestQueue queue;
     RecyclerView chatOptions;
     ChatListAdaptor chatListAdaptor;
@@ -48,6 +49,8 @@ public class MessageListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message_list);
+        USER_ID = Objects.requireNonNull(getIntent().getExtras()).getString("USER_ID");
+        LOAD_URL = BASE_URL + USER_ID;
         date = new Date();
 
         // Start by setting up a title for the page
@@ -83,7 +86,7 @@ public class MessageListActivity extends AppCompatActivity {
         //TODO: Delete this when testing is done!!!!!!!!!!!!!!!!!
         chatsList.add(new Chat("1234567", "Jeff (Frontend entry)", "My name is Jeff", date.getTime(), 0xFF4444AA));
 
-        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, BASE_URL, null,
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, LOAD_URL, null,
                 response -> {
                     try {
                         for (int i = 0; i < response.length(); i++) {
@@ -117,6 +120,7 @@ public class MessageListActivity extends AppCompatActivity {
         messageIntent.putExtra("OTHER_USER_ID", other_user_id);
         messageIntent.putExtra("OTHER_USER_NAME", other_user_name);
         messageIntent.putExtra("OTHER_USER_COLOUR", other_user_colour);
+        messageIntent.putExtra("USER_ID", USER_ID);
         startActivity(messageIntent);
     }
 

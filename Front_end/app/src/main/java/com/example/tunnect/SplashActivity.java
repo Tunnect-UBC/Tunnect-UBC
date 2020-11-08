@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Window;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -30,7 +31,7 @@ public class SplashActivity extends AppCompatActivity {
     private SharedPreferences msharedPreferences;
     private RequestQueue queue;
 
-
+    //private static final String CLIENT_ID = "35i4h34h5j69jk";
     private static final String CLIENT_ID = "b30cb6a307474da78191b84e475f90a6";
     private static final String REDIRECT_URI = "com.example.tunnect://callback";
     private static final int REQUEST_CODE = 1337;
@@ -96,10 +97,11 @@ public class SplashActivity extends AppCompatActivity {
             // We use commit instead of apply because we need the information stored immediately
             editor.commit();
 
-            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, "http://52.188.167.58:3000/userstore"+CLIENT_ID, null, response -> {
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, "http://52.188.167.58:3000/userstore/"+CLIENT_ID, null, response -> {
                 if (response != null) {
                     startMainActivity();
                 } else {
+                    Toast.makeText(getApplicationContext(), "Create a new account!", Toast.LENGTH_LONG).show();
                     startProfileActivity();
                 }
             }, error -> {
@@ -112,6 +114,7 @@ public class SplashActivity extends AppCompatActivity {
     // Transfers to the main activity
     private void startMainActivity() {
         Intent newIntent = new Intent(SplashActivity.this, MainActivity.class);
+        newIntent.putExtra("USER_ID", CLIENT_ID);
         startActivity(newIntent);
     }
 
@@ -119,6 +122,7 @@ public class SplashActivity extends AppCompatActivity {
     private void startProfileActivity() {
         Intent newIntent = new Intent(SplashActivity.this, ProfileActivity.class);
         newIntent.putExtra("FROM_MENU", false);
+        newIntent.putExtra("USER_ID", CLIENT_ID);
         startActivity(newIntent);
     }
 }
