@@ -18,15 +18,18 @@ import java.util.List;
  * given context with chat option layouts as defined in res/layout/user_chat.xml
  */
 public class ChatListAdaptor extends RecyclerView.Adapter<ChatListAdaptor.ViewHolder> {
-    Context context;
-    List<Chat> chatList;
-    RecyclerView chatOptions;
-    final View.OnClickListener onClickListener = new OpenChat();
+    private Context context;
+    private List<Chat> chatList;
+    private RecyclerView chatOptions;
+    private final View.OnClickListener onClickListener = new OpenChat();
+    private MessageTime actualTime;
 
     // Class that presents the layout of a chat
     public static class ViewHolder extends RecyclerView.ViewHolder{
-        TextView rowName, rowLastMessage, rowTimestamp;
-        ImageView rowColour;
+        private TextView rowName;
+        private TextView rowLastMessage;
+        private TextView rowTimestamp;
+        private ImageView rowColour;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -57,9 +60,10 @@ public class ChatListAdaptor extends RecyclerView.Adapter<ChatListAdaptor.ViewHo
     @Override
     public void onBindViewHolder(@NonNull ChatListAdaptor.ViewHolder holder, int position) {
         Chat chat = chatList.get(position);
+        actualTime = new MessageTime(chat.getTimestamp());
         holder.rowName.setText(chat.getName());
         holder.rowLastMessage.setText(chat.getLastMessage());
-        holder.rowTimestamp.setText(chat.getTimestamp());
+        holder.rowTimestamp.setText(actualTime.getTimeDate());
         GradientDrawable background = (GradientDrawable) holder.rowColour.getBackground().mutate();
         background.setColor(chat.getColour());
     }

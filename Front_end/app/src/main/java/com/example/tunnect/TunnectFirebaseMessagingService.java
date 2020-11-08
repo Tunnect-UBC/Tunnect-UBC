@@ -1,15 +1,9 @@
 package com.example.tunnect;
-import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import androidx.annotation.NonNull;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.view.View;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.android.gms.tasks.OnCompleteListener;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -51,16 +45,14 @@ public class TunnectFirebaseMessagingService extends FirebaseMessagingService {
      */
     private void handleNow(final RemoteMessage remoteMessage) {
         Handler handler = new Handler(Looper.getMainLooper());
-        handler.post(new Runnable() {
-            public final void run() {
-                Toast.makeText(getBaseContext(), getString(R.string.handle_notification_now), Toast.LENGTH_LONG).show();
-                if (remoteMessage.getNotification() != null) {
-                    Toast.makeText(getBaseContext(), "sending broadcast", Toast.LENGTH_LONG).show();
-                    Intent intent = new Intent("ReceivedMessage");
-                    intent.putExtra("BROADCAST_MESSAGE", remoteMessage.getData().get("Text"));
-                    if (broadcaster != null) {
-                        broadcaster.sendBroadcast(intent);
-                    }
+        handler.post(() -> {
+            Toast.makeText(getBaseContext(), getString(R.string.handle_notification_now), Toast.LENGTH_LONG).show();
+            if (remoteMessage.getNotification() != null) {
+                Toast.makeText(getBaseContext(), "sending broadcast", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent("ReceivedMessage");
+                intent.putExtra("BROADCAST_MESSAGE", remoteMessage.getData().get("Text"));
+                if (broadcaster != null) {
+                    broadcaster.sendBroadcast(intent);
                 }
             }
         });
