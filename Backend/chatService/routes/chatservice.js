@@ -103,7 +103,7 @@ router.post("/:receiverid", (req, res, next) => {
            .then((result) => {
             Chat.updateOne({usrID1: req.params.receiverid, usrID2: req.body.senderid},
            {$push: {messages : [{senderid: req.body.senderid, message: req.body.message, timeStamp: req.body.timeStamp}]},
-           $set: {lastMessage: req.body.message, lastTime: req.body.timeStamp}}, function(err, result){})})
+           $set: {lastMessage: req.body.message, lastTime: req.body.timeStamp}}, function(err, result){});})
           .then((result) => {
             res.status(200).json({});
           })
@@ -160,7 +160,7 @@ router.post("/:usrid1/:usrid2", (req, res, next) => {
           //console.log("chat already exists");
           res.status(200).json({
             message: "chat already exists"
-          })
+          });
         }
       })
     } else {
