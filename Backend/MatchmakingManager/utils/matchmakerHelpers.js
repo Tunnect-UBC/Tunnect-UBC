@@ -42,7 +42,7 @@ const helpers = {
                 user: user.username,
                 score: this.getScore(host, user)
             });
-        })
+        });
 
         //sorts the array by score
         usersScore.sort((a, b) => b.score - a.score);

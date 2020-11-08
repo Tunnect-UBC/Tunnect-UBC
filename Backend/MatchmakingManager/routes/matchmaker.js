@@ -22,9 +22,9 @@ const userStoreUrl = "http:/localhost:3000/userstore";
  * 
  * User schema described in ../../models/Users
  */
-router.get("/", (req, res, next) => {
+router.get("/:hostId", (req, res, next) => {
     //hostId is the id of the user who is looking for a match
-    const hostId = req.body.hostId;
+    const hostId = req.params.hostId;
     
     /*const jsonRankings = helpers.rank(userstoreMock(), hostId);
     console.log(jsonRankings);
@@ -47,7 +47,7 @@ router.get("/", (req, res, next) => {
             if (JSON.parse(data).find((user) => user._id === hostId)) {
 	            const jsonRankings = helpers.rank(JSON.parse(data), hostId);
                 //console.log(jsonRankings);
-                res.status(200).json({jsonRankings});
+                res.status(200).json(jsonRankings);
 	        } else {
                 //console.log(req.body);
 		        //console.log("Error, hostId not found");
@@ -57,7 +57,7 @@ router.get("/", (req, res, next) => {
             }
         });
     })
-        .on("error", err => {
+        .on("error", (err) => {
             //console.log("Error: " + err.message);
             res.status(500).json({
                 error: err
