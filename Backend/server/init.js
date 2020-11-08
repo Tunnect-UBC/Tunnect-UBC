@@ -6,11 +6,11 @@ const helpers = {
         const bodyParser = require("body-parser");
         const mongoose = require("mongoose");
         return {
-            express: express,
-            app: app,
-            morgan: morgan,
-            bodyParser: bodyParser,
-            mongoose: mongoose
+            express,
+            app,
+            morgan,
+            bodyParser,
+            mongoose
         }
     },
 
@@ -45,8 +45,23 @@ const helpers = {
             }
             next();   
         });
-    }
+    },
 
-}
+    setEntryError(app) {
+        const error = new Error("Not found");
+        error.status = 404;
+        next(error);
+    },
+
+    setErrorHandle(app) {
+        res.status(error.status || 500);
+        res.json({
+            error: {
+                message: error.message,
+                status: error.status
+            }
+        });
+    }
+};
 
 module.exports = helpers;
