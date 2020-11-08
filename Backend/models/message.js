@@ -4,9 +4,8 @@ const Schema = mongoose.Schema;
 
 const MessageSchema = new Schema({
   senderid : { type: String},
-  sender_name : { type : String},
-  sender_colour : {type : String},
-  message : { type: String}
+  message : { type: String},
+  timeStamp: Long
 });
 
 const Message = mongoose.model('message', MessageSchema);

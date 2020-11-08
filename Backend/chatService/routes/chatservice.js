@@ -4,14 +4,13 @@
 //status(200) indicates running smoothly :: status(404) connection error :: status(500) err handling
 
 
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const mongoose = require('mongoose');
-const axios = require('axios');
+const mongoose = require("mongoose");
+const axios = require("axios");
 
 
-const Chat = require('../../models/chat');
-const Message = require('../../models/message');
+const Chat = require("../../models/chat");
 
 /////////////////////GET requests//////////////////////
 //syntax reminder::router.get('/' -targets requests aimed at /products
@@ -19,9 +18,9 @@ const Message = require('../../models/message');
 /**
 *GET request for a list of available chats for a user
 **/
-router.get('/:userId', (req, res, next) => {
+router.get("/:userId", (req, res, next) => {
   const id = req.params.userId;
-  if (id === 'all'){
+  if (id === "all"){
     Chat.find({}, function(err, result){
       if(err){
         res.status(500).json({
@@ -32,14 +31,14 @@ router.get('/:userId', (req, res, next) => {
       }
     });
   } else {
-    Chat.find({usrID1: id}, 'usrID2 lastmessage', function(err, result1){
+    Chat.find({usrID1: id}, "usrID2 usrColour2 usrName2 lastMessage lastTime", function(err, result1){
       if(err){
         res.status(500).json({
           error: err
         });
       }
       else if (!result1.length){
-        Chat.find({usrID2: id}, 'usrID1 lastmessage', function (err, result2) {
+        Chat.find({usrID2: id}, "usrID1 usrColour1 usrName1 lastMessage lastTime", function (err, result2) {
           if(err){
             res.status(500).json({
               error: err
@@ -64,13 +63,13 @@ router.get('/:userId', (req, res, next) => {
 *  [ {sender_name: String, message: String} ]
 **/
 
-router.get('/:userid1/:userid2', (req, res, next) => {
+router.get("/:userid1/:userid2", (req, res, next) => {
    const id1 = req.params.userid1;
    const id2 = req.params.userid2;
 
-  Chat.find({usrID1: id1, usrID2: id2}, 'messages', function (err, result1) {
+  Chat.find({usrID1: id1, usrID2: id2}, "messages", function (err, result1) {
     if(!result1.length) {
-      Chat.find({usrID1: id2, usrID2: id1}, 'messages', function (err, result2) {
+      Chat.find({usrID1: id2, usrID2: id1}, "messages", function (err, result2) {
         if(err){
           res.status(500).json({
             error: err
@@ -97,55 +96,48 @@ router.get('/:userid1/:userid2', (req, res, next) => {
 /**
 *put a message in the messagedb and update the corressponding chat's message list
 **/
-router.post('/:receiverid', (req, res, next) => {
-  axios.get('http://localhost:3000/userstore/' + req.body.senderid, {params: {}})
-  .then((response) => {
-  const message = new Message({
-    senderid: req.body.senderid,
-    sender_name: response.data.username,
-    sender_colour: response.data.icon_colour,
-    message: req.body.message
-  });
-  console.log(response.data);
-  message.save()
-         .then(result => {
-           console.log(result);
-           res.status(200).json(result);
-         })
-         .then(result => {Chat.updateOne({usrID1: req.body.senderid, usrID2: req.params.receiverid},
-           {$push: {messages : [{senderid: req.body.senderid, sender_name: response.data.username, message: req.body.message}]}}, function(err, result){})})
+router.post("/:receiverid", (req, res, next) => {
+  Chat.updateOne({usrID1: req.body.senderid, usrID2: req.params.receiverid},
+           {$push: {messages : [{senderid: req.body.senderid, message: req.body.message, timeStamp: req.body.timeStamp}]}}, function(err, result){})
          .then(result => {Chat.updateOne({usrID1: req.params.receiverid, usrID2: req.body.senderid},
-           {$push: {messages : [{senderid: req.body.senderid, sender_name: response.data.username, message: req.body.message}]}}, function(err, result){})})
+           {$push: {messages : [{senderid: req.body.senderid, message: req.body.message, timeStamp: req.body.timeStamp}]}}, function(err, result){})})
           .then(result => {Chat.updateOne({usrID1: req.body.senderid, usrID2: req.params.receiverid},
-           {$set: {lastmessage: req.body.message}}, function(err, result){})})
+           {$set: {lastMessage: req.body.message}, $set: {lastTime: req.body.timeStamp}}, function(err, result){})})
           .then(result => {Chat.updateOne({usrID1: req.params.receiverid, usrID2: req.body.senderid},
-           {$set: {lastmessage: req.body.message}}, function(err, result){})})
-           .catch(err => {
+           {$set: {lastMessage: req.body.message}, $set: {lastTime: req.body.timeStamp}}, function(err, result){})})
+          .catch(err => {
              res.status(500).json({
                error: err
              })
            });
-      })
-      .catch(err => {
-        res.status(404).json({
-          message: "User does not exist"
-          });
-      });
-
   });
 
 /**
 *add a chat to the chatsdb
 **/
-router.post('/:usrid1/:usrid2', (req, res, next) => {
+router.post("/:usrid1/:usrid2", (req, res, next) => {
+  axios.get("http://localhost:3000/userstore/" + req.params.usrid1, {params: {}})
+  .then((response) => {
   const usr1 = req.params.usrid1;
   const usr2 = req.params.usrid2;
+  var usr1name = response.data.username;
+  var usr1colour = response.data.icon_colour;
+
+ axios.get("http://localhost:3000/userstore/" + req.params.usrid2, {params: {}})
+ .then((response2) => {
+   console.log(usr1name);
   var chat = new Chat({
     usrID1: usr1,
+    usrColour1: usr1colour,
+    usrName1: usr1name,
     usrID2: usr2,
-    messages: [{senderid: "tunnect", sender_name: "Tunnect", message: "Congrats: you've tunnected! Start a chat and say hi :)"}],
-    lastmessage: "Congrats: you've tunnected! Start a chat and say hi :)"
+    usrColour2: response2.data.icon_colour,
+    usrName2: response2.data.username,
+    messages: [{senderid: "tunnect", message: "Congrats: you've tunnected! Start a chat and say hi :)", timeStamp: req.body.timeStamp}],
+    lastMessage: "Congrats: you've tunnected! Start a chat and say hi :)",
+    lastTime: req.body.timeStamp
   });
+  console.log(response2);
   Chat.find({usrID1: usr1, usrID2: usr2}, function(err, result1){
     if(!result1.length){
       Chat.find({usrID1: usr2, usrID2: usr1}, function(err, result2){
@@ -159,14 +151,14 @@ router.post('/:usrid1/:usrid2', (req, res, next) => {
                    });
                  })
                  .catch(err => {
-                   console.log(err);
+                   //console.log(err);
                    res.status(500).json({
                      error:err
                    })
                  });
         }
         else {
-          console.log("chat already exists");
+          //console.log("chat already exists");
           res.status(200).json({
             message: "chat already exists"
           })
@@ -179,19 +171,26 @@ router.post('/:usrid1/:usrid2', (req, res, next) => {
       })
     }
   });
+ })
+ .catch(err => {
+   res.status(404).json({
+     message: "User2 does not exist"
+     });
+ });
+});
 });
 
 /**
 * Deletes a chat(but not all messages tied to the chat)
 **/
-router.delete('/:userId1/:userId2', (req, res, next) => {
+router.delete("/:userId1/:userId2", (req, res, next) => {
     const id1 = req.params.userId1;
     const id2 = req.params.userId2;
     Chat.remove({
         usrID1: id1,
         usrID2: id2
     })
-        .then(result => {
+        .then((result) => {
           if (!result.deletedCount){
             Chat.remove({
               usrID1: id2,
