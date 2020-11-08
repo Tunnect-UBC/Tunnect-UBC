@@ -106,7 +106,7 @@ public class MessageListAdaptor extends RecyclerView.Adapter {
         }
 
         // Assigns values to instance of sent message layout
-        void bind(Message message) {
+        private void bind(Message message) {
             MessageTime actualTime = new MessageTime(message.getTimestamp());
             this.message.setText(message.getMessage());
             this.timestamp.setText(actualTime.getTimeDate());
@@ -129,7 +129,7 @@ public class MessageListAdaptor extends RecyclerView.Adapter {
         }
 
         // Assigns values to instance of received message layout
-        void bind(Message message) {
+        private void bind(Message message) {
             MessageTime actualTime = new MessageTime(message.getTimestamp());
             this.message.setText(message.getMessage());
             this.timestamp.setText(actualTime.getTimeDate());
@@ -151,7 +151,7 @@ public class MessageListAdaptor extends RecyclerView.Adapter {
         }
 
         // Assigns values to instance of a subsequent received message layout
-        void bind(Message message) {
+        private void bind(Message message) {
             MessageTime actualTime = new MessageTime(message.getTimestamp());
             this.message.setText(message.getMessage());
             this.timestamp.setText(actualTime.getTimeDate());

@@ -59,8 +59,8 @@ public class SplashActivity extends AppCompatActivity {
                     editor.putString("token", response.getAccessToken());
                     Log.d("spotAuth", "GOT AUTH TOKEN");
                     editor.apply();
-                    JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, "http://52.188.167.58:3000/userstore/"+CLIENT_ID, null, response -> {
-                        if (response != null) {
+                    JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, "http://52.188.167.58:3000/userstore/"+CLIENT_ID, null, resp -> {
+                        if (resp != null) {
                             startMainActivity();
                         } else {
                             Toast.makeText(getApplicationContext(), "Create a new account!", Toast.LENGTH_LONG).show();
