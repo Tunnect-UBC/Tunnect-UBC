@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView score_view;
     private List<String> matches;
     private List<Integer> scores;
-    JSONObject currObject;
+    private JSONObject currObject;
     private int currMatch;
 
     // TODO: Delete this when we can get songs
