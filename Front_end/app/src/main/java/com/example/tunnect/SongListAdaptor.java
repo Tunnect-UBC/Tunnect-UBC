@@ -1,7 +1,6 @@
 package com.example.tunnect;
 
 import android.content.Context;
-import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,12 +12,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 public class SongListAdaptor extends RecyclerView.Adapter<SongListAdaptor.ViewHolder> {
-    Context context;
-    List<Song> songs;
-    RecyclerView songList;
+    private Context context;
+    private List<Song> songs;
+    private RecyclerView songList;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView songTitle, artist;
+        public TextView songTitle;
+        public TextView artist;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);

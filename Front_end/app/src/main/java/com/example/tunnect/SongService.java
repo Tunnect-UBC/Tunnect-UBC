@@ -9,8 +9,6 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,7 +31,7 @@ public class SongService {
         queue = Volley.newRequestQueue(context);
     }
 
-    public ArrayList<Song> get_search_songs() {
+    public ArrayList<Song> getSearchSongs() {
         return search_songs;
     }
 
@@ -93,7 +91,7 @@ public class SongService {
     }
 
     // Constucts a url for spotify based on the song title given
-    public void set_URL(String song_title) {
+    public void setURL(String song_title) {
         url = "https://api.spotify.com/v1/search?q=";
         char[] song_title_array = new char[song_title.length()];
         song_title.getChars(0, song_title.length(), song_title_array, 0);
@@ -107,19 +105,6 @@ public class SongService {
         }
         url = url + "&type=track";
     }
-
-    public static void add_song(Song song) throws JSONException {
-        String add_url = "something idk";
-        JSONObject jsong = new JSONObject();
-        jsong.put("name", song.getName());
-        jsong.put("id", song.getId());
-        jsong.put("album", song.getAlbum());
-        jsong.put("artist", song.getArtist());
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PUT, add_url, jsong, response -> {
-        }, error -> {
-        });
-    }
-
 }
 
 // Song class
