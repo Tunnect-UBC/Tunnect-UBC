@@ -29,7 +29,7 @@ mongoose.connection.once("open", () => {
     //console.log("Database connected:", userDBUrl);
 });
   
-mongoose.connection.on("error", err => {
+mongoose.connection.on("error", (err) => {
     //console.error("connection error:", err);
 });
 
