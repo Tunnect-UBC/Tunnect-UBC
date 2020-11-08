@@ -1,0 +1,49 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/bin/node',
+1 verbose cli   '/usr/bin/npm',
+1 verbose cli   'run-script',
+1 verbose cli   'start-userstore' ]
+2 info using npm@3.5.2
+3 info using node@v8.10.0
+4 verbose run-script [ 'prestart-userstore',
+4 verbose run-script   'start-userstore',
+4 verbose run-script   'poststart-userstore' ]
+5 info lifecycle userstore@1.0.0~prestart-userstore: userstore@1.0.0
+6 silly lifecycle userstore@1.0.0~prestart-userstore: no script for prestart-userstore, continuing
+7 info lifecycle userstore@1.0.0~start-userstore: userstore@1.0.0
+8 verbose lifecycle userstore@1.0.0~start-userstore: unsafe-perm in lifecycle true
+9 verbose lifecycle userstore@1.0.0~start-userstore: PATH: /usr/share/npm/bin/node-gyp-bin:/home/tunnect/Tunnect/Backend/node_modules/.bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+10 verbose lifecycle userstore@1.0.0~start-userstore: CWD: /home/tunnect/Tunnect/Backend
+11 silly lifecycle userstore@1.0.0~start-userstore: Args: [ '-c', 'nodemon ./UserStore/server.js' ]
+12 info lifecycle userstore@1.0.0~start-userstore: Failed to exec start-userstore script
+13 verbose stack Error: userstore@1.0.0 start-userstore: `nodemon ./UserStore/server.js`
+13 verbose stack spawn ENOENT
+13 verbose stack     at ChildProcess.<anonymous> (/usr/share/npm/lib/utils/spawn.js:17:16)
+13 verbose stack     at emitTwo (events.js:126:13)
+13 verbose stack     at ChildProcess.emit (events.js:214:7)
+13 verbose stack     at maybeClose (internal/child_process.js:925:16)
+13 verbose stack     at Process.ChildProcess._handle.onexit (internal/child_process.js:209:5)
+14 verbose pkgid userstore@1.0.0
+15 verbose cwd /home/tunnect/Tunnect/Backend/UserStore
+16 error Linux 5.4.0-1031-azure
+17 error argv "/usr/bin/node" "/usr/bin/npm" "run-script" "start-userstore"
+18 error node v8.10.0
+19 error npm  v3.5.2
+20 error file sh
+21 error code ELIFECYCLE
+22 error errno ENOENT
+23 error syscall spawn
+24 error userstore@1.0.0 start-userstore: `nodemon ./UserStore/server.js`
+24 error spawn ENOENT
+25 error Failed at the userstore@1.0.0 start-userstore script 'nodemon ./UserStore/server.js'.
+25 error Make sure you have the latest version of node.js and npm installed.
+25 error If you do, this is most likely a problem with the userstore package,
+25 error not with npm itself.
+25 error Tell the author that this fails on your system:
+25 error     nodemon ./UserStore/server.js
+25 error You can get information on how to open an issue for this project with:
+25 error     npm bugs userstore
+25 error Or if that isn't available, you can get their info via:
+25 error     npm owner ls userstore
+25 error There is likely additional logging output above.
+26 verbose exit [ 1, true ]
