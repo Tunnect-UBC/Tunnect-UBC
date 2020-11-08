@@ -18,16 +18,18 @@ import java.util.List;
  * given context with chat option layouts as defined in res/layout/user_chat.xml
  */
 public class ChatListAdaptor extends RecyclerView.Adapter<ChatListAdaptor.ViewHolder> {
-    Context context;
-    List<Chat> chatList;
-    RecyclerView chatOptions;
-    final View.OnClickListener onClickListener = new OpenChat();
-    MessageTime actualTime;
+    private Context context;
+    private List<Chat> chatList;
+    private RecyclerView chatOptions;
+    private final View.OnClickListener onClickListener = new OpenChat();
+    private MessageTime actualTime;
 
     // Class that presents the layout of a chat
     public static class ViewHolder extends RecyclerView.ViewHolder{
-        TextView rowName, rowLastMessage, rowTimestamp;
-        ImageView rowColour;
+        private TextView rowName;
+        private TextView rowLastMessage;
+        private TextView rowTimestamp;
+        private ImageView rowColour;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
