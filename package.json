@@ -1,0 +1,35 @@
+{
+  "name": "Backend",
+  "version": "1.0.0",
+  "description": "UserStore responsible for GETTING groups of users, or PUT/PATCH/DELETE/GETTING an individual user",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "start-userstore": "nodemon ./Backend/UserStore/server.js",
+    "start-matchmaker": "nodemon ./Backend/MatchmakingManager/server.js",
+    "start-chat": "nodemon ./Backend/chatService/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nickhamiltonn/Tunnect.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nickhamiltonn/Tunnect/issues"
+  },
+  "homepage": "https://github.com/nickhamiltonn/Tunnect#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "firebase-admin": "^9.3.0",
+    "mongodb": "^3.6.2",
+    "mongoose": "^5.10.10",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "jest": "^26.6.3",
+    "nodemon": "^2.0.6",
+    "supertest": "^6.0.0"
+  }
+}

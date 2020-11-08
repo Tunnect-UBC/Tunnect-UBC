@@ -11,29 +11,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
-
-import org.json.JSONException;
 
 import java.util.ArrayList;
 
 public class SearchActivity extends AppCompatActivity {
 
-    // RecyclerView definitions
+    // RecyclerView definition
     private RecyclerView recyclerView;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager layoutManager;
-
-    // UI definitions
-    private Button search_button;
-    private EditText search_bar;
 
     // Song service used to access spotify
     private SongService songService;
     // Songs returned from a search
     private ArrayList<Song> search_songs;
-    // Value used to track what song is currently displayed
-    private int current_song;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,23 +36,23 @@ public class SearchActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
+        // UI definitions
         recyclerView = findViewById(R.id.song_list);
         recyclerView.setHasFixedSize(true);
-        layoutManager = new LinearLayoutManager(this);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
         songService = new SongService(getApplicationContext());
-        search_bar = (EditText) findViewById(R.id.search_bar);
-        search_button = (Button) findViewById(R.id.search_button);
+        EditText search_bar = (EditText) findViewById(R.id.search_bar);
+        Button search_button = (Button) findViewById(R.id.search_button);
 
         // Search button functionality
         search_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                songService.set_URL(search_bar.getText().toString());
+                songService.setURL(search_bar.getText().toString());
                 songService.search(() -> {
-                    search_songs = songService.get_search_songs();
-                    current_song = 0;
+                    search_songs = songService.getSearchSongs();
                     if (search_songs == null) {
                         //TODO: Handle no search results
                     }
@@ -90,7 +79,7 @@ public class SearchActivity extends AppCompatActivity {
 
     // Displays the info of the given song
     private void dispSongs() {
-        mAdapter = new SongListAdaptor(this, search_songs, recyclerView);
+        RecyclerView.Adapter mAdapter = new SongListAdaptor(this, search_songs);
         recyclerView.setAdapter(mAdapter);
     }
 

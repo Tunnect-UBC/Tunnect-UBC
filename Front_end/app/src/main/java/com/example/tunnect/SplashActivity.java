@@ -81,6 +81,7 @@ public class SplashActivity extends AppCompatActivity {
                 default:
                     // Handle other cases
                     Log.d("spotAuth", "Auth flow cancelled");
+                    break;
             }
         }
     }

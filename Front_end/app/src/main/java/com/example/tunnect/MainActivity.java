@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
-import android.view.View;
 import android.widget.Button;
 import android.view.MotionEvent;
 import android.widget.TextView;
@@ -19,9 +18,6 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -39,8 +35,6 @@ public class MainActivity extends AppCompatActivity {
 
     // RecyclerView definitions
     private RecyclerView recyclerView;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager layoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,16 +51,14 @@ public class MainActivity extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.match_list);
         recyclerView.setHasFixedSize(true);
-        layoutManager = new LinearLayoutManager(this);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
-        /*
         try {
             getMatches("1234567");
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        */
 
         // TODO: Delete all this once getMatches works
         Song song1 = new Song("song1", "Song1", "Artist1", "Album1");
@@ -151,15 +143,15 @@ public class MainActivity extends AppCompatActivity {
         user_name.setText(user.getUsername());
         score_view.setText(user.getTopArtist());
 
-        mAdapter = new SongListAdaptor(this, user.getSongs(), recyclerView);
+        RecyclerView.Adapter mAdapter = new SongListAdaptor(this, user.getSongs());
         recyclerView.setAdapter(mAdapter);
     }
 
-    private void getMatches(String user_id) throws JSONException {
+    private void getMatches(String userId) throws JSONException {
         String match_url = "http://52.188.167.58:3001/matchmaker";
         RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
         JSONObject hostId = new JSONObject();
-        hostId.put("hostId", "35i4h34h5j69jk");
+        hostId.put("hostId", userId);
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, match_url, hostId, response -> {
             matches = response;
@@ -198,16 +190,18 @@ public class MainActivity extends AppCompatActivity {
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
             final float xDistance = Math.abs(e1.getX() - e2.getX());
             final float yDistance = Math.abs(e1.getY() - e2.getY());
+            float absVelocityX;
+            float absVelocityY;
 
             if (xDistance > this.swipe_Max_Distance
                     || yDistance > this.swipe_Max_Distance)
                 return false;
 
-            velocityX = Math.abs(velocityX);
-            velocityY = Math.abs(velocityY);
+            absVelocityX = Math.abs(velocityX);
+            absVelocityY = Math.abs(velocityY);
             boolean result = false;
 
-            if (velocityX > this.swipe_Min_Velocity
+            if (absVelocityX > this.swipe_Min_Velocity
                     && xDistance > this.swipe_Min_Distance) {
                 if (e1.getX() > e2.getX()) // right to left
                     this.onSwipe(SWIPE_LEFT);
@@ -215,7 +209,7 @@ public class MainActivity extends AppCompatActivity {
                     this.onSwipe(SWIPE_RIGHT);
 
                 result = true;
-            } else if (velocityY > this.swipe_Min_Velocity
+            } else if (absVelocityY > this.swipe_Min_Velocity
                     && yDistance > this.swipe_Min_Distance) {
                 if (e1.getY() > e2.getY()) // bottom to up
                     this.onSwipe(SWIPE_UP);
@@ -240,6 +234,9 @@ public class MainActivity extends AppCompatActivity {
                 case SWIPE_LEFT:
                     currUser.dislike(getApplicationContext());
                     break;
+                default:
+                    break;
+
             }
         }
     }
