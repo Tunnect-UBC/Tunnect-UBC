@@ -44,9 +44,17 @@ router.get('/', (req, res, next) => {
         //The whole response has been received. Print out the result.
         resp.on("end", () => {
             //need to call helper function to calculate rank users, based on score
-            const jsonRankings = helpers.rank(JSON.parse(data), hostId);
-            console.log(jsonRankings);
-            res.status(200).json({jsonRankings});
+            if (JSON.parse(data).find(user => user._id == hostId)) {
+	        const jsonRankings = helpers.rank(JSON.parse(data), hostId);
+                console.log(jsonRankings);
+                res.status(200).json({jsonRankings});
+	    } else {
+                console.log(req.body);
+		console.log("Error, hostId not found");
+		res.status(404).json({
+		    error: "HostId not found"
+		})
+            }
         })
     })
         .on("error", err=> {
