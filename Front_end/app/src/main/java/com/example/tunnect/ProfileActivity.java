@@ -6,14 +6,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.graphics.drawable.DrawableCompat;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -39,7 +36,8 @@ public class ProfileActivity extends AppCompatActivity {
     private int selectedColorRGB;
     private Drawable wrappedIconImage;
     private ImageView iconImage;
-    private EditText username, faveArtist;
+    private EditText username;
+    private EditText faveArtist;
     private TextView profileTitle;
 
     @Override

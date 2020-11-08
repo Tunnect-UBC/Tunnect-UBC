@@ -25,7 +25,7 @@ public class MessageListAdaptor extends RecyclerView.Adapter {
     private Context context;
     private List<Message> messageList;
     private String currentUserId;
-    private static String lastId = "";
+    //private static String lastId = "";
     private String otherUserId;
     // an instance of the recycler view must be kept if clicking functionality is added
 
@@ -47,12 +47,12 @@ public class MessageListAdaptor extends RecyclerView.Adapter {
         Message message = messageList.get(position);
 
         if (message.getId().equals(currentUserId)) {
-            lastId = "";
+            //lastId = "";
             return SENT_MESSAGE;
         //} else if (lastId.equals(otherUserId)){
             //return ADDITIONAL_RECEIVED_MESSAGE;
         } else {
-            lastId = otherUserId;
+            //lastId = otherUserId;
             return RECEIVED_MESSAGE;
         }
     }
@@ -89,13 +89,14 @@ public class MessageListAdaptor extends RecyclerView.Adapter {
                 break;
             case ADDITIONAL_RECEIVED_MESSAGE:
                 ((ADReceivedMessageHolder) holder).bind(message);
+                break;
         }
     }
 
     // Class that presents the layout of a sent message
     private static class SentMessageHolder extends RecyclerView.ViewHolder {
-        TextView message, timestamp;
-        MessageTime actualTime;
+        private TextView message, timestamp;
+        private MessageTime actualTime;
 
         SentMessageHolder(View itemView) {
             super(itemView);
@@ -113,9 +114,9 @@ public class MessageListAdaptor extends RecyclerView.Adapter {
 
     // Class that presents the layout of a received message
     private static class ReceivedMessageHolder extends RecyclerView.ViewHolder {
-        TextView message, timestamp, name;
-        ImageView rowColour;
-        MessageTime actualTime;
+        private TextView message, timestamp, name;
+        private ImageView rowColour;
+        private MessageTime actualTime;
 
         ReceivedMessageHolder(View itemView) {
             super(itemView);
@@ -138,8 +139,8 @@ public class MessageListAdaptor extends RecyclerView.Adapter {
 
     // Class that presents the layout of a subsequent received message
     private static class ADReceivedMessageHolder extends RecyclerView.ViewHolder {
-        TextView message, timestamp;
-        MessageTime actualTime;
+        private TextView message, timestamp;
+        private MessageTime actualTime;
 
         ADReceivedMessageHolder(View itemView) {
             super(itemView);
