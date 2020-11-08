@@ -1,7 +1,6 @@
 package com.example.tunnect;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.drawable.DrawableCompat;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,25 +9,15 @@ import android.util.Log;
 import android.view.Window;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.gson.Gson;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.HashMap;
-import java.util.Map;
-
 public class SplashActivity extends AppCompatActivity {
-    private SharedPreferences.Editor editor;
-    private SharedPreferences msharedPreferences;
     private RequestQueue queue;
     // https://m.youtube.com/watch?v=dQw4w9WgXcQ , the secret function...
     //private static final String CLIENT_ID = "35i4h34h5j69jk";
@@ -44,6 +33,7 @@ public class SplashActivity extends AppCompatActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getSupportActionBar().hide();
         setContentView(R.layout.activity_splash);
+        queue = Volley.newRequestQueue(this);
 
         authenticateSpotify();
 
@@ -69,7 +59,17 @@ public class SplashActivity extends AppCompatActivity {
                     editor.putString("token", response.getAccessToken());
                     Log.d("spotAuth", "GOT AUTH TOKEN");
                     editor.apply();
-                    startMainActivity();
+                    JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, "http://52.188.167.58:3000/userstore/"+CLIENT_ID, null, response -> {
+                        if (response != null) {
+                            startMainActivity();
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Create a new account!", Toast.LENGTH_LONG).show();
+                            startProfileActivity();
+                        }
+                    }, error -> {
+                        startProfileActivity();
+                    });
+                    queue.add(jsonObjectRequest);
                     break;
 
                 // Auth flow returned an error
@@ -84,30 +84,6 @@ public class SplashActivity extends AppCompatActivity {
                     break;
             }
         }
-    }
-  
-    private void waitForUserInfo() {
-        UserService userService = new UserService(queue, msharedPreferences);
-        userService.get(() -> {
-            User user = userService.getUser();
-            editor = getSharedPreferences("SPOTIFY", 0).edit();
-            editor.putString("userid", user.id);
-            Log.d("STARTING", "GOT USER INFORMATION");
-            // We use commit instead of apply because we need the information stored immediately
-            editor.commit();
-
-            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, "http://52.188.167.58:3000/userstore/"+CLIENT_ID, null, response -> {
-                if (response != null) {
-                    startMainActivity();
-                } else {
-                    Toast.makeText(getApplicationContext(), "Create a new account!", Toast.LENGTH_LONG).show();
-                    startProfileActivity();
-                }
-            }, error -> {
-                startProfileActivity();
-            });
-            queue.add(jsonObjectRequest);
-        });
     }
 
     // Transfers to the main activity

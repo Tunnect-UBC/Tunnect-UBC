@@ -39,10 +39,10 @@ public class MessageListActivity extends AppCompatActivity {
     private static final String BASE_URL = "http://52.188.167.58:5000/chatservice/";
     private static String LOAD_URL;
     private RequestQueue queue;
-    RecyclerView chatOptions;
-    ChatListAdaptor chatListAdaptor;
-    RecyclerView.LayoutManager layoutManager;
-    List<Chat> chatsList = new ArrayList<>();
+    private RecyclerView chatOptions;
+    private ChatListAdaptor chatListAdaptor;
+    private RecyclerView.LayoutManager layoutManager;
+    private List<Chat> chatsList = new ArrayList<>();
     private Date date;
 
     @Override
@@ -124,7 +124,7 @@ public class MessageListActivity extends AppCompatActivity {
     // Adds message to screen from received broadcast
     private final BroadcastReceiver messageReceiver = new BroadcastReceiver() {
         public void onReceive(@Nullable Context context, @NonNull Intent intent) {
-            String message = Objects.requireNonNull(intent.getExtras()).getString("BROADCAST_MESSAGE");
+            //String message = Objects.requireNonNull(intent.getExtras()).getString("BROADCAST_MESSAGE");
             //updateRecyclerView(message, RECEIVED_MESSAGE);
             //TODO: Setup an update for chats with last message sent
             Toast.makeText(getBaseContext(), "got broadcast", Toast.LENGTH_LONG).show();
