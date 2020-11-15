@@ -171,7 +171,9 @@ public class MainActivity extends AppCompatActivity {
                 scores.add(i, 0.0);
             }
             currMatch = 0;
-            getUser(matches.get(currMatch), scores.get(currMatch));
+            if (matches.size() != 0 && scores.size() != 0) {
+                getUser(matches.get(currMatch), scores.get(currMatch));
+            }
         }, error -> {
             Log.d("matches", "failure");
         });
