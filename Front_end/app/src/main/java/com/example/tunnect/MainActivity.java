@@ -130,8 +130,10 @@ public class MainActivity extends AppCompatActivity {
         user_name.setText(username);
         score_view.setText(score.toString());
 
-        // TODO: Change this from fakeUser
-        RecyclerView.Adapter mAdapter = new SongListAdaptor(this, fakeUser.getSongs());
+        // TODO: Change this to display matches actual songs
+        List<Song> fakeSongs = new ArrayList<>();
+        fakeSongs.add(new Song("fakeId", "fakeName", "fakeArtist", "fakeAlbum"));
+        RecyclerView.Adapter mAdapter = new SongListAdaptor(this, fakeSongs);
         recyclerView.setAdapter(mAdapter);
     }
 

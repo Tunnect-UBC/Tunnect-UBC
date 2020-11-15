@@ -1,4 +1,5 @@
 package com.example.tunnect;
+import com.google.gson.JsonArray;
 import com.pes.androidmaterialcolorpickerdialog.ColorPicker;
 
 import androidx.appcompat.app.ActionBar;
@@ -22,6 +23,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -135,6 +137,7 @@ public class ProfileActivity extends AppCompatActivity {
             user.put("username", selectedUsername);
             user.put("top_artist", selectedArtist);
             user.put("icon_colour", selectedColorRGB);
+            user.put("songs", null);
         } catch (JSONException e) {
             e.printStackTrace();
             Toast.makeText(getApplicationContext(), "Failed to add profile to the server!", Toast.LENGTH_LONG).show();
