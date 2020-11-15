@@ -204,9 +204,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             currMatch = 0;
-            if (matches.size() != 0 && scores.size() != 0) {
-                dispMatch(matches.get(currMatch), scores.get(currMatch));
-            }
             user.updateSongs(user_songs);
             dispMatch(user, score);
         }, error -> {
