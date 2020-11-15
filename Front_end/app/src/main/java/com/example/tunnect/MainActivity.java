@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
@@ -31,7 +32,13 @@ public class MainActivity extends AppCompatActivity {
     private static String USER_ID;
     private TextView user_name;
     private TextView score_view;
-    //private JSONObject matches;
+    private List<String> matches;
+    private List<Integer> scores;
+    private JSONObject currObject;
+    private int currMatch;
+
+    // TODO: Delete this when we can get songs
+    private User fakeUser;
 
     // RecyclerView definitions
     private RecyclerView recyclerView;
@@ -55,21 +62,21 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
 
         try {
-            getMatches("1234567");
+            getMatches(USER_ID);
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        dispMatch(createFakeUser());
-
         Button likeBtn = findViewById(R.id.like_btn);
         likeBtn.setOnClickListener(view -> {
             currUser.like(getApplicationContext());
+            dispNextMatch();
         });
 
         Button dislikeBtn = findViewById(R.id.dislike_btn);
         dislikeBtn.setOnClickListener(view -> {
             currUser.dislike(getApplicationContext());
+            dispNextMatch();
         });
 
         Button messagesBtn = findViewById(R.id.messages_btn);
@@ -89,8 +96,7 @@ public class MainActivity extends AppCompatActivity {
 
         Button settingsBtn = findViewById(R.id.settings_btn);
         settingsBtn.setOnClickListener(view -> {
-            Intent settingsIntent = new Intent(MainActivity.this, TestActivity.class);
-            startActivity(settingsIntent);
+            Toast.makeText(getApplicationContext(), "No settings", Toast.LENGTH_LONG).show();
         });
 
         Button searchBtn = findViewById(R.id.goto_search_btn);
@@ -120,48 +126,54 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private User createFakeUser() {
-        Song song1 = new Song("song1", "Song1", "Artist1", "Album1");
-        Song song2 = new Song("song2", "Song2", "Artist2", "Album2");
-        Song song3 = new Song("song3", "Song3", "Artist3", "Album3");
-        Song song4 = new Song("song4", "Song4", "Artist4", "Album4");
-        Song song5 = new Song("song5", "Song5", "Artist5", "Album5");
-        Song song6 = new Song("song6", "Song6", "Artist6", "Album6");
-        Song song7 = new Song("song7", "Song7", "Artist7", "Album7");
-        Song song8 = new Song("song8", "Song8", "Artist8", "Album8");
+    private void dispMatch(String username, Integer score) {
+        user_name.setText(username);
+        score_view.setText(score.toString());
+
+        // TODO: Change this to display matches actual songs
         List<Song> fakeSongs = new ArrayList<>();
-        fakeSongs.add(song1);
-        fakeSongs.add(song2);
-        fakeSongs.add(song3);
-        fakeSongs.add(song4);
-        fakeSongs.add(song5);
-        fakeSongs.add(song6);
-        fakeSongs.add(song7);
-        fakeSongs.add(song8);
-        User fakeUser = new User("fakeId", "ExampleUser", "Example", fakeSongs);
-        return fakeUser;
-    }
-
-    private void dispMatch(User user) {
-        user_name.setText(user.getUsername());
-        score_view.setText(user.getTopArtist());
-
-        RecyclerView.Adapter mAdapter = new SongListAdaptor(this, user.getSongs());
+        fakeSongs.add(new Song("fakeId", "fakeName", "fakeArtist", "fakeAlbum"));
+        RecyclerView.Adapter mAdapter = new SongListAdaptor(this, fakeSongs);
         recyclerView.setAdapter(mAdapter);
     }
 
-    private void getMatches(String userId) throws JSONException {
-        String match_url = "http://52.188.167.58:3001/matchmaker";
-        RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
-        JSONObject hostId = new JSONObject();
-        hostId.put("hostId", userId);
+    private void dispNextMatch() {
+        currMatch++;
+        dispMatch(matches.get(currMatch), scores.get(currMatch));
+        // TODO: Deal with currMatch getting to end of the list
+    }
 
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, match_url, hostId, response -> {
-            //matches = response;
+    private void getMatches(String userId) throws JSONException {
+        String match_url = "http://52.188.167.58:3001/matchmaker/" + userId;
+        RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
+
+        matches = new ArrayList<>();
+        scores = new ArrayList<>();
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, match_url, null, response -> {
+            for (int i = 0; i < response.length(); i++) {
+                try {
+                    currObject = response.getJSONObject(i);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    matches.add(i, currObject.get("user").toString());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    scores.add(i, (Integer) currObject.get("score"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            currMatch = 0;
+            dispMatch(matches.get(currMatch), scores.get(currMatch));
         }, error -> {
             Log.d("matches", "failure");
         });
-        queue.add(jsonObjectRequest);
+        queue.add(jsonArrayRequest);
     }
 
     @Override
@@ -230,12 +242,13 @@ public class MainActivity extends AppCompatActivity {
             UserService currUser = new UserService();
 
             switch (direction) {
-
                 case SWIPE_RIGHT:
                     currUser.like(getApplicationContext());
+                    dispNextMatch();
                     break;
                 case SWIPE_LEFT:
                     currUser.dislike(getApplicationContext());
+                    dispNextMatch();
                     break;
                 default:
                     break;
