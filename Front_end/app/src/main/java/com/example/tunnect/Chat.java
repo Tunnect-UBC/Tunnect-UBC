@@ -9,10 +9,10 @@ public class Chat {
     private String id;
     private String name;
     private String lastMessage;
-    private String timestamp;
+    private long timestamp;
     private int colour;
 
-    public Chat(String id, String name, String lastMessage, String timestamp, int colour) {
+    public Chat(String id, String name, String lastMessage, long timestamp, int colour) {
         this.id = id;
         this.name = name;
         this.lastMessage = lastMessage;
@@ -32,7 +32,7 @@ public class Chat {
         return lastMessage;
     }
 
-    public String getTimestamp() {
+    public long getTimestamp() {
         return timestamp;
     }
 

@@ -7,10 +7,10 @@ public class Message {
     private String id;
     private String name;
     private String message;
-    private String timestamp;
+    private long timestamp;
     private int colour;
 
-    public Message(String sender_id, String sender_name, String message, String timestamp, int colour) {
+    public Message(String sender_id, String sender_name, String message, long timestamp, int colour) {
         this.id = sender_id;
         this.name = sender_name;
         this.message = message;
@@ -30,7 +30,7 @@ public class Message {
         return message;
     }
 
-    public String getTimestamp() {
+    public long getTimestamp() {
         return timestamp;
     }
 

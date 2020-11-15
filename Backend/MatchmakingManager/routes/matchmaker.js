@@ -4,14 +4,14 @@
  * The api supports:
  *      GET    localhost:3001/matchmaker - Gets all users in the database (line 26)
  */
-const http = require('http'); 
-const express = require('express');
-const router = express.Router();
-const helpers = require('../utils/matchmakerHelpers');
+const http = require("http"); 
+const express = require("express");
+const router = new express.Router();
+const helpers = require("../utils/matchmakerHelpers");
 
-const userstoreMock = require('../../Mocks/userstore.mock');
+const userstoreMock = require("../../Mocks/userstore.mock");
 
-const userStoreUrl = 'http:/localhost:3000/userstore';
+const userStoreUrl = "http:/localhost:3000/userstore";
 
 
 /**
@@ -22,9 +22,9 @@ const userStoreUrl = 'http:/localhost:3000/userstore';
  * 
  * User schema described in ../../models/Users
  */
-router.get('/', (req, res, next) => {
+router.get("/:hostId", (req, res, next) => {
     //hostId is the id of the user who is looking for a match
-    const hostId = req.body.hostId;
+    const hostId = req.params.hostId;
     
     /*const jsonRankings = helpers.rank(userstoreMock(), hostId);
     console.log(jsonRankings);
@@ -33,36 +33,32 @@ router.get('/', (req, res, next) => {
     //by a call to mock
 
     //this is to get the list of all users, such that we can rank them
-    http.get(userStoreUrl, resp => {
+    http.get(userStoreUrl, (resp) => {
         let data = "";
 
         //A chunk of data has been received
-        resp.on("data", chunk => {
+        resp.on("data", (chunk) => {
             data += chunk;
-        })
+        });
 
         //The whole response has been received. Print out the result.
         resp.on("end", () => {
-            //need to call helper function to calculate rank users, based on score
-            if (JSON.parse(data).find(user => user._id == hostId)) {
-	        const jsonRankings = helpers.rank(JSON.parse(data), hostId);
-                console.log(jsonRankings);
-                res.status(200).json({jsonRankings});
-	    } else {
-                console.log(req.body);
-		console.log("Error, hostId not found");
-		res.status(404).json({
-		    error: "HostId not found"
-		})
+        //need to call helper function to calculate rank users, based on score
+            if (JSON.parse(data).find((user) => user._id === hostId)) {
+                const jsonRankings = helpers.rank(JSON.parse(data), hostId);
+                res.status(200).json(jsonRankings);
+            } else {
+                res.status(404).json({
+                    error: "HostId not found"
+                });
             }
-        })
+        });
     })
-        .on("error", err=> {
-            console.log("Error: " + err.message);
+        .on("error", (err) => {
             res.status(500).json({
                 error: err
             });
-        })
+        });
 
 });
 
