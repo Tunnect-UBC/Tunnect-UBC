@@ -33,24 +33,7 @@ router.get("/:hostId", (req, res, next) => {
     //by a call to mock
 
     //this is to get the list of all users, such that we can rank them
-    
-    
-    User.find()
-        .exec()
-        .then((users) => {
-            if (users.length >= 0) {
-                const jsonRankings = helpers.rank(JSON.parse(data), hostId);
-                res.status(200).json(jsonRankings);
-            }
-        })
-        .catch((err) => {
-            res.status(500).json({
-                error: err
-            });
-        });
-
-
-    /*http.get(userStoreUrl, (resp) => {
+    http.get(userStoreUrl, (resp) => {
         let data = "";
 
         //A chunk of data has been received
@@ -75,7 +58,7 @@ router.get("/:hostId", (req, res, next) => {
             res.status(500).json({
                 error: err
             });
-        });*/
+        });
 
 });
 

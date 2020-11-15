@@ -39,7 +39,7 @@ const helpers = {
         users.forEach((user) => {
             //console.log(user);
             usersScore.push({
-                user: user.username,
+                _id: user._id,
                 score: this.getScore(host, user)
             });
         });
