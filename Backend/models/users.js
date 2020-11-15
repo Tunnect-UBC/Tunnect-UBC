@@ -8,7 +8,8 @@ const userSchema = new mongoose.Schema({
     username: String,
     topArtist: String,
     iconColour: String,
-    songs: Array
+    songs: Array,
+    matches: Array
 });
 
 module.exports = mongoose.model("User", userSchema);
