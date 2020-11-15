@@ -8,6 +8,7 @@ import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.graphics.drawable.DrawableCompat;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Menu;
@@ -41,6 +42,7 @@ public class ProfileActivity extends AppCompatActivity {
     private EditText username;
     private EditText faveArtist;
     private TextView profileTitle;
+    private ColorPicker cp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +56,7 @@ public class ProfileActivity extends AppCompatActivity {
         Drawable unwrappedIconImage = AppCompatResources.getDrawable(this, R.drawable.profile_circle);
         wrappedIconImage = DrawableCompat.wrap(unwrappedIconImage);
         selectedColorRGB = 0;
-        ColorPicker cp = new ColorPicker(ProfileActivity.this, 66, 170, 170);
+        cp = new ColorPicker(ProfileActivity.this, 66, 170, 170);
         USER_ID = Objects.requireNonNull(getIntent().getExtras()).getString("USER_ID");
         RETRIEVE_URL = ADD_URL + USER_ID;
 
@@ -100,8 +102,9 @@ public class ProfileActivity extends AppCompatActivity {
                     profileTitle.setText((String) response.get("username"));
                     username.setText((String) response.get("username"));
                     faveArtist.setText((String) response.get("top_artist"));
-                    DrawableCompat.setTint(wrappedIconImage, (int) response.get("colour"));
+                    DrawableCompat.setTint(wrappedIconImage, (int) response.get("icon_colour"));
                     iconImage.setImageDrawable(wrappedIconImage);
+                    cp.setColor((int) response.get("colour"));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
