@@ -64,11 +64,7 @@ public class SearchListAdaptor extends RecyclerView.Adapter<SearchListAdaptor.Vi
         holder.artist.setText(song.getArtist());
 
         holder.add_btn.setOnClickListener(view -> {
-            try {
-                addSong(song.getName(), holder);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            updateSongs(song.getName(), holder);
         });
     }
 
@@ -77,25 +73,38 @@ public class SearchListAdaptor extends RecyclerView.Adapter<SearchListAdaptor.Vi
         return songs.size();
     }
 
-    private void addSong(String song, ViewHolder holder) throws JSONException {
-        //String url = "http://52.188.167.58:3000/userstore/" + user_id;
-        String url = "http://52.188.167.58:3000/userstore/1234567";
+    private void addSong(String song, ViewHolder holder, JSONArray user_songs) throws JSONException {
+        String url = "http://52.188.167.58:3000/userstore/" + user_id;
         RequestQueue queue = Volley.newRequestQueue(context);
         JSONArray addArray = new JSONArray();
         JSONObject songObject = new JSONObject();
-        JSONArray songArray = new JSONArray();
-        songArray.put(song);
-        songArray.put("Sway");
+        user_songs.put(song);
         songObject.put("propName", "songs");
-        songObject.put("value", songArray);
+        songObject.put("value", user_songs);
         addArray.put(songObject);
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.PATCH, url, addArray, response -> {
             Toast.makeText(context, "Song Added", Toast.LENGTH_LONG).show();
             holder.add_btn.setText("Added");
         }, error -> {
-            Toast.makeText(context, "Adding Failed", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "Song Added Kinda", Toast.LENGTH_LONG).show();
+            holder.add_btn.setText("Added");
         });
         queue.add(jsonArrayRequest);
+    }
+
+    private void updateSongs(String song, ViewHolder holder) {
+        String url = "http://52.188.167.58:3000/userstore/" + user_id;
+        RequestQueue queue = Volley.newRequestQueue(context);
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, response -> {
+            try {
+                addSong(song, holder, response.optJSONArray("songs"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error -> {
+            Toast.makeText(context, "Couldn't get user", Toast.LENGTH_LONG).show();
+        });
+        queue.add(jsonObjectRequest);
     }
 }
