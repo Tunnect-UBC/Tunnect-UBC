@@ -41,6 +41,7 @@ public class ProfileActivity extends AppCompatActivity {
     private EditText username;
     private EditText faveArtist;
     private TextView profileTitle;
+    private boolean inUserStore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +89,19 @@ public class ProfileActivity extends AppCompatActivity {
             saveProfileEntries();
         });
 
+        Button addBtn = findViewById(R.id.add_songs);
+        addBtn.setOnClickListener(view -> {
+            if (inUserStore) {
+                Intent searchIntent = new Intent(ProfileActivity.this, SearchActivity.class);
+                searchIntent.putExtra("USER_ID", USER_ID);
+                startActivity(searchIntent);
+            }
+            else {
+                // TODO: handle adding songs during profile creation
+                Toast.makeText(getApplicationContext(), "Please save your profile first", Toast.LENGTH_LONG).show();
+            }
+        });
+
         // Read information on current user if it exists and fill screen entries
         loadProfileEntries();
     }
@@ -96,6 +110,7 @@ public class ProfileActivity extends AppCompatActivity {
     private void loadProfileEntries() {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, RETRIEVE_URL, null, response -> {
             if (response != null) {
+                inUserStore = true;
                 try {
                     profileTitle.setText((String) response.get("username"));
                     username.setText((String) response.get("username"));
@@ -108,8 +123,10 @@ public class ProfileActivity extends AppCompatActivity {
             } else {
                 DrawableCompat.setTint(wrappedIconImage, 0xFF66AAAA);
                 iconImage.setImageDrawable(wrappedIconImage);
+                inUserStore = false;
             }
         }, error -> {
+            inUserStore = false;
         });
         queue.add(jsonObjectRequest);
     }
