@@ -31,6 +31,7 @@ public class SongListAdaptor extends RecyclerView.Adapter<SongListAdaptor.ViewHo
         this.songs = songs;
     }
 
+    @NonNull
     @Override
     public SongListAdaptor.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);

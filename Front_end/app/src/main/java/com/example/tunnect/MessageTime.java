@@ -8,7 +8,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
-// This class gets a timestamp and can return a time or a date based on it
+// This class gets a timestamp (in milliseconds from epoch) and can return a time or a date based on it
 public class MessageTime {
 
     private long MILLISECONDS_IN_HOUR = 3600000;
