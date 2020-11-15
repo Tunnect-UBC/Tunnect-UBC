@@ -14,12 +14,13 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class SearchActivity extends AppCompatActivity {
 
+    private String USER_ID;
     // RecyclerView definition
     private RecyclerView recyclerView;
-
     // Song service used to access spotify
     private SongService songService;
     // Songs returned from a search
@@ -46,6 +47,8 @@ public class SearchActivity extends AppCompatActivity {
         songService = new SongService(getApplicationContext());
         EditText search_bar = (EditText) findViewById(R.id.search_bar);
         Button search_button = (Button) findViewById(R.id.search_button);
+
+        USER_ID = Objects.requireNonNull(getIntent().getExtras()).getString("USER_ID");
 
         // Search button functionality
         search_button.setOnClickListener(new View.OnClickListener() {
@@ -79,9 +82,9 @@ public class SearchActivity extends AppCompatActivity {
         return true;
     }
 
-    // Displays the info of the given song
+    // Displays the Search Results
     private void dispSongs() {
-        RecyclerView.Adapter mAdapter = new SongListAdaptor(this, search_songs);
+        RecyclerView.Adapter mAdapter = new SearchListAdaptor(this, search_songs, USER_ID);
         recyclerView.setAdapter(mAdapter);
     }
 
