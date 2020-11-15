@@ -15,6 +15,8 @@ const mongoose = require("mongoose");
 
 const User = require("../../models/users");
 
+const helpers = require("../utils/userstore_helpers");
+
 
 /**
  * GET localhost:3000/userstore - Gets all users in the database
@@ -24,7 +26,34 @@ const User = require("../../models/users");
  * 
  * User schema described in ../../models/Users
  */
-router.get("/", (req, res, next) => {
+router.get("/", async (req, res, next) => {
+    const users = await helpers.get_all();
+
+    if (users !== undefined) {
+        res.status(200).json(users);
+    } else {
+        res.status(500).json({
+            error: "no user"
+        });
+    }
+    
+    /*User.find()
+        .exec()
+        .then((users) => {
+            //console.log(users);
+            if (users.length >= 0) {
+                res.status(200).json(users);
+            }
+        })
+        .catch((err) => {
+            //console.log(err);
+            res.status(500).json({
+                error: err
+            });
+        });*/
+});
+
+/*async function get_all() {
     User.find()
         .exec()
         .then((users) => {
@@ -39,7 +68,7 @@ router.get("/", (req, res, next) => {
                 error: err
             });
         });
-});
+}*/
 
 
 /**
