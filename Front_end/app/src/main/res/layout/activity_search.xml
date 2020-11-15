@@ -13,7 +13,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#252525"
+            android:background="@color/background_dark"
             android:orientation="horizontal">
 
             <EditText
@@ -24,8 +24,8 @@
                 android:ems="10"
                 android:hint="Search"
                 android:inputType="textPersonName"
-                android:textColor="#FFFFFF"
-                android:textColorHint="#92FFFFFF" />
+                android:textColor="@color/white"
+                android:textColorHint="@color/hint_white" />
 
             <Button
                 android:id="@+id/search_button"
@@ -39,7 +39,7 @@
             android:id="@+id/song_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#252525" />
+            android:background="@color/background_dark" />
 
     </LinearLayout>
 

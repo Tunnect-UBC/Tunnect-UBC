@@ -96,7 +96,9 @@ public class MainActivity extends AppCompatActivity {
 
         Button settingsBtn = findViewById(R.id.settings_btn);
         settingsBtn.setOnClickListener(view -> {
-            Toast.makeText(getApplicationContext(), "No settings", Toast.LENGTH_LONG).show();
+            Intent settingIntent = new Intent(MainActivity.this, SettingsActivity.class);
+            settingIntent.putExtra("USER_ID", USER_ID);
+            startActivity(settingIntent);
         });
 
         Button searchBtn = findViewById(R.id.goto_search_btn);
@@ -108,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
 
         Button testBtn = findViewById(R.id.test);
         testBtn.setOnClickListener(view -> {
-            String testurl = "http://52.188.167.58:5000/chatservice/35i4h34h5j69jk/1234567";
+            String testurl = "http://52.188.167.58:5000/chatservice/"+USER_ID+"/1234567";
             RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
             JSONObject user = new JSONObject();
             try {
