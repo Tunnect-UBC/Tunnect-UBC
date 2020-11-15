@@ -37,9 +37,14 @@ public class MessageTime {
     private String getTime(ZoneId zoneId) {
         LocalDateTime localDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(this.timestamp), zoneId);
         String hours = Integer.toString(localDateTime.getHour());
-        String minutes = Integer.toString(localDateTime.getMinute());
+        int min = localDateTime.getMinute();
+        String minutes = Integer.toString(min);
 
-        return hours+":"+minutes;
+        if(min <= 9) {
+            return hours+":"+"0"+minutes;
+        } else {
+            return hours+":"+minutes;
+        }
     }
 
     // Returns a date corresponding to timestamp

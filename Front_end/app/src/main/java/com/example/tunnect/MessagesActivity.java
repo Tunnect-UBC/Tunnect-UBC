@@ -178,12 +178,15 @@ public class MessagesActivity extends AppCompatActivity {
                             JSONObject message = messages.getJSONObject(i);
 
                             int colour;
+                            String name;
                             if(message.getString("senderid").equals("tunnect")) {
                                 colour = 0xFFD2691E;
+                                name = "Tunnect";
                             } else {
                                 colour = otherUserColour;
+                                name = otherUserName;
                             }
-                            messagesList.add(new Message(message.getString("senderid"), otherUserName,
+                            messagesList.add(new Message(message.getString("senderid"), name,
                                     message.getString("message"), message.getLong("timeStamp"), colour));
                         }
 
@@ -200,6 +203,11 @@ public class MessagesActivity extends AppCompatActivity {
                 }, error -> Toast.makeText(getApplicationContext(), "Connection to server failed", Toast.LENGTH_LONG).show());
 
         queue.add(request);
+
+        if (receiverID.equals("tunnect")) {
+            messagesList.add(new Message("tunnect", "Tunnect",
+                    "Welcome to tunnect messaging! \nWhen making matches with other users, a chat will appear here.", date.getTime(), 0xFFD2691E));
+        }
     }
 
     // A method that updates the recycler view, adding new message entries to the screen
