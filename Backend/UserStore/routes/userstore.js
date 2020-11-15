@@ -84,7 +84,7 @@ router.get("/", async (req, res, next) => {
  * Response is json error on error with status 500
  * User schema described in ../../models/Users
  */
-router.post("/", (req, res, next) => {
+router.post("/", async (req, res, next) => {
     //an example of how one might extract info about user from body
     const user = new User({
         _id: req.body._id,
@@ -95,8 +95,18 @@ router.post("/", (req, res, next) => {
         matches: req.body.matches
     });
     
+    const result = await helpers.post_user(user);
+
+    if (result === 1) {
+        res.status(200).json(user);
+    } else {
+        res.status(500).json({
+            error: "error with helper function"
+        });
+    }
+
     //stores this in the database
-    user.save()
+    /*user.save()
         .then((result) => {
             //console.log(result);
             res.status(200).json({
@@ -109,9 +119,7 @@ router.post("/", (req, res, next) => {
             res.status(500).json({
                 error:err
             });
-        });
-    
-    
+        });*/
 });
 
 

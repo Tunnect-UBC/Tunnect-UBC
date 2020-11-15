@@ -14,7 +14,21 @@ const helpers = {
                 //console.log(err);
                 return undefined;
             });
-    } 
+    },
+
+    async post_user(user) {
+        //stores this in the database
+        user.save()
+        .then((result) => {
+            //console.log(result);
+            return 1;
+        })
+        .catch((err) => {
+            //console.log(err);
+            return 0;
+        });
+
+    }
 };
 //};
 

@@ -29,3 +29,41 @@ describe("GET/: endpoint", () => {
         expect(res.statusCode).toEqual(200);
     });
 });
+
+
+describe("POST/: endpoint", () => {
+    it("Request to post user to database, error", async () => {
+        helpers.post_user = jest.fn().mockReturnValueOnce(0);
+                            
+        const res = await request.post("/userstore").send({
+            _id: "h75fvg",
+            username: "nickham",
+            topArtist: "uzi",
+            iconColour: "0xffffff",
+            songs: [],
+            matches: []
+        });
+        
+        
+        expect(res.statusCode).toEqual(500);
+    });
+});
+
+
+describe("POST/: endpoint", () => {
+    it("Request to post user to database, success", async () => {
+        helpers.post_user = jest.fn().mockReturnValueOnce(1);
+                            
+        const res = await request.post("/userstore").send({
+            _id: "h75fvg",
+            username: "nickham",
+            topArtist: "uzi",
+            iconColour: "0xffffff",
+            songs: [],
+            matches: []
+        });
+        
+        
+        expect(res.statusCode).toEqual(200);
+    });
+});
