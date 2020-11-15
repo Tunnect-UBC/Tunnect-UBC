@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
 
         Button testBtn = findViewById(R.id.test);
         testBtn.setOnClickListener(view -> {
-            String testurl = "http://52.188.167.58:5000/chatservice/"+USER_ID+"/1234567";
+            String testurl = "http://52.188.167.58:5000/chatservice/"+USER_ID+"/la12nc34e5";
             RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
             JSONObject user = new JSONObject();
             try {
@@ -171,7 +171,9 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             currMatch = 0;
-            dispMatch(matches.get(currMatch), scores.get(currMatch));
+            if (matches.size() != 0 && scores.size() != 0) {
+                dispMatch(matches.get(currMatch), scores.get(currMatch));
+            }
         }, error -> {
             Log.d("matches", "failure");
         });

@@ -134,7 +134,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="27dp"
             android:layout_marginLeft="30dp"
             android:layout_marginRight="30dp"
             android:orientation="vertical">
@@ -148,7 +148,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/name"
-                    android:textSize="15sp"
+                    android:textSize="17sp"
                     android:textColor="@color/colorPrimary"/>
 
                 <EditText
@@ -182,7 +182,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/fave_art"
-                    android:textSize="15sp"
+                    android:textSize="17sp"
                     android:textColor="@color/colorPrimary"/>
 
                 <EditText
@@ -216,7 +216,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/colour"
-                    android:textSize="15sp"
+                    android:textSize="17sp"
                     android:textColor="@color/colorPrimary"/>
 
                 <Button
@@ -239,7 +239,7 @@
 
             <Button
                 android:id="@+id/save_profile"
-                android:layout_marginTop="25dp"
+                android:layout_marginTop="22dp"
                 android:layout_gravity="center"
                 android:text="Save"
                 android:textColor="@color/white"
