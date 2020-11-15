@@ -17,7 +17,6 @@ public class UserService {
     public void addUser(String userid, String username, String top_artist, Context context) {
         user.updateUserId(userid);
         user.updateUsername(username);
-        user.updateTopArtist(top_artist);
         RequestQueue queue = Volley.newRequestQueue(context);
 
         String add_url = "http://52.188.167.58:3000/userstore";
@@ -61,11 +60,6 @@ public class UserService {
             }
             try {
                 user.updateUsername((String) user_info.get("username"));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            try {
-                user.updateTopArtist((String) user_info.get("top_artist"));
             } catch (JSONException e) {
                 e.printStackTrace();
             }

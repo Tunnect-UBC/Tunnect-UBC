@@ -5,15 +5,17 @@ import java.util.List;
 public class User {
     private String userId;
     private String username;
-    private String top_artist;
-    private List<Song> songs;
+    private List<String> songs;
+    private List<String> matches;
 
-    public User(String userId, String username, String top_artist, List<Song> songs) {
+    public User(String userId, String username, List<String> songs, List<String> matches) {
         this.userId = userId;
         this.username = username;
-        this.top_artist = top_artist;
         this.songs = songs;
+        this.matches = matches;
     }
+
+    public User() {}
 
     public void updateUserId(String userId) {
         this.userId = userId;
@@ -23,9 +25,7 @@ public class User {
         this.username = username;
     }
 
-    public void updateTopArtist(String top_artist) {
-        this.top_artist = top_artist;
-    }
+    public void updateSongs(List<String> songs) { this.songs = songs; }
 
     public String getUserId() {
         return userId;
@@ -35,9 +35,7 @@ public class User {
         return username;
     }
 
-    public String getTopArtist() {
-        return top_artist;
-    }
+    public List<String> getSongs() { return songs; }
 
-    public List<Song> getSongs() { return songs; }
+    public List<String> getMatches() {return matches; }
 }
