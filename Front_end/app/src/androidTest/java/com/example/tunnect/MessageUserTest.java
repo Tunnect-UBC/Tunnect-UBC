@@ -1,5 +1,6 @@
 package com.example.tunnect;
 
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.test.espresso.ViewInteraction;
 import androidx.test.filters.LargeTest;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -18,6 +19,8 @@ import static androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtP
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.Matchers.allOf;
 
 /**
  * Instrumented test, which will execute on an Android device.
@@ -53,6 +56,8 @@ public class MessageUserTest {
         editText.perform(replaceText("Test Message"), closeSoftKeyboard());
 
         sendButton.perform(click());
+        ViewInteraction sentM = onView(withId(R.id.sent_message));
+        sentM.check(matches(withText("Test Message")));
 
         // Go back to main activity
         ViewInteraction return1 = onView(withContentDescription("Navigate up"));
