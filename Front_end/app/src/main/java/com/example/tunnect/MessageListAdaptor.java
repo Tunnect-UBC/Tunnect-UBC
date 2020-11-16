@@ -54,7 +54,7 @@ public class MessageListAdaptor extends RecyclerView.Adapter {
 
         } else {
             //lastId = otherUserId;
-            return ADDITIONAL_RECEIVED_MESSAGE;
+            return RECEIVED_MESSAGE; //ADDITIONAL_RECEIVED_MESSAGE;
         }
     }
 

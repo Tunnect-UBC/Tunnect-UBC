@@ -1,5 +1,4 @@
 package com.example.tunnect;
-import com.google.gson.JsonArray;
 import com.pes.androidmaterialcolorpickerdialog.ColorPicker;
 
 import androidx.appcompat.app.ActionBar;
@@ -23,7 +22,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -41,6 +39,7 @@ public class ProfileActivity extends AppCompatActivity {
     private EditText username;
     private EditText faveArtist;
     private TextView profileTitle;
+    private ColorPicker cp;
     private boolean inUserStore;
 
     @Override
@@ -55,7 +54,7 @@ public class ProfileActivity extends AppCompatActivity {
         Drawable unwrappedIconImage = AppCompatResources.getDrawable(this, R.drawable.profile_circle);
         wrappedIconImage = DrawableCompat.wrap(unwrappedIconImage);
         selectedColorRGB = 0;
-        ColorPicker cp = new ColorPicker(ProfileActivity.this, 66, 170, 170);
+        cp = new ColorPicker(ProfileActivity.this, 66, 170, 170);
         USER_ID = Objects.requireNonNull(getIntent().getExtras()).getString("USER_ID");
         RETRIEVE_URL = ADD_URL + USER_ID;
 
@@ -115,8 +114,9 @@ public class ProfileActivity extends AppCompatActivity {
                     profileTitle.setText((String) response.get("username"));
                     username.setText((String) response.get("username"));
                     faveArtist.setText((String) response.get("top_artist"));
-                    DrawableCompat.setTint(wrappedIconImage, (int) response.get("colour"));
+                    DrawableCompat.setTint(wrappedIconImage, (int) response.get("icon_colour"));
                     iconImage.setImageDrawable(wrappedIconImage);
+                    cp.setColor((int) response.get("colour"));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

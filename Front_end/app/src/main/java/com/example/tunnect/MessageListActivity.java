@@ -86,7 +86,7 @@ public class MessageListActivity extends AppCompatActivity {
 
     // Using a Volley connection, this method adds entries in the chatsList from the provided server data
     private void populateChatList() {
-        chatsList.add(new Chat("tunnect", "Tunnect", "Welcome to tunnect messaging! \nWhen making connections with other users, a chat will appear here.", date.getTime(), 0xFFD2691E));
+        chatsList.add(new Chat("tunnect", "Tunnect", "Welcome to tunnect messaging! \nWhen making matches with other users, a chat will appear here.", date.getTime(), 0xFFD2691E));
         chatListAdaptor = new ChatListAdaptor(this, chatsList, chatOptions);
         chatOptions.setAdapter(chatListAdaptor);
 
