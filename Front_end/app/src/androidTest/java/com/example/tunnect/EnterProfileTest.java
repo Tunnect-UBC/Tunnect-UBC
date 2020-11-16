@@ -17,6 +17,7 @@ import static androidx.test.espresso.action.ViewActions.replaceText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 /**
  * Instrumented test, which will execute on an Android device.
@@ -63,6 +64,9 @@ public class EnterProfileTest {
         editText2.perform(pressImeActionButton());
 
         saveButton.perform(click());
+
+        editText1.check(matches(withText("Test Name")));
+        editText2.check(matches(withText("Test Artist")));
 
         // Select a colour then press save
         enterColour.perform(click());

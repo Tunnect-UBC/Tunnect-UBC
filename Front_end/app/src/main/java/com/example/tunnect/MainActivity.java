@@ -143,6 +143,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void dispNextMatch() {
+
         currMatch++;
         getUser(matches.get(currMatch), scores.get(currMatch));
         // TODO: Deal with currMatch getting to end of the list
@@ -171,6 +172,7 @@ public class MainActivity extends AppCompatActivity {
                 scores.add(i, 0.0);
             }
             currMatch = 0;
+            addLastMatch();
             if (matches.size() != 0 && scores.size() != 0) {
                 getUser(matches.get(currMatch), scores.get(currMatch));
             }
@@ -178,6 +180,10 @@ public class MainActivity extends AppCompatActivity {
             Log.d("matches", "failure");
         });
         queue.add(jsonArrayRequest);
+    }
+
+    private void addLastMatch() {
+        
     }
 
     private void getUser(String userId, double score) {
