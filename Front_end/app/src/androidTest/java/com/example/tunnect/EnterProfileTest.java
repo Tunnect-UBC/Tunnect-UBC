@@ -32,10 +32,10 @@ public class EnterProfileTest {
 
     @Test
     public void NewUserEnterProfile() throws InterruptedException {
-        Thread.sleep(10000);
+        Thread.sleep(5000);
 
         // Open up profile from main activity
-        ViewInteraction messageButton = onView(withId(R.id.messages_btn));
+        ViewInteraction messageButton = onView(withId(R.id.profile_btn));
         messageButton.check(matches(isDisplayed()));
         messageButton.perform(click());
 
