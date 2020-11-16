@@ -18,16 +18,16 @@ const helpers = {
               resp = 1;
             }
             else {
-              resp = 0;
+              resp = 2;
             }
           });
         }
         else {
-           resp = 0;
+           resp = 1;
         }
       })
       .catch((err) => {
-        resp = 2;
+        resp = 0;
       });
       return resp;
    },
@@ -36,7 +36,7 @@ const helpers = {
        if (id == "all"){
          await Chat.find({}, async function(err, result){
            if(err){
-             return 2;
+             return 0;
            }
            else {
              return 1;
@@ -46,14 +46,14 @@ const helpers = {
        else {
          await Chat.find({usrID1: id}, "usrID2 usrColour2 usrName2 lastMessage lastTime", async function(err, result1){
            if(err){
-             return 2;
+             return 0;
            }
            else if(!result1.length){
              await Chat.find({usrID2: id}, "usrID1 usrColour1 usrName1 lastMessage lastTime", async function (err, result2) {
                if(err){
-                 return 3;
+                 return 0;
                }
-               else{
+               else {
                  return 1;
                }
              });
@@ -106,15 +106,15 @@ async postMessage(senderid, receiverid, message, timeStamp) {
 
 
 async postChat(usrid1, usrid2, timeStamp){
-  axios.get("http://localhost:3000/userstore/" + usrid1, {params: {}})
-  .then((response) => {
+  await axios.get("http://localhost:3000/userstore/" + usrid1, {params: {}})
+  .then(async (response) => {
   const usr1 = usrid1;
   const usr2 = usrid2;
   var usr1name = response.data.username;
   var usr1colour = response.data.icon_colour;
 
- axios.get("http://localhost:3000/userstore/" + usrid2, {params: {}})
- .then((response2) => {
+ await axios.get("http://localhost:3000/userstore/" + usrid2, {params: {}})
+ .then(async(response2) => {
   var chat = new Chat({
     usrID1: usr1,
     usrColour1: usr1colour,
@@ -126,29 +126,29 @@ async postChat(usrid1, usrid2, timeStamp){
     lastMessage: "Congrats: you've tunnected! Start a chat and say hi :)",
     lastTime: timeStamp
   });
-  Chat.find({usrID1: usr1, usrID2: usr2}, function(err, result1){
+  await Chat.find({usrID1: usr1, usrID2: usr2}, async function(err, result1){
     if(!result1.length){
-      Chat.find({usrID1: usr2, usrID2: usr1}, function(err, result2){
+      await Chat.find({usrID1: usr2, usrID2: usr1}, async function(err, result2){
         if(!result2.length){
           chat.save()
                  .then((result) => {
                    return 1;
                  })
                  .catch((err) => {
-                   return -1;
+                   return 0;
                  });
         }
         else {
-          return 0;
+          return 2;
         }
       });
     } else {
-      return 0;
+      return 2;
     }
   });
  })
  .catch((err) => {
-  return 2;
+  return 0;
  });
 });
 }
