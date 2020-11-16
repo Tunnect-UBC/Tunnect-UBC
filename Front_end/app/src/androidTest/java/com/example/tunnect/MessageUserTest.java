@@ -36,7 +36,7 @@ public class MessageUserTest {
 
     @Test
     public void MessageAnotherUser() throws InterruptedException {
-        Thread.sleep(10000);
+        Thread.sleep(5000);
 
         // Open up a chat from main activity
         ViewInteraction messageButton = onView(withId(R.id.messages_btn));
