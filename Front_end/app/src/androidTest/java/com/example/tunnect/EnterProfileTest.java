@@ -56,23 +56,27 @@ public class EnterProfileTest {
         // Try to enter in first field then press save
         editText1.perform(replaceText("Test Name"), closeSoftKeyboard());
         editText1.perform(pressImeActionButton());
+        Thread.sleep(2000);
 
         saveButton.perform(click());
 
         // Try to enter in second field then press save
         editText2.perform(replaceText("Test Artist"), closeSoftKeyboard());
         editText2.perform(pressImeActionButton());
+        Thread.sleep(2000);
 
         saveButton.perform(click());
 
         editText1.check(matches(withText("Test Name")));
         editText2.check(matches(withText("Test Artist")));
+        Thread.sleep(2000);
 
         // Select a colour then press save
         enterColour.perform(click());
 
         ViewInteraction okColourBtn = onView(withId(R.id.okColorButton));
         okColourBtn.perform(click());
+        Thread.sleep(2000);
 
         saveButton.perform(click());
     }

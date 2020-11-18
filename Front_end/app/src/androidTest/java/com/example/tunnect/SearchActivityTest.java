@@ -42,7 +42,7 @@ public class SearchActivityTest {
 
     @Test
     public void searchActivityTest() throws InterruptedException {
-        Thread.sleep(10000);
+        Thread.sleep(5000);
 
         onView(withId(R.id.profile_btn)).perform(click());
         onView(withId(R.id.add_songs)).perform(click());

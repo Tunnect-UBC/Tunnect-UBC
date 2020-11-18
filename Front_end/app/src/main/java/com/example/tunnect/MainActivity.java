@@ -124,6 +124,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void dispMatch(User user, Double score) {
+        if (user.getUserId().equals("no_user")) {
+            user_name.setText("No Matches Found!");
+            return;
+        }
+
         user_name.setText(user.getUsername());
         score_view.setText(score.toString());
 
@@ -143,10 +148,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void dispNextMatch() {
-
         currMatch++;
-        getUser(matches.get(currMatch), scores.get(currMatch));
-        // TODO: Deal with currMatch getting to end of the list
+        int size = matches.size();
+
+        if (size == currMatch) {
+            RecyclerView.Adapter mAdapter = new SongListAdaptor(this, new ArrayList<>());
+            recyclerView.setAdapter(mAdapter);
+            user_name.setText("No Matches Left!");
+        } else {
+            getUser(matches.get(currMatch), scores.get(currMatch));
+        }
     }
 
     private void getMatches(String userId) throws JSONException {
@@ -172,18 +183,18 @@ public class MainActivity extends AppCompatActivity {
                 scores.add(i, 0.0);
             }
             currMatch = 0;
-            addLastMatch();
-            if (matches.size() != 0 && scores.size() != 0) {
+            if(matches.size() != 0) {
                 getUser(matches.get(currMatch), scores.get(currMatch));
+            } else {
+                User no_user = new User();
+                no_user.updateUserId("no_user");
+                dispMatch(no_user, 0.0);
             }
+
         }, error -> {
             Log.d("matches", "failure");
         });
         queue.add(jsonArrayRequest);
-    }
-
-    private void addLastMatch() {
-        
     }
 
     private void getUser(String userId, double score) {

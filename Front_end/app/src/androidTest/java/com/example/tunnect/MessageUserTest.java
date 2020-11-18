@@ -51,15 +51,18 @@ public class MessageUserTest {
         sendButton.check(matches(isDisplayed()));
         sendButton.perform(click());
 
+        Thread.sleep(2000);
         ViewInteraction editText = onView(withId(R.id.edit_text_chatbox));
         editText.check(matches(isDisplayed()));
         editText.perform(replaceText("Test Message"), closeSoftKeyboard());
 
+        Thread.sleep(2000);
         sendButton.perform(click());
         ViewInteraction sentM = onView(withId(R.id.sent_message));
         sentM.check(matches(withText("Test Message")));
 
         // Go back to main activity
+        Thread.sleep(2000);
         ViewInteraction return1 = onView(withContentDescription("Navigate up"));
         return1.perform(click());
         ViewInteraction return2 = onView(withContentDescription("Navigate up"));
