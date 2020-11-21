@@ -36,7 +36,7 @@ public class MessageUserTest {
 
     @Test
     public void MessageAnotherUser() throws InterruptedException {
-        Thread.sleep(10000);
+        Thread.sleep(5000);
 
         // Open up a chat from main activity
         ViewInteraction messageButton = onView(withId(R.id.messages_btn));
@@ -51,15 +51,18 @@ public class MessageUserTest {
         sendButton.check(matches(isDisplayed()));
         sendButton.perform(click());
 
+        Thread.sleep(2000);
         ViewInteraction editText = onView(withId(R.id.edit_text_chatbox));
         editText.check(matches(isDisplayed()));
         editText.perform(replaceText("Test Message"), closeSoftKeyboard());
 
+        Thread.sleep(2000);
         sendButton.perform(click());
         ViewInteraction sentM = onView(withId(R.id.sent_message));
         sentM.check(matches(withText("Test Message")));
 
         // Go back to main activity
+        Thread.sleep(2000);
         ViewInteraction return1 = onView(withContentDescription("Navigate up"));
         return1.perform(click());
         ViewInteraction return2 = onView(withContentDescription("Navigate up"));
