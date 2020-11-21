@@ -50,24 +50,10 @@ public class SearchActivityTest {
         Thread.sleep(3000);
         onView(withId(R.id.search_button)).perform(click());
 
-        ViewInteraction appCompatButton4 = onView(
-                allOf(withId(R.id.add_btn), withText("Add"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.song_list),
-                                        0),
-                                3),
-                        isDisplayed()));
+        ViewInteraction appCompatButton4 = onView(allOf(withId(R.id.add_btn), withText("Add"), childAtPosition(childAtPosition(withId(R.id.song_list), 0), 3), isDisplayed()));
         appCompatButton4.perform(click());
 
-        ViewInteraction button = onView(
-                allOf(withId(R.id.add_btn),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.song_list),
-                                        0),
-                                3),
-                        isDisplayed()));
+        ViewInteraction button = onView(allOf(withId(R.id.add_btn), childAtPosition(childAtPosition(withId(R.id.song_list), 0), 3), isDisplayed()));
         button.check(matches(isDisplayed()));
     }
 

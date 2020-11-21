@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -14,6 +15,7 @@ import android.view.MotionEvent;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonArrayRequest;
@@ -25,6 +27,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private List<Double> scores;
     private JSONObject currObject;
     private int currMatch;
+    private SharedPreferences sharedPreferences;
 
     // TODO: Delete this when we can get songs
     private User fakeUser;
@@ -52,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
         USER_ID = Objects.requireNonNull(getIntent().getExtras()).getString("USER_ID");
 
         setContentView(R.layout.activity_main);
+        sharedPreferences = this.getSharedPreferences("SPOTIFY", 0);
 
         mDetector = new GestureDetectorCompat(this, new MyGestureListener());
         user_name = findViewById(R.id.user_name);
@@ -134,13 +140,13 @@ public class MainActivity extends AppCompatActivity {
 
         // TODO: Change this to display artists and stuff
         List<Song> fakeSongs = new ArrayList<>();
-        List<String> matchesSongs = user.getSongs();
+        List<Song> matchesSongs = user.getSongs();
         if (matchesSongs == null) {
             fakeSongs.add(new Song("", "This user has no songs", "", ""));
         }
         else {
             for (int i = 0; i < matchesSongs.size(); i++) {
-                fakeSongs.add(new Song("fakeId", matchesSongs.get(i), "Artist", "Album"));
+                fakeSongs.add(matchesSongs.get(i));
             }
         }
         RecyclerView.Adapter mAdapter = new SongListAdaptor(this, fakeSongs);
@@ -197,6 +203,7 @@ public class MainActivity extends AppCompatActivity {
         queue.add(jsonArrayRequest);
     }
 
+    // Gets a potential matches user info
     private void getUser(String userId, double score) {
         User user = new User();
         String get_url = "http://52.188.167.58:3000/userstore/" + userId;
@@ -222,12 +229,61 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
             }
-            currMatch = 0;
-            user.updateSongs(user_songs);
-            dispMatch(user, score);
+            if (user_songs.size() > 0) {
+                for (int i = 0; i < user_songs.size() - 1; i++) {
+                    getSong(user, score, user_songs.get(i), false);
+                }
+                getSong(user, score, user_songs.get(user_songs.size() - 1), true);
+            }
+            else {
+                user.addSong(new Song("", "This user has no songs", "", ""));
+                dispMatch(user, score);
+            }
         }, error -> {
             // TODO: error handling here
         });
+        queue.add(jsonObjectRequest);
+    }
+
+    // Get song the info of a song
+    private void getSong(User user, Double score, String song_id, Boolean lastSong) {
+        String url = "https://api.spotify.com/v1/tracks/" + song_id;
+        RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
+        Song song = new Song();
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, response -> {
+            song.setId(song_id);
+            try {
+                song.setName(response.getString("name"));
+                JSONObject album_info = response.getJSONObject("album");
+                song.setAlbum(album_info.getString("name"));
+                JSONArray artists = album_info.optJSONArray("artists");
+                JSONObject artist_info = artists.getJSONObject(0);
+                String artist = artist_info.getString("name");
+                // Used if a song has multiple artists
+                for (int i = 1; i < artists.length(); i++) {
+                    artist_info = artists.getJSONObject(i);
+                    artist = artist + ", " + artist_info.getString("name");
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            if (lastSong) {
+                user.addSong(song);
+                dispMatch(user, score);
+            }
+        }, error -> {
+            Toast.makeText(getApplicationContext(), "Error getting songs", Toast.LENGTH_SHORT).show();
+            dispMatch(user, score);
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                String token = sharedPreferences.getString("token", "");
+                String auth = "Bearer " + token;
+                headers.put("Authorization", auth);
+                return headers;
+            }
+        };
         queue.add(jsonObjectRequest);
     }
 
