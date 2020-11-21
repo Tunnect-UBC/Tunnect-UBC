@@ -1,14 +1,15 @@
 package com.example.tunnect;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class User {
     private String userId;
     private String username;
-    private List<String> songs;
+    private List<Song> songs;
     private List<String> matches;
 
-    public User(String userId, String username, List<String> songs, List<String> matches) {
+    public User(String userId, String username, List<Song> songs, List<String> matches) {
         this.userId = userId;
         this.username = username;
         this.songs = songs;
@@ -25,7 +26,7 @@ public class User {
         this.username = username;
     }
 
-    public void updateSongs(List<String> songs) { this.songs = songs; }
+    public void updateSongs(List<Song> songs) { this.songs = songs; }
 
     public String getUserId() {
         return userId;
@@ -35,7 +36,14 @@ public class User {
         return username;
     }
 
-    public List<String> getSongs() { return songs; }
+    public List<Song> getSongs() { return songs; }
 
     public List<String> getMatches() {return matches; }
+
+    public void addSong(Song song) {
+        if (songs == null) {
+            songs = new ArrayList<>();
+        }
+        songs.add(song);
+    }
 }

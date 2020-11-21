@@ -64,7 +64,7 @@ public class SearchListAdaptor extends RecyclerView.Adapter<SearchListAdaptor.Vi
         holder.artist.setText(song.getArtist());
 
         holder.add_btn.setOnClickListener(view -> {
-            updateSongs(song.getName(), holder);
+            updateSongs(song.getId(), holder);
         });
     }
 
