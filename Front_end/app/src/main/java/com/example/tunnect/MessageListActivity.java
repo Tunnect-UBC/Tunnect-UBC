@@ -63,6 +63,10 @@ public class MessageListActivity extends AppCompatActivity {
 
         // Fill recycler view with existing chat entries
         queue = Volley.newRequestQueue(this);
+        chatOptions = findViewById(R.id.chatOptions);
+        chatOptions.setHasFixedSize(true);
+        layoutManager = new LinearLayoutManager(this);
+        chatOptions.setLayoutManager(layoutManager);
 
         populateChatList();
     }
@@ -82,9 +86,9 @@ public class MessageListActivity extends AppCompatActivity {
 
     // Using a Volley connection, this method adds entries in the chatsList from the provided server data
     private void populateChatList() {
-        // these entries are added for testing purposes
-        //TODO: Delete this when testing is done!!!!!!!!!!!!!!!!!
-        chatsList.add(new Chat("1234567", "Jeff (Frontend entry)", "My name is Jeff", date.getTime(), 0xFF4444AA));
+        chatsList.add(new Chat("tunnect", "Tunnect", "Welcome to tunnect messaging! \nWhen making matches with other users, a chat will appear here.", date.getTime(), 0xFFD2691E));
+        chatListAdaptor = new ChatListAdaptor(this, chatsList, chatOptions);
+        chatOptions.setAdapter(chatListAdaptor);
 
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, LOAD_URL, null,
                 response -> {
@@ -97,12 +101,10 @@ public class MessageListActivity extends AppCompatActivity {
                                 chatsList.add(new Chat(chat.getString("usrID2"), chat.getString("usrName2"), chat.getString("lastMessage"), chat.getLong("lastTime"), chat.getInt("usrColour2")));
                             }
                         }
-                        chatOptions = findViewById(R.id.chatOptions);
-                        chatOptions.setHasFixedSize(true);
-                        layoutManager = new LinearLayoutManager(this);
-                        chatOptions.setLayoutManager(layoutManager);
+
                         chatListAdaptor = new ChatListAdaptor(this, chatsList, chatOptions);
                         chatOptions.setAdapter(chatListAdaptor);
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                         Toast.makeText(getApplicationContext(), "Failed to retrieve data from server!", Toast.LENGTH_LONG).show();

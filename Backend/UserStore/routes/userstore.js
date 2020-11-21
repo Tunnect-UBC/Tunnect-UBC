@@ -8,6 +8,7 @@
  *      PATCH  localhost:3000/userstore/{id} - Patches the user specified by id, and updates fields (line 134)
  *      DELETE localhost:3000/userstore/{id} - Deletes the user specified by id, from the database (line 164)
  */
+const e = require("express");
 const express = require("express");
 const router = new express.Router();
 const mongoose = require("mongoose");
@@ -61,7 +62,8 @@ router.post("/", (req, res, next) => {
         username: req.body.username,
         topArtist: req.body.topArtist,
         iconColour: req.body.iconColour,
-        songs: req.body.songs
+        songs: req.body.songs,
+        matches: req.body.matches
     });
     
     //stores this in the database
@@ -101,12 +103,12 @@ router.get("/:userId", (req, res, next) => {
             if (user) {
                 res.status(200).json(user);
             } else {
-                res.status(404).json({messgae: "No valid entry found for provided ID"});
+                res.status(404).json({message: "No valid entry found for provided ID"});
             }
         })
-        .catch(err => {
+        .catch((err) => {
             //console.log(err);
-            res.statuts(500).json({error: err});
+            res.status(500).json({error: err});
         });
 });
 
@@ -147,8 +149,85 @@ router.patch("/:userId", (req, res, next) => {
             //console.log(res);
             res.status(200).json(result);
         })
-        .catch(err => {
+        .catch((err) => {
             //console.log(err);
+            res.status(500).json({
+                error: err
+            });
+        });
+});
+
+
+/**
+ * PATCH localhost:3000/userstore/{id}/addMatch/{id2} - Adds id2 to id's list of matches
+ * 
+ */
+router.patch("/:userId/addMatch/:userId2", (req, res, next) => {
+    const id = req.params.userId;
+    const id2 = req.params.userId2;
+    User.findById(id)
+        .exec()
+        .then((user) => {
+            //console.log(user);
+            if (user) {
+                user.matches.push(id2);
+            } else {
+                return res.status(404).json({message: "No valid entry found for provided ID"});
+            }
+        })
+        .catch((err) => {
+            return res.status(500).json({error: err});
+        });
+
+
+    User.update({_id: id }, { $set : {matches: user.matches} })
+        .exec()
+        .then((result) => {
+            //console.log(res);
+            res.status(200).json(result);
+        })
+        .catch((err) => {
+            //console.log(err);
+            res.status(500).json({
+                error: err
+            });
+        });
+});
+
+/**
+ * PATCH localhost:3000/userstore/{id}/removeMatch/{id2} - Removes id2 from id's list of matches
+ * 
+ */
+router.patch("/:userId/addMatch/:userId2", (req, res, next) => {
+    const id = req.params.userId;
+    const id2 = req.params.userId2;
+    let userMatches;
+
+    User.findById(id)
+        .exec()
+        .then((user) => {
+            if (user) {
+                const index = user.matches.indexOf(id2);
+                if (index != -1) {
+                    userMatches = user.matches.splice(index, 1);
+                } else {
+                    return res.status(404).json({message: "No valid entry found in matches for userId2"});
+                }
+            } else {
+                return res.status(404).json({message: "No valid entry found for provided userId"});
+            }
+        })
+        .catch((err) => {
+            return res.status(500).json({error: err});
+        });
+
+
+    User.update({_id: id }, { $set : {matches: userMatches} })
+        .exec()
+        .then((result) => {
+            res.status(200).json(result);
+        })
+        .catch((err) => {
             res.status(500).json({
                 error: err
             });
@@ -169,10 +248,10 @@ router.delete("/:userId", (req, res, next) => {
         _id: id
     })
         .exec()
-        .then(result => {
+        .then((result) => {
             res.status(200).json(result);
         })
-        .catch(err => {
+        .catch((err) => {
             //console.log(err);
             res.statuts(500).json({error: err});
         });

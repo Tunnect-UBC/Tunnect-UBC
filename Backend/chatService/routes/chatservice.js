@@ -5,7 +5,7 @@
 
 
 const express = require("express");
-const router = express.Router();
+const router = new express.Router();
 const mongoose = require("mongoose");
 const axios = require("axios");
 
@@ -98,17 +98,19 @@ router.get("/:userid1/:userid2", (req, res, next) => {
 **/
 router.post("/:receiverid", (req, res, next) => {
   Chat.updateOne({usrID1: req.body.senderid, usrID2: req.params.receiverid},
-           {$push: {messages : [{senderid: req.body.senderid, message: req.body.message, timeStamp: req.body.timeStamp}]}}, function(err, result){})
-         .then(result => {Chat.updateOne({usrID1: req.params.receiverid, usrID2: req.body.senderid},
-           {$push: {messages : [{senderid: req.body.senderid, message: req.body.message, timeStamp: req.body.timeStamp}]}}, function(err, result){})})
-          .then(result => {Chat.updateOne({usrID1: req.body.senderid, usrID2: req.params.receiverid},
-           {$set: {lastMessage: req.body.message}, $set: {lastTime: req.body.timeStamp}}, function(err, result){})})
-          .then(result => {Chat.updateOne({usrID1: req.params.receiverid, usrID2: req.body.senderid},
-           {$set: {lastMessage: req.body.message}, $set: {lastTime: req.body.timeStamp}}, function(err, result){})})
-          .catch(err => {
+           {$push: {messages : [{senderid: req.body.senderid, message: req.body.message, timeStamp: req.body.timeStamp}]},
+           $set: {lastMessage: req.body.message, lastTime: req.body.timeStamp}})
+           .then((result) => {
+            Chat.updateOne({usrID1: req.params.receiverid, usrID2: req.body.senderid},
+           {$push: {messages : [{senderid: req.body.senderid, message: req.body.message, timeStamp: req.body.timeStamp}]},
+           $set: {lastMessage: req.body.message, lastTime: req.body.timeStamp}}, function(err, result){});})
+          .then((result) => {
+            res.status(200).json({});
+          })
+          .catch((err) => {
              res.status(500).json({
                error: err
-             })
+             });
            });
   });
 
@@ -125,7 +127,6 @@ router.post("/:usrid1/:usrid2", (req, res, next) => {
 
  axios.get("http://localhost:3000/userstore/" + req.params.usrid2, {params: {}})
  .then((response2) => {
-   console.log(usr1name);
   var chat = new Chat({
     usrID1: usr1,
     usrColour1: usr1colour,
@@ -137,42 +138,40 @@ router.post("/:usrid1/:usrid2", (req, res, next) => {
     lastMessage: "Congrats: you've tunnected! Start a chat and say hi :)",
     lastTime: req.body.timeStamp
   });
-  console.log(response2);
   Chat.find({usrID1: usr1, usrID2: usr2}, function(err, result1){
     if(!result1.length){
       Chat.find({usrID1: usr2, usrID2: usr1}, function(err, result2){
         if(!result2.length){
           chat.save()
-                 .then(result => {
-                   console.log(result);
+                 .then((result) => {
                    res.status(200).json({
                      message: "POST to chatdb",
                      createdMessage: result
                    });
                  })
-                 .catch(err => {
+                 .catch((err) => {
                    //console.log(err);
                    res.status(500).json({
                      error:err
-                   })
+                   });
                  });
         }
         else {
           //console.log("chat already exists");
           res.status(200).json({
             message: "chat already exists"
-          })
+          });
         }
-      })
+      });
     } else {
-      console.log("chat already exists");
+      //console.log("chat already exists");
       res.status(200).json({
         message: "chat already exists"
-      })
+      });
     }
   });
  })
- .catch(err => {
+ .catch((err) => {
    res.status(404).json({
      message: "User2 does not exist"
      });
@@ -195,14 +194,14 @@ router.delete("/:userId1/:userId2", (req, res, next) => {
             Chat.remove({
               usrID1: id2,
               usrID2: id1
-            }).then(result => {
+            }).then((result) => {
               res.status(200).json(result);
-            })
+            });
           }
             res.status(200).json(result);
         })
-        .catch(err => {
-            console.log(err);
+        .catch((err) => {
+            //console.log(err);
             res.statuts(500).json({error: err});
         });
 });

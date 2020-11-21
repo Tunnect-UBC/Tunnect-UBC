@@ -106,6 +106,11 @@ public class MessagesActivity extends AppCompatActivity {
 
         // Fill the recycler view with the history of chat messages
         queue = Volley.newRequestQueue(this);
+        messageHistory = findViewById(R.id.messageHistory);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setStackFromEnd(true);
+        messageHistory.setLayoutManager(layoutManager);
+
         populateMessageHistory();
 
         // Set up button to send a message
@@ -168,13 +173,6 @@ public class MessagesActivity extends AppCompatActivity {
 
     // Using a Volley connection, this method adds entries in the messagesList from the provided server data
     private void populateMessageHistory() {
-        // these entries are added for testing purposes
-        //TODO: Delete this when testing is done!!!!!!!!!!!!!!!!!
-        messagesList.add(new Message(USER_ID, "David Onak", "Hello", date.getTime(), 0xFF44AA44));
-        messagesList.add(new Message(receiverID, "Jeff", "My name is Jeff", date.getTime(), 0xFF4444AA));
-        messagesList.add(new Message(receiverID, "Jeff", "Hello...", date.getTime(), 0xFF222222));
-        messagesList.add(new Message(receiverID, "Jeff", "Helloooo!!!", date.getTime(), 0xFF222222));
-
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, BASE_URL, null,
                 response -> {
                     try {
@@ -184,14 +182,19 @@ public class MessagesActivity extends AppCompatActivity {
                         for (int i = 0; i < messages.length(); i++) {
                             JSONObject message = messages.getJSONObject(i);
 
-                            messagesList.add(new Message(message.getString("senderid"), otherUserName,
-                                    message.getString("message"), message.getLong("timeStamp"), otherUserColour));
+                            int colour;
+                            String name;
+                            if(message.getString("senderid").equals("tunnect")) {
+                                colour = 0xFFD2691E;
+                                name = "Tunnect";
+                            } else {
+                                colour = otherUserColour;
+                                name = otherUserName;
+                            }
+                            messagesList.add(new Message(message.getString("senderid"), name,
+                                    message.getString("message"), message.getLong("timeStamp"), colour));
                         }
 
-                        messageHistory = findViewById(R.id.messageHistory);
-                        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-                        layoutManager.setStackFromEnd(true);
-                        messageHistory.setLayoutManager(layoutManager);
                         messageAdapter = new MessageListAdaptor(this, messagesList, USER_ID, receiverID);
                         messageHistory.setAdapter(messageAdapter);
                     } catch (JSONException e) {
@@ -201,6 +204,13 @@ public class MessagesActivity extends AppCompatActivity {
                 }, error -> Toast.makeText(getApplicationContext(), "Connection to server failed", Toast.LENGTH_LONG).show());
 
         queue.add(request);
+
+        if (receiverID.equals("tunnect")) {
+            messagesList.add(new Message("tunnect", "Tunnect",
+                    "Welcome to tunnect messaging! \nWhen making matches with other users, a chat will appear here.", date.getTime(), 0xFFD2691E));
+        }
+        messageAdapter = new MessageListAdaptor(this, messagesList, USER_ID, receiverID);
+        messageHistory.setAdapter(messageAdapter);
     }
 
     // A method that updates the recycler view, adding new message entries to the screen

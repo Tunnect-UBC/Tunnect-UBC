@@ -39,6 +39,8 @@ public class ProfileActivity extends AppCompatActivity {
     private EditText username;
     private EditText faveArtist;
     private TextView profileTitle;
+    private ColorPicker cp;
+    private boolean inUserStore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +54,7 @@ public class ProfileActivity extends AppCompatActivity {
         Drawable unwrappedIconImage = AppCompatResources.getDrawable(this, R.drawable.profile_circle);
         wrappedIconImage = DrawableCompat.wrap(unwrappedIconImage);
         selectedColorRGB = 0;
-        ColorPicker cp = new ColorPicker(ProfileActivity.this, 66, 170, 170);
+        cp = new ColorPicker(ProfileActivity.this, 66, 170, 170);
         USER_ID = Objects.requireNonNull(getIntent().getExtras()).getString("USER_ID");
         RETRIEVE_URL = ADD_URL + USER_ID;
 
@@ -86,6 +88,19 @@ public class ProfileActivity extends AppCompatActivity {
             saveProfileEntries();
         });
 
+        Button addBtn = findViewById(R.id.add_songs);
+        addBtn.setOnClickListener(view -> {
+            if (inUserStore) {
+                Intent searchIntent = new Intent(ProfileActivity.this, SearchActivity.class);
+                searchIntent.putExtra("USER_ID", USER_ID);
+                startActivity(searchIntent);
+            }
+            else {
+                // TODO: handle adding songs during profile creation
+                Toast.makeText(getApplicationContext(), "Please save your profile first", Toast.LENGTH_LONG).show();
+            }
+        });
+
         // Read information on current user if it exists and fill screen entries
         loadProfileEntries();
     }
@@ -94,20 +109,24 @@ public class ProfileActivity extends AppCompatActivity {
     private void loadProfileEntries() {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, RETRIEVE_URL, null, response -> {
             if (response != null) {
+                inUserStore = true;
                 try {
                     profileTitle.setText((String) response.get("username"));
                     username.setText((String) response.get("username"));
                     faveArtist.setText((String) response.get("top_artist"));
-                    DrawableCompat.setTint(wrappedIconImage, (int) response.get("colour"));
+                    DrawableCompat.setTint(wrappedIconImage, (int) response.get("icon_colour"));
                     iconImage.setImageDrawable(wrappedIconImage);
+                    cp.setColor((int) response.get("colour"));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             } else {
                 DrawableCompat.setTint(wrappedIconImage, 0xFF66AAAA);
                 iconImage.setImageDrawable(wrappedIconImage);
+                inUserStore = false;
             }
         }, error -> {
+            inUserStore = false;
         });
         queue.add(jsonObjectRequest);
     }
@@ -135,6 +154,7 @@ public class ProfileActivity extends AppCompatActivity {
             user.put("username", selectedUsername);
             user.put("top_artist", selectedArtist);
             user.put("icon_colour", selectedColorRGB);
+            user.put("songs", null);
         } catch (JSONException e) {
             e.printStackTrace();
             Toast.makeText(getApplicationContext(), "Failed to add profile to the server!", Toast.LENGTH_LONG).show();
