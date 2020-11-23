@@ -73,9 +73,10 @@
                 android:gravity="center">
 
                 <TextView
+                    android:id="@+id/num_matches"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="0"
+                    android:text="@string/zero"
                     android:textSize="25sp"
                     android:textColor="@color/white"
                     android:fontFamily="sans-serif-medium"/>
@@ -83,7 +84,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="MATCHES"
+                    android:text="@string/matches"
                     android:textSize="13sp"
                     android:textColor="@color/white"
                     android:fontFamily="sans-serif-medium"/>
@@ -108,9 +109,10 @@
                 android:gravity="center">
 
                 <TextView
+                    android:id="@+id/num_songs"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="0"
+                    android:text="@string/zero"
                     android:textSize="25sp"
                     android:textColor="@color/white"
                     android:fontFamily="sans-serif-medium"/>
@@ -118,7 +120,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="PLAYLISTS"
+                    android:text="@string/songs"
                     android:textSize="13sp"
                     android:textColor="@color/white"
                     android:fontFamily="sans-serif-medium"/>

@@ -40,6 +40,8 @@ public class ProfileActivity extends AppCompatActivity {
     private EditText username;
     private EditText faveArtist;
     private TextView profileTitle;
+    private TextView matches;
+    private TextView songs;
     private ColorPicker cp;
     private boolean inUserStore;
 
@@ -48,6 +50,8 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
         queue = Volley.newRequestQueue(getApplicationContext());
+        matches = findViewById(R.id.num_matches);
+        songs = findViewById(R.id.num_songs);
         iconImage = findViewById(R.id.profile_icon);
         username = findViewById(R.id.enter_username);
         profileTitle = findViewById(R.id.username_title);
@@ -118,6 +122,8 @@ public class ProfileActivity extends AppCompatActivity {
                     DrawableCompat.setTint(wrappedIconImage, (int) response.get("icon_colour"));
                     iconImage.setImageDrawable(wrappedIconImage);
                     cp.setColor((int) response.get("icon_colour"));
+                    songs.setText(Objects.requireNonNull(response.optJSONArray("songs")).length());
+                    matches.setText(0); // TODO: CHANGE THIS TO READ NUMBER OF MATCHES ONCE IT IS ADDED TO THE BACKEND
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -150,8 +156,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         JSONObject user = new JSONObject();
         JsonObjectRequest jsonObjectRequest;
-        if(inUserStore) {
-            // Add the user to the server
+        if(inUserStore) { // Add the user to the server
             try {
                 user.put("_id", USER_ID);
                 user.put("username", selectedUsername);
@@ -210,6 +215,7 @@ public class ProfileActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Failed to connect to the server!", Toast.LENGTH_LONG).show();
             });
         }
+
         queue.add(jsonObjectRequest);
     }
 
