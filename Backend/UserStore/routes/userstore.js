@@ -152,76 +152,26 @@ router.patch("/:userId", async (req, res, next) => {
  * PATCH localhost:3000/userstore/{id}/addMatch/{id2} - Adds id2 to id's list of matches
  * 
  */
-router.patch("/:userId/addMatch/:userId2", (req, res, next) => {
-    const id = req.params.userId;
-    const id2 = req.params.userId2;
-    User.findById(id)
-        .exec()
-        .then((user) => {
-            //console.log(user);
-            if (user) {
-                user.matches.push(id2);
-            } else {
-                return res.status(404).json({message: "No valid entry found for provided ID"});
-            }
-        })
-        .catch((err) => {
-            return res.status(500).json({error: err});
-        });
+router.patch("/:userId/addMatch/:userId2", async (req, res, next) => {
+    const userId = req.params.userId;
+    const userId2 = req.params.userId2;
+    
+    const result = await helpers.addMatch(userId, userId2);
 
-
-    User.update({_id: id }, { $set : {matches: user.matches} })
-        .exec()
-        .then((result) => {
-            //console.log(res);
-            res.status(200).json(result);
-        })
-        .catch((err) => {
-            //console.log(err);
-            res.status(500).json({
-                error: err
-            });
-        });
+    res.status(result[0]).json(result[1]);
 });
 
 /**
  * PATCH localhost:3000/userstore/{id}/removeMatch/{id2} - Removes id2 from id's list of matches
  * 
  */
-router.patch("/:userId/addMatch/:userId2", (req, res, next) => {
-    const id = req.params.userId;
-    const id2 = req.params.userId2;
-    let userMatches;
+router.patch("/:userId/removeMatch/:userId2", async (req, res, next) => {
+    const userId = req.params.userId;
+    const userId2 = req.params.userId2;
 
-    User.findById(id)
-        .exec()
-        .then((user) => {
-            if (user) {
-                const index = user.matches.indexOf(id2);
-                if (index != -1) {
-                    userMatches = user.matches.splice(index, 1);
-                } else {
-                    return res.status(404).json({message: "No valid entry found in matches for userId2"});
-                }
-            } else {
-                return res.status(404).json({message: "No valid entry found for provided userId"});
-            }
-        })
-        .catch((err) => {
-            return res.status(500).json({error: err});
-        });
+    const result = await helpers.removeMatch(userId, userId2);
 
-
-    User.update({_id: id }, { $set : {matches: userMatches} })
-        .exec()
-        .then((result) => {
-            res.status(200).json(result);
-        })
-        .catch((err) => {
-            res.status(500).json({
-                error: err
-            });
-        });
+    res.status(result[0]).json(result[1]);
 });
 
 

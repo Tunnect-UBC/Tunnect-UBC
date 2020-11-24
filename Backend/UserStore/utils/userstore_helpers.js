@@ -104,8 +104,68 @@ const helpers = {
             });
 
         return resp;
+    },
+
+    async addMatch(userId1, userId2) {
+        let resp = [];
+        
+        await User.findById(userId1)
+            .exec()
+            .then(async (user) => {
+                if (user) {
+                    let userMatches = user.matches;
+                    userMatches.push(userId2);
+
+                    await User.updateOne({_id: userId1 }, { $set : {matches: userMatches} })
+                                .exec()
+                                .then((result) => {
+                                    resp = [200, result];
+                                })
+                                .catch((err) => {
+                                    resp = [500, err];
+                                });
+
+                } else {
+                    resp = [404, {message: "No valid entry found for provided ID"}];
+                }
+            })
+            .catch((err) => {
+                resp = [500, err];
+            });
+
+        console.log(resp);
+
+        return resp;
+    },
+
+    async removeMatch(userId1, userId2) {
+        let resp = [];
+
+        await User.findById(userId1)
+            .exec()
+            .then(async (user) => {
+                if (user) {
+                    await User.updateOne({_id: userId1 }, { $pull : {matches: userId2} })
+                                .exec()
+                                .then((result) => {
+                                    resp = [200, result];
+                                })
+                                .catch((err) => {
+                                    resp = [500, err];
+                                });
+
+                } else {
+                    resp = [404, {message: "No valid entry found for provided ID"}];
+                }
+            })
+            .catch((err) => {
+                resp = [500, err];
+            });
+
+        console.log(resp);
+
+        return resp;
     }
 };
-//};
 
 module.exports = helpers;
