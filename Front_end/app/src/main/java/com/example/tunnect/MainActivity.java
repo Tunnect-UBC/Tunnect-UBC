@@ -45,9 +45,6 @@ public class MainActivity extends AppCompatActivity {
     private int currMatch;
     private SharedPreferences sharedPreferences;
 
-    // TODO: Delete this when we can get songs
-    private User fakeUser;
-
     // RecyclerView definitions
     private RecyclerView recyclerView;
 
