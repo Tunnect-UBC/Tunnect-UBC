@@ -73,6 +73,10 @@ public class SearchListAdaptor extends RecyclerView.Adapter<SearchListAdaptor.Vi
         return songs.size();
     }
 
+    /*
+    * Adds a song to the users profile
+    * TODO: Currently the json request always returns an erro but it seems to work anyway?
+    */
     private void addSong(String song, ViewHolder holder, JSONArray user_songs) throws JSONException {
         String url = "http://52.188.167.58:3000/userstore/" + user_id;
         RequestQueue queue = Volley.newRequestQueue(context);
@@ -93,6 +97,9 @@ public class SearchListAdaptor extends RecyclerView.Adapter<SearchListAdaptor.Vi
         queue.add(jsonArrayRequest);
     }
 
+    /*
+    * Fetches a users current list of songs then passes that list to addSong
+    */
     private void updateSongs(String song, ViewHolder holder) {
         String url = "http://52.188.167.58:3000/userstore/" + user_id;
         RequestQueue queue = Volley.newRequestQueue(context);

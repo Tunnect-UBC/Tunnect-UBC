@@ -5,6 +5,7 @@ import androidx.core.view.GestureDetectorCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -62,7 +63,6 @@ public class MainActivity extends AppCompatActivity {
         mDetector = new GestureDetectorCompat(this, new MyGestureListener());
         user_name = findViewById(R.id.user_name);
         score_view = findViewById(R.id.user_info_button);
-        UserService currUser = new UserService();
 
         recyclerView = findViewById(R.id.match_list);
         recyclerView.setHasFixedSize(true);
@@ -75,18 +75,21 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+        // Like Button
         Button likeBtn = findViewById(R.id.like_btn);
         likeBtn.setOnClickListener(view -> {
-            currUser.like(getApplicationContext());
+            like(getApplicationContext());
             dispNextMatch();
         });
 
+        // Dislike Button
         Button dislikeBtn = findViewById(R.id.dislike_btn);
         dislikeBtn.setOnClickListener(view -> {
-            currUser.dislike(getApplicationContext());
+            dislike(getApplicationContext());
             dispNextMatch();
         });
 
+        // Messages Button
         Button messagesBtn = findViewById(R.id.messages_btn);
         messagesBtn.setOnClickListener(view -> {
             Intent messageIntent = new Intent(MainActivity.this, MessageListActivity.class);
@@ -94,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(messageIntent);
         });
 
+        // Profile Button
         Button profileBtn = findViewById(R.id.profile_btn);
         profileBtn.setOnClickListener(view -> {
             Intent profileIntent = new Intent(MainActivity.this, ProfileActivity.class);
@@ -102,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(profileIntent);
         });
 
+        // Settings Button
         Button settingsBtn = findViewById(R.id.settings_btn);
         settingsBtn.setOnClickListener(view -> {
             Intent settingIntent = new Intent(MainActivity.this, SettingsActivity.class);
@@ -109,6 +114,8 @@ public class MainActivity extends AppCompatActivity {
             startActivity(settingIntent);
         });
 
+        // Test Button
+        // TODO: Get rid of this
         Button testBtn = findViewById(R.id.test);
         testBtn.setOnClickListener(view -> {
             String testurl = "http://52.188.167.58:5000/chatservice/"+USER_ID+"/la12nc34e5";
@@ -129,6 +136,10 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /*
+    * Displays a potential match
+    * Sends a users songs to the SongListAdaptor to be displayed
+    */
     private void dispMatch(User user, Double score) {
         if (user.getUserId().equals("no_user")) {
             user_name.setText("No Matches Found!");
@@ -138,26 +149,22 @@ public class MainActivity extends AppCompatActivity {
         user_name.setText(user.getUsername());
         score_view.setText(score.toString());
 
-        // TODO: Change this to display artists and stuff
-        List<Song> fakeSongs = new ArrayList<>();
         List<Song> matchesSongs = user.getSongs();
         if (matchesSongs == null) {
-            fakeSongs.add(new Song("", "This user has no songs", "", ""));
+            matchesSongs.add(new Song("", "This user has no songs", "", ""));
         }
-        else {
-            for (int i = 0; i < matchesSongs.size(); i++) {
-                fakeSongs.add(matchesSongs.get(i));
-            }
-        }
-        RecyclerView.Adapter mAdapter = new SongListAdaptor(this, fakeSongs);
+        RecyclerView.Adapter mAdapter = new SongListAdaptor(this, matchesSongs);
         recyclerView.setAdapter(mAdapter);
     }
 
+    /*
+    * Increments the currMatch counter and begins the process of displaying the next match
+    * by calling getUser
+    */
     private void dispNextMatch() {
         currMatch++;
-        int size = matches.size();
 
-        if (size == currMatch) {
+        if (matches.size() == currMatch) {
             RecyclerView.Adapter mAdapter = new SongListAdaptor(this, new ArrayList<>());
             recyclerView.setAdapter(mAdapter);
             user_name.setText("No Matches Left!");
@@ -166,6 +173,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /*
+    * Gets a users potential matches and places their userIds in the matches list.
+    * Calls getUser for the first match
+    * Calls dispMatch if the user has no matches
+    */
     private void getMatches(String userId) throws JSONException {
         String match_url = "http://52.188.167.58:3001/matchmaker/" + userId;
         RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
@@ -203,7 +215,11 @@ public class MainActivity extends AppCompatActivity {
         queue.add(jsonArrayRequest);
     }
 
-    // Gets a potential matches user info
+    /*
+    * Fetches a users info and places the user info in user
+    * Calls getSong on each of the users songs
+    * If the user has no songs then it calls dispMatch
+    */
     private void getUser(String userId, double score) {
         User user = new User();
         String get_url = "http://52.188.167.58:3000/userstore/" + userId;
@@ -245,7 +261,10 @@ public class MainActivity extends AppCompatActivity {
         queue.add(jsonObjectRequest);
     }
 
-    // Get song the info of a song
+    /*
+    * Fetches a song from spotify, parses its data, and places the songs info in the user given
+    * Calls dispMatch on the user if the song is the last of the user's songs
+    */
     private void getSong(User user, Double score, String song_id, Boolean lastSong) {
         String url = "https://api.spotify.com/v1/tracks/" + song_id;
         RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
@@ -287,12 +306,29 @@ public class MainActivity extends AppCompatActivity {
         queue.add(jsonObjectRequest);
     }
 
+    /*
+    * Handles like functionality
+    */
+    public void like(Context context) {
+        Toast.makeText(context, "Likes not implemented yet", Toast.LENGTH_SHORT).show();
+    }
+
+    /*
+    * Handles dislike functionality
+    */
+    public void dislike(Context context) {
+        Toast.makeText(context, "dislikes not implemented yet", Toast.LENGTH_SHORT).show();
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event){
         this.mDetector.onTouchEvent(event);
         return super.onTouchEvent(event);
     }
 
+    /*
+    * Class that handles swiping
+    */
     class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
         private static final String DEBUG_TAG = "Gestures";
         public final static int SWIPE_UP = 1;
@@ -312,6 +348,9 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
 
+        /*
+        * Performs calculations to determine if a fling motion can be considered a swipe
+        */
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
             final float xDistance = Math.abs(e1.getX() - e2.getX());
@@ -348,17 +387,20 @@ public class MainActivity extends AppCompatActivity {
             return result;
         }
 
+        /*
+        * Handles swipes
+        */
         private void onSwipe(int direction) {
             //Detect the swipe gestures and display toast
             UserService currUser = new UserService();
 
             switch (direction) {
                 case SWIPE_RIGHT:
-                    currUser.like(getApplicationContext());
+                    like(getApplicationContext());
                     dispNextMatch();
                     break;
                 case SWIPE_LEFT:
-                    currUser.dislike(getApplicationContext());
+                    dislike(getApplicationContext());
                     dispNextMatch();
                     break;
                 default:
