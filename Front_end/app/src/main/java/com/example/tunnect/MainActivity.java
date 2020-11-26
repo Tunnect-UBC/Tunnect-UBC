@@ -148,6 +148,7 @@ public class MainActivity extends AppCompatActivity {
 
         List<Song> matchesSongs = user.getSongs();
         if (matchesSongs == null) {
+            matchesSongs = new ArrayList<>();
             matchesSongs.add(new Song("", "This user has no songs", "", ""));
         }
         RecyclerView.Adapter mAdapter = new SongListAdaptor(this, matchesSongs);
