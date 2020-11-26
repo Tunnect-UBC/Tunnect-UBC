@@ -25,7 +25,6 @@ public class MessageListAdaptor extends RecyclerView.Adapter {
     private Context context;
     private List<Message> messageList;
     private String currentUserId;
-    //private static String lastId = "";
     private String otherUserId;
     // an instance of the recycler view must be kept if clicking functionality is added
 
@@ -47,15 +46,18 @@ public class MessageListAdaptor extends RecyclerView.Adapter {
         Message message = messageList.get(position);
 
         if (message.getId().equals(currentUserId)) {
-            //lastId = "";
             return SENT_MESSAGE;
-        } else if (message.getId().equals(otherUserId)){
-            return RECEIVED_MESSAGE;
-
-        } else {
-            //lastId = otherUserId;
-            return RECEIVED_MESSAGE; //ADDITIONAL_RECEIVED_MESSAGE;
         }
+
+        if (position > 0) {
+            Message lastMessage = messageList.get(position - 1);
+
+            if(message.getId().equals(lastMessage.getId()) && message.getId().equals(otherUserId)) {
+                return ADDITIONAL_RECEIVED_MESSAGE;
+            }
+        }
+
+        return RECEIVED_MESSAGE;
     }
 
     // Inflates the appropriate layout according to the ViewType.

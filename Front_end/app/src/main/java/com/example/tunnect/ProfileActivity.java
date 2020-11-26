@@ -1,4 +1,5 @@
 package com.example.tunnect;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.pes.androidmaterialcolorpickerdialog.ColorPicker;
 
 import androidx.appcompat.app.ActionBar;
@@ -39,6 +40,8 @@ public class ProfileActivity extends AppCompatActivity {
     private EditText username;
     private EditText faveArtist;
     private TextView profileTitle;
+    private TextView matches;
+    private TextView songs;
     private ColorPicker cp;
     private boolean inUserStore;
 
@@ -47,6 +50,8 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
         queue = Volley.newRequestQueue(getApplicationContext());
+        matches = findViewById(R.id.num_matches);
+        songs = findViewById(R.id.num_songs);
         iconImage = findViewById(R.id.profile_icon);
         username = findViewById(R.id.enter_username);
         profileTitle = findViewById(R.id.username_title);
@@ -116,7 +121,9 @@ public class ProfileActivity extends AppCompatActivity {
                     faveArtist.setText((String) response.get("top_artist"));
                     DrawableCompat.setTint(wrappedIconImage, (int) response.get("icon_colour"));
                     iconImage.setImageDrawable(wrappedIconImage);
-                    cp.setColor((int) response.get("colour"));
+                    cp.setColor((int) response.get("icon_colour"));
+                    songs.setText(Objects.requireNonNull(response.optJSONArray("songs")).length());
+                    matches.setText(0); // TODO: CHANGE THIS TO READ NUMBER OF MATCHES ONCE IT IS ADDED TO THE BACKEND
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -132,7 +139,7 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     // If entries are correct, will create a profile for the current user
-    // TODO: Allow this function to append the profile if it exists already
+    // TODO: Make this more effiecent if possible
     private void saveProfileEntries() {
         String selectedUsername = username.getText().toString().trim();
         String selectedArtist = faveArtist.getText().toString().trim();
@@ -147,25 +154,68 @@ public class ProfileActivity extends AppCompatActivity {
             return;
         }
 
-        // Add the user to the server
         JSONObject user = new JSONObject();
-        try {
-            user.put("_id", USER_ID);
-            user.put("username", selectedUsername);
-            user.put("top_artist", selectedArtist);
-            user.put("icon_colour", selectedColorRGB);
-            user.put("songs", null);
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Toast.makeText(getApplicationContext(), "Failed to add profile to the server!", Toast.LENGTH_LONG).show();
+        JsonObjectRequest jsonObjectRequest;
+        if(inUserStore) { // Add the user to the server
+            try {
+                user.put("_id", USER_ID);
+                user.put("username", selectedUsername);
+                user.put("top_artist", selectedArtist);
+                user.put("icon_colour", selectedColorRGB);
+                user.put("songs", null);
+            } catch (JSONException e) {
+                Toast.makeText(getApplicationContext(), "Failed to add profile to the server!", Toast.LENGTH_LONG).show();
+            }
+            jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, ADD_URL, user, response -> {
+                Intent mainIntent = new Intent(ProfileActivity.this, MainActivity.class);
+                mainIntent.putExtra("USER_ID", USER_ID);
+                startActivity(mainIntent);
+            }, error -> {
+                Toast.makeText(getApplicationContext(), "Failed to connect to the server!", Toast.LENGTH_LONG).show();
+            });
+
+        } else { // If modifying profile then use patch requests
+            try {
+                user.put("propName", "username");
+                user.put("value", selectedUsername);
+            } catch (JSONException e) {
+                Toast.makeText(getApplicationContext(), "Failed to add profile to the server!", Toast.LENGTH_LONG).show();
+            }
+            jsonObjectRequest = new JsonObjectRequest(Request.Method.PATCH, ADD_URL, user, response -> {
+            }, error -> {
+                Toast.makeText(getApplicationContext(), "Failed to connect to the server!", Toast.LENGTH_LONG).show();
+            });
+            queue.add(jsonObjectRequest);
+
+            user = new JSONObject();
+            try {
+                user.put("propName", "icon_colour");
+                user.put("value", selectedColorRGB);
+            } catch (JSONException e) {
+                Toast.makeText(getApplicationContext(), "Failed to add profile to the server!", Toast.LENGTH_LONG).show();
+            }
+            jsonObjectRequest = new JsonObjectRequest(Request.Method.PATCH, ADD_URL, user, response -> {
+            }, error -> {
+                Toast.makeText(getApplicationContext(), "Failed to connect to the server!", Toast.LENGTH_LONG).show();
+            });
+            queue.add(jsonObjectRequest);
+
+            user = new JSONObject();
+            try {
+                user.put("propName", "username");
+                user.put("value", selectedUsername);
+            } catch (JSONException e) {
+                Toast.makeText(getApplicationContext(), "Failed to add profile to the server!", Toast.LENGTH_LONG).show();
+            }
+            jsonObjectRequest = new JsonObjectRequest(Request.Method.PATCH, ADD_URL, user, response -> {
+                Intent mainIntent = new Intent(ProfileActivity.this, MainActivity.class);
+                mainIntent.putExtra("USER_ID", USER_ID);
+                startActivity(mainIntent);
+            }, error -> {
+                Toast.makeText(getApplicationContext(), "Failed to connect to the server!", Toast.LENGTH_LONG).show();
+            });
         }
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, ADD_URL, user, response -> {
-            Intent mainIntent = new Intent(ProfileActivity.this, MainActivity.class);
-            mainIntent.putExtra("USER_ID", USER_ID);
-            startActivity(mainIntent);
-        }, error -> {
-            Toast.makeText(getApplicationContext(), "Failed to connect to the server!", Toast.LENGTH_LONG).show();
-        });
+
         queue.add(jsonObjectRequest);
     }
 
