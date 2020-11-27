@@ -106,6 +106,11 @@ public class MessagesActivity extends AppCompatActivity {
 
         // Fill the recycler view with the history of chat messages
         queue = Volley.newRequestQueue(this);
+        messageHistory = findViewById(R.id.messageHistory);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setStackFromEnd(true);
+        messageHistory.setLayoutManager(layoutManager);
+
         populateMessageHistory();
 
         // Set up button to send a message
@@ -178,19 +183,18 @@ public class MessagesActivity extends AppCompatActivity {
                             JSONObject message = messages.getJSONObject(i);
 
                             int colour;
+                            String name;
                             if(message.getString("senderid").equals("tunnect")) {
                                 colour = 0xFFD2691E;
+                                name = "Tunnect";
                             } else {
                                 colour = otherUserColour;
+                                name = otherUserName;
                             }
-                            messagesList.add(new Message(message.getString("senderid"), otherUserName,
+                            messagesList.add(new Message(message.getString("senderid"), name,
                                     message.getString("message"), message.getLong("timeStamp"), colour));
                         }
 
-                        messageHistory = findViewById(R.id.messageHistory);
-                        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-                        layoutManager.setStackFromEnd(true);
-                        messageHistory.setLayoutManager(layoutManager);
                         messageAdapter = new MessageListAdaptor(this, messagesList, USER_ID, receiverID);
                         messageHistory.setAdapter(messageAdapter);
                     } catch (JSONException e) {
@@ -200,6 +204,13 @@ public class MessagesActivity extends AppCompatActivity {
                 }, error -> Toast.makeText(getApplicationContext(), "Connection to server failed", Toast.LENGTH_LONG).show());
 
         queue.add(request);
+
+        if (receiverID.equals("tunnect")) {
+            messagesList.add(new Message("tunnect", "Tunnect",
+                    "Welcome to tunnect messaging! \nWhen making matches with other users, a chat will appear here.", date.getTime(), 0xFFD2691E));
+        }
+        messageAdapter = new MessageListAdaptor(this, messagesList, USER_ID, receiverID);
+        messageHistory.setAdapter(messageAdapter);
     }
 
     // A method that updates the recycler view, adding new message entries to the screen

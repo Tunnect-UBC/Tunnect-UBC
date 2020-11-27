@@ -159,6 +159,7 @@ router.patch("/:userId/addMatch/:userId2", async (req, res, next) => {
     const result = await helpers.addStatus(userId, userId2, "matches");
 
     res.status(result[0]).json(result[1]);
+
 });
 
 
@@ -166,6 +167,7 @@ router.patch("/:userId/addMatch/:userId2", async (req, res, next) => {
  * PATCH localhost:3000/userstore/{id}/removeMatch/{id2} - Removes id2 from id's list of matches
  * 
  */
+
 router.patch("/:userId/removeMatch/:userId2", async (req, res, next) => {
     const userId = req.params.userId;
     const userId2 = req.params.userId2;
