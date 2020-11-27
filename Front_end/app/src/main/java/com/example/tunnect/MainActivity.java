@@ -45,6 +45,11 @@ public class MainActivity extends AppCompatActivity {
     private int currMatch;
     private SharedPreferences sharedPreferences;
 
+    // Volley queues
+    private RequestQueue userQueue;
+    private RequestQueue matchQueue;
+    private RequestQueue spotifyQueue;
+
     // RecyclerView definitions
     private RecyclerView recyclerView;
 
@@ -63,8 +68,13 @@ public class MainActivity extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.match_list);
         recyclerView.setHasFixedSize(true);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(layoutManager);
+
+        // Setup Volley queues
+        userQueue = Volley.newRequestQueue(getApplicationContext());
+        matchQueue = Volley.newRequestQueue(getApplicationContext());
+        spotifyQueue = Volley.newRequestQueue(getApplicationContext());
 
         try {
             getMatches(USER_ID);
@@ -178,7 +188,6 @@ public class MainActivity extends AppCompatActivity {
     */
     private void getMatches(String userId) throws JSONException {
         String match_url = "http://52.188.167.58:3001/matchmaker/" + userId;
-        RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
 
         matches = new ArrayList<>();
         scores = new ArrayList<>();
@@ -210,7 +219,7 @@ public class MainActivity extends AppCompatActivity {
         }, error -> {
             Log.d("matches", "failure");
         });
-        queue.add(jsonArrayRequest);
+        matchQueue.add(jsonArrayRequest);
     }
 
     /*
@@ -221,7 +230,6 @@ public class MainActivity extends AppCompatActivity {
     private void getUser(String userId, double score) {
         User user = new User();
         String get_url = "http://52.188.167.58:3000/userstore/" + userId;
-        RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, get_url, null, response -> {
             JSONObject user_info = response;
             try {
@@ -256,7 +264,7 @@ public class MainActivity extends AppCompatActivity {
         }, error -> {
             // TODO: error handling here
         });
-        queue.add(jsonObjectRequest);
+        userQueue.add(jsonObjectRequest);
     }
 
     /*
@@ -265,7 +273,6 @@ public class MainActivity extends AppCompatActivity {
     */
     private void getSong(User user, Double score, String song_id, Boolean lastSong) {
         String url = "https://api.spotify.com/v1/tracks/" + song_id;
-        RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
         Song song = new Song();
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, response -> {
             song.setId(song_id);
@@ -281,11 +288,12 @@ public class MainActivity extends AppCompatActivity {
                     artist_info = artists.getJSONObject(i);
                     artist = artist + ", " + artist_info.getString("name");
                 }
+                song.setArtist(artist);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+            user.addSong(song);
             if (lastSong) {
-                user.addSong(song);
                 dispMatch(user, score);
             }
         }, error -> {
@@ -301,7 +309,7 @@ public class MainActivity extends AppCompatActivity {
                 return headers;
             }
         };
-        queue.add(jsonObjectRequest);
+        spotifyQueue.add(jsonObjectRequest);
     }
 
     /*

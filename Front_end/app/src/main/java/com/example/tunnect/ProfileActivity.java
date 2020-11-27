@@ -156,7 +156,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         JSONObject user = new JSONObject();
         JsonObjectRequest jsonObjectRequest;
-        if(inUserStore) { // Add the user to the server
+        if(!inUserStore) { // Add the user to the server
             try {
                 user.put("_id", USER_ID);
                 user.put("username", selectedUsername);
