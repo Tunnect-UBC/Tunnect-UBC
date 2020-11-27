@@ -8,15 +8,24 @@ public class User {
     private String username;
     private List<Song> songs;
     private List<String> matches;
+    private List<String> dislikes;
+    private List<String> likes;
 
-    public User(String userId, String username, List<Song> songs, List<String> matches) {
+    public User(String userId, String username, List<Song> songs, List<String> matches, List<String> dislikes, List<String> likes) {
         this.userId = userId;
         this.username = username;
         this.songs = songs;
         this.matches = matches;
+        this.likes = likes;
+        this.dislikes = dislikes;
     }
 
-    public User() {}
+    public User() {
+        this.songs = new ArrayList<>();
+        this.matches = new ArrayList<>();
+        this.likes = new ArrayList<>();
+        this.dislikes = new ArrayList<>();
+    }
 
     public void updateUserId(String userId) {
         this.userId = userId;
@@ -25,8 +34,6 @@ public class User {
     public void updateUsername(String username) {
         this.username = username;
     }
-
-    public void updateSongs(List<Song> songs) { this.songs = songs; }
 
     public String getUserId() {
         return userId;
@@ -40,10 +47,23 @@ public class User {
 
     public List<String> getMatches() {return matches; }
 
+    public List<String> getLikes() {return likes;}
+
+    public List<String> getDislikes() {return dislikes;}
+
+    public void addLike(String userId) {
+        likes.add(userId);
+    }
+
+    public void addDislike(String userId) {
+        dislikes.add(userId);
+    }
+
+    public void addMatch(String userId) {
+        matches.add(userId);
+    }
+
     public void addSong(Song song) {
-        if (songs == null) {
-            songs = new ArrayList<>();
-        }
         songs.add(song);
     }
 }

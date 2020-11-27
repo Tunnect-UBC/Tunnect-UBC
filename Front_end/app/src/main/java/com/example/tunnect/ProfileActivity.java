@@ -23,6 +23,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -118,12 +119,12 @@ public class ProfileActivity extends AppCompatActivity {
                 try {
                     profileTitle.setText((String) response.get("username"));
                     username.setText((String) response.get("username"));
-                    faveArtist.setText((String) response.get("top_artist"));
-                    DrawableCompat.setTint(wrappedIconImage, (int) response.get("icon_colour"));
-                    iconImage.setImageDrawable(wrappedIconImage);
-                    cp.setColor((int) response.get("icon_colour"));
-                    songs.setText(Objects.requireNonNull(response.optJSONArray("songs")).length());
-                    matches.setText(0); // TODO: CHANGE THIS TO READ NUMBER OF MATCHES ONCE IT IS ADDED TO THE BACKEND
+                    JSONArray jsonSongs = response.optJSONArray("songs");
+                    int numSongs = jsonSongs.length();
+                    songs.setText(Integer.toString(numSongs));
+                    JSONArray jsonMatches = response.optJSONArray("matches");
+                    int numMatches = jsonMatches.length();
+                    matches.setText(Integer.toString(numMatches));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
