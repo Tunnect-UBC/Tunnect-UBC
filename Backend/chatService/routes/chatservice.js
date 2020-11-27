@@ -47,7 +47,6 @@ router.get("/:userid1/:userid2", async (req, res, next) => {
    const id2 = req.params.userid2;
 
    result = await helpers.getMessages(id1, id2);
-   console.log(result);
    if(result[0] == 0){
      res.status(500).json(result[1]);
    }
@@ -68,17 +67,17 @@ router.get("/:userid1/:userid2", async (req, res, next) => {
 **/
 router.post("/:receiverid", async (req, res, next) => {
      const senderid = req.body.senderid;
-     const receiverid = req.param.receiverid;
+     const receiverid = req.params.receiverid;
      const message = req.body.message;
      const timeStamp = req.body.timeStamp;
 
      result = await helpers.postMessage(senderid, receiverid, message, timeStamp);
-     if(result === 0){
+     if(result[0] === 0){
        res.status(500).json({
          message: "db error"
        });
      }
-     else if(result === 1){
+     else if(result[0] === 1){
        res.status(200).json({});
      }
      else{
@@ -92,19 +91,19 @@ router.post("/:receiverid", async (req, res, next) => {
 *add a chat to the chatsdb
 **/
 router.post("/:usrid1/:usrid2", async (req, res, next) => {
-<<<<<<< HEAD
    const usrid1 = req.params.usrid1;
    const usrid2 = req.params.usrid2;
-   const timeStamp = 0;
+   const timeStamp = req.body.timeStamp;
    var usr1name;
    var usr1colour;
+   var chat;
     await axios.get("http://localhost:3000/userstore/" + usrid1, {params: {}})
    .then(async (response) => {
     usr1name = response.data.username;
     usr1colour = response.data.icon_colour;
     await axios.get("http://localhost:3000/userstore/" + usrid2, {params: {}})
     .then(async(response2) => {
-     var chat = new Chat({
+     chat = new Chat({
       usrID1: usrid1,
       usrColour1: usr1colour,
       usrName1: usr1name,
@@ -115,27 +114,18 @@ router.post("/:usrid1/:usrid2", async (req, res, next) => {
       lastMessage: "Congrats: you've tunnected! Start a chat and say hi :)",
       lastTime: timeStamp
      });
-     console.log(chat);
    });
    });
-   result = await helpers.postChat(chat, usr1, usr2);
-=======
-
-   const usrid1 = req.param.usrid1;
-   const usrid2 = req.param.usrid2;
-   const timeStamp = req.body.timeStamp;
-
-   result = await helpers.postChat(usrid1, usrid2, timeStamp);
->>>>>>> 96f20de70b67e032ebc225be35c85d986921ab3d
-   if(result === 0){
+   result = await helpers.postChat(chat, usrid1, usrid2);
+   if(result[0] === 0){
       res.status(500).json({
         message: "db error"
       });
    }
-   else if(result === 1){
+   else if(result[0] === 1){
      res.status(200).json({});
    }
-   else if(result === 2){
+   else if(result[0] === 2){
      res.status(300).json({
        message: "Chat already exists"
      });

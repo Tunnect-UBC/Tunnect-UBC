@@ -88,15 +88,16 @@ const helpers = {
    },
 
 async postMessage(senderid, receiverid, message, timeStamp) {
+  resp = [];
   await Chat.updateOne({usrID1: senderid, usrID2: receiverid},
            {$push: {messages : [{senderid: senderid, message: message, timeStamp: timeStamp}]},
            $set: {lastMessage: message, lastTime: timeStamp}})
            .then(async (result) => {
              await Chat.updateOne({usrID1: receiverid, usrID2: senderid},
            {$push: {messages : [{senderid: senderid, message: message, timeStamp: timeStamp}]},
-           $set: {lastMessage: message, lastTime: timeStamp}}, function(err, result){});})
-          .then((result) => {
-            resp = [1, result];
+           $set: {lastMessage: message, lastTime: timeStamp}});})
+          .then(async (result) => {
+            resp = [1];
           })
           .catch((err) => {
              resp = [0];
@@ -108,28 +109,40 @@ async postMessage(senderid, receiverid, message, timeStamp) {
 async postChat(chat, usr1, usr2){
   resp = [];
   await Chat.find({usrID1: usr1, usrID2: usr2}, async function(err, result1){
-    if(!result1.length){
-      await Chat.find({usrID1: usr2, usrID2: usr1}, async function(err, result2){
-        if(!result2.length){
-          await chat.save()
-                 .then((result) => {
-                   resp = [1, result];
-                 })
-                 .catch((err) => {
-                   resp = [0];
-                 });
-        }
-        else {
-          resp = [2];
-        }
-      });
-    } else {
-      resp = [2];
+      if (err) {
+        resp = [0,err];
+      }
+      else{
+        resp = [1, result1];
+      }
+  })
+  .then(async (res1) => {
+    await Chat.find({usrID1: usr2, usrID2: usr1}, async function(err, result2){
+      if(err) {
+        resp = [0, err];
+      }
+      else {
+        resp[2] = result2;
+      }
+   })
+  })
+  .then(async (res2) => {
+    if(resp[1].length === 0 && resp[2].length === 0){
+      await chat.save()
+            .then((result) => {
+               resp[0] = 1;
+            })
+            .catch((err) => {
+               resp = [0, err];
+            });
     }
- })
- .catch((err) => {
-  resp = [0];
- });
+    else {
+      resp[0] = 2;
+    }
+  })
+  .catch((err) => {
+  resp = [0, err];
+  });
  return resp;
 }
 
