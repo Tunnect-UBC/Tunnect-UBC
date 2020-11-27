@@ -9,7 +9,9 @@ const userSchema = new mongoose.Schema({
     topArtist: String,
     iconColour: Number,
     songs: Array,
-    matches: Array
+    matches: Array,
+    likes: Array,
+    dislikes: Array
 });
 
 module.exports = mongoose.model("User", userSchema);
