@@ -156,10 +156,11 @@ router.patch("/:userId/addMatch/:userId2", async (req, res, next) => {
     const userId = req.params.userId;
     const userId2 = req.params.userId2;
     
-    const result = await helpers.addMatch(userId, userId2);
+    const result = await helpers.addStatus(userId, userId2, "matches");
 
     res.status(result[0]).json(result[1]);
 });
+
 
 /**
  * PATCH localhost:3000/userstore/{id}/removeMatch/{id2} - Removes id2 from id's list of matches
@@ -169,7 +170,61 @@ router.patch("/:userId/removeMatch/:userId2", async (req, res, next) => {
     const userId = req.params.userId;
     const userId2 = req.params.userId2;
 
-    const result = await helpers.removeMatch(userId, userId2);
+    const result = await helpers.removeStatus(userId, userId2, "matches");
+
+    res.status(result[0]).json(result[1]);
+});
+
+/**
+ * PATCH localhost:3000/userstore/{id}/addLike/{id2} - Adds id2 to id's list of likes
+ * 
+ */
+router.patch("/:userId/addLike/:userId2", async (req, res, next) => {
+    const userId = req.params.userId;
+    const userId2 = req.params.userId2;
+    
+    const result = await helpers.addStatus(userId, userId2, "likes");
+
+    res.status(result[0]).json(result[1]);
+});
+
+
+/**
+ * PATCH localhost:3000/userstore/{id}/removeLike/{id2} - Removes id2 from id's list of likes
+ * 
+ */
+router.patch("/:userId/removeLike/:userId2", async (req, res, next) => {
+    const userId = req.params.userId;
+    const userId2 = req.params.userId2;
+
+    const result = await helpers.removeStatus(userId, userId2, "likes");
+
+    res.status(result[0]).json(result[1]);
+});
+
+/**
+ * PATCH localhost:3000/userstore/{id}/addDislike/{id2} - Adds id2 to id's list of dislikes
+ * 
+ */
+router.patch("/:userId/addDislike/:userId2", async (req, res, next) => {
+    const userId = req.params.userId;
+    const userId2 = req.params.userId2;
+    
+    const result = await helpers.addStatus(userId, userId2, "dislikes");
+
+    res.status(result[0]).json(result[1]);
+});
+
+
+/**
+ * PATCH localhost:3000/userstore/{id}/removeDislike/{id2} - Removes id2 from id's list of dislikes
+ * 
+ */
+router.patch("/:userId/removeDislike/:userId2", async (req, res, next) => {
+    const userId = req.params.userId;
+    const userId2 = req.params.userId2;
+
+    const result = await helpers.removeStatus(userId, userId2, "dislikes");
 
     res.status(result[0]).json(result[1]);
 });

@@ -106,24 +106,45 @@ const helpers = {
         return resp;
     },
 
-    async addMatch(userId1, userId2) {
+    async addStatus(userId1, userId2, status) {
         let resp = [];
         
         await User.findById(userId1)
             .exec()
             .then(async (user) => {
                 if (user) {
-                    let userMatches = user.matches;
-                    userMatches.push(userId2);
+                    let userStatus = user[status];
+                    userStatus.push(userId2);
 
-                    await User.updateOne({_id: userId1 }, { $set : {matches: userMatches} })
-                                .exec()
-                                .then((result) => {
-                                    resp = [200, result];
-                                })
-                                .catch((err) => {
-                                    resp = [500, err];
-                                });
+
+                    if (status === "likes") {
+                        await User.updateOne({_id: userId1 }, { $set : {likes: userStatus} })
+                            .exec()
+                            .then((result) => {
+                                resp = [200, result];
+                            })
+                            .catch((err) => {
+                                resp = [500, err];
+                            });
+                    } else if (status === "dislikes") {
+                        await User.updateOne({_id: userId1 }, { $set : {dislikes: userStatus} })
+                            .exec()
+                            .then((result) => {
+                                resp = [200, result];
+                            })
+                            .catch((err) => {
+                                resp = [500, err];
+                            });
+                    } else {
+                        await User.updateOne({_id: userId1 }, { $set : {matches: userStatus} })
+                            .exec()
+                            .then((result) => {
+                                resp = [200, result];
+                            })
+                            .catch((err) => {
+                                resp = [500, err];
+                            });
+                    }
 
                 } else {
                     resp = [404, {message: "No valid entry found for provided ID"}];
@@ -138,21 +159,42 @@ const helpers = {
         return resp;
     },
 
-    async removeMatch(userId1, userId2) {
+    async removeStatus(userId1, userId2, status) {
         let resp = [];
 
         await User.findById(userId1)
             .exec()
             .then(async (user) => {
                 if (user) {
-                    await User.updateOne({_id: userId1 }, { $pull : {matches: userId2} })
-                                .exec()
-                                .then((result) => {
-                                    resp = [200, result];
-                                })
-                                .catch((err) => {
-                                    resp = [500, err];
-                                });
+                    
+                    if (status === "likes") {
+                        await User.updateOne({_id: userId1 }, { $pull : {likes: userId2} })
+                            .exec()
+                            .then((result) => {
+                                resp = [200, result];
+                            })
+                            .catch((err) => {
+                                resp = [500, err];
+                            });
+                    } else if (status === "dislikes") {
+                        await User.updateOne({_id: userId1 }, { $pull : {dislikes: userId2} })
+                            .exec()
+                            .then((result) => {
+                                resp = [200, result];
+                            })
+                            .catch((err) => {
+                                resp = [500, err];
+                            });
+                    } else {
+                        await User.updateOne({_id: userId1 }, { $pull : {matches: userId2} })
+                            .exec()
+                            .then((result) => {
+                                resp = [200, result];
+                            })
+                            .catch((err) => {
+                                resp = [500, err];
+                            });
+                    }
 
                 } else {
                     resp = [404, {message: "No valid entry found for provided ID"}];
