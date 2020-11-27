@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private List<Double> scores;
     private JSONObject currObject;
     private int currMatch;
+    private User displayedUser;
     private SharedPreferences sharedPreferences;
 
     // Volley queues
@@ -85,14 +86,14 @@ public class MainActivity extends AppCompatActivity {
         // Like Button
         Button likeBtn = findViewById(R.id.like_btn);
         likeBtn.setOnClickListener(view -> {
-            like(getApplicationContext());
+            like(displayedUser);
             dispNextMatch();
         });
 
         // Dislike Button
         Button dislikeBtn = findViewById(R.id.dislike_btn);
         dislikeBtn.setOnClickListener(view -> {
-            dislike(getApplicationContext());
+            dislike(displayedUser);
             dispNextMatch();
         });
 
@@ -148,6 +149,7 @@ public class MainActivity extends AppCompatActivity {
     * Sends a users songs to the SongListAdaptor to be displayed
     */
     private void dispMatch(User user, Double score) {
+        displayedUser = user;
         if (user.getUserId().equals("no_user")) {
             user_name.setText("No Matches Found!");
             return;
@@ -234,11 +236,19 @@ public class MainActivity extends AppCompatActivity {
             JSONObject user_info = response;
             try {
                 user.updateUserId((String) user_info.get("_id"));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            try {
                 user.updateUsername((String) user_info.get("username"));
+                JSONArray jsonMatches = user_info.optJSONArray("matches");
+                for (int i = 0; i < jsonMatches.length(); i++) {
+                    user.addMatch(jsonMatches.get(i).toString());
+                }
+                JSONArray jsonLikes = user_info.optJSONArray("likes");
+                for (int i = 0; i < jsonLikes.length(); i++) {
+                    user.addLike(jsonLikes.get(i).toString());
+                }
+                JSONArray jsonDislikes = user_info.optJSONArray("dislikes");
+                for (int i = 0; i < jsonDislikes.length(); i++) {
+                    user.addDislike(jsonDislikes.get(i).toString());
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -315,15 +325,55 @@ public class MainActivity extends AppCompatActivity {
     /*
     * Handles like functionality
     */
-    public void like(Context context) {
-        Toast.makeText(context, "Likes not implemented yet", Toast.LENGTH_SHORT).show();
+    public void like(User likedUser) {
+        if (likedUser.getLikes().contains(USER_ID)) {
+            match(likedUser);
+        }
+        String like_url = "http://52.188.167.58:3000/userstore/" + USER_ID + "/addLike/" + likedUser.getUserId();
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PATCH, like_url, null, response -> {
+        }, error -> {
+            // TODO: error handling here
+        });
+        userQueue.add(jsonObjectRequest);
     }
 
     /*
     * Handles dislike functionality
     */
-    public void dislike(Context context) {
-        Toast.makeText(context, "dislikes not implemented yet", Toast.LENGTH_SHORT).show();
+    public void dislike(User dislikedUser) {
+        String dislike_url = "http://52.188.167.58:3000/userstore/" + USER_ID + "/addDislike/" + dislikedUser.getUserId();
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PATCH, dislike_url, null, response -> {
+        }, error -> {
+            // TODO: error handling here
+        });
+        userQueue.add(jsonObjectRequest);
+    }
+
+    /*
+    * Removes the current user from the matched users likes
+    * Adds both users to the others matches list
+    * TODO: Have this function create a chat between users
+    */
+    public void match(User matchedUser) {
+        Toast.makeText(getApplicationContext(), "You matched with " + matchedUser.getUsername(), Toast.LENGTH_LONG).show();
+        String like_url = "http://52.188.167.58:3000/userstore/" + USER_ID + "/removeLike/" + matchedUser.getUserId();
+        String match_url1 = "http://52.188.167.58:3000/userstore/" + USER_ID + "/addMatch/" + matchedUser.getUserId();
+        String match_url2 = "http://52.188.167.58:3000/userstore/" + matchedUser.getUserId() + "/addMatch/" + USER_ID;
+        JsonObjectRequest removeLikeRequest = new JsonObjectRequest(Request.Method.PATCH, like_url, null, response -> {
+        }, error -> {
+            // TODO: error handling here
+        });
+        JsonObjectRequest matchRequest1 = new JsonObjectRequest(Request.Method.PATCH, match_url1, null, response -> {
+        }, error -> {
+            // TODO: error handling here
+        });
+        JsonObjectRequest matchRequest2 = new JsonObjectRequest(Request.Method.PATCH, match_url2, null, response -> {
+        }, error -> {
+            // TODO: error handling here
+        });
+        userQueue.add(removeLikeRequest);
+        userQueue.add(matchRequest1);
+        userQueue.add(matchRequest2);
     }
 
     @Override
@@ -402,11 +452,11 @@ public class MainActivity extends AppCompatActivity {
 
             switch (direction) {
                 case SWIPE_RIGHT:
-                    like(getApplicationContext());
+                    like(displayedUser);
                     dispNextMatch();
                     break;
                 case SWIPE_LEFT:
-                    dislike(getApplicationContext());
+                    dislike(displayedUser);
                     dispNextMatch();
                     break;
                 default:
