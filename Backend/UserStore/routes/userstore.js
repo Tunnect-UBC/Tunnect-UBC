@@ -29,46 +29,14 @@ const helpers = require("../utils/userstore_helpers");
 router.get("/", async (req, res, next) => {
     const users = await helpers.get_all();
 
-    if (users !== undefined) {
-        res.status(200).json(users);
+    if (users[0] === 1) {
+        res.status(200).json(users[1]);
     } else {
         res.status(500).json({
-            error: "no user"
+            error: users[1]
         });
     }
-    
-    /*User.find()
-        .exec()
-        .then((users) => {
-            //console.log(users);
-            if (users.length >= 0) {
-                res.status(200).json(users);
-            }
-        })
-        .catch((err) => {
-            //console.log(err);
-            res.status(500).json({
-                error: err
-            });
-        });*/
 });
-
-/*async function get_all() {
-    User.find()
-        .exec()
-        .then((users) => {
-            //console.log(users);
-            if (users.length >= 0) {
-                res.status(200).json(users);
-            }
-        })
-        .catch((err) => {
-            //console.log(err);
-            res.status(500).json({
-                error: err
-            });
-        });
-}*/
 
 
 /**
@@ -85,7 +53,6 @@ router.get("/", async (req, res, next) => {
  * User schema described in ../../models/Users
  */
 router.post("/", async (req, res, next) => {
-    //an example of how one might extract info about user from body
     const user = new User({
         _id: req.body._id,
         username: req.body.username,
@@ -96,30 +63,15 @@ router.post("/", async (req, res, next) => {
     });
     
     const result = await helpers.post_user(user);
+    console.log(result);
 
-    if (result === 1) {
-        res.status(200).json(user);
+    if (result[0] === 1) {
+        res.status(200).json(result[1]);
     } else {
         res.status(500).json({
-            error: "error with helper function"
+            error: result[1]
         });
     }
-
-    //stores this in the database
-    /*user.save()
-        .then((result) => {
-            //console.log(result);
-            res.status(200).json({
-                message: "Handling POST requests to /userstore",
-                createdUser: result
-            });
-        })
-        .catch((err) => {
-            //console.log(err);
-            res.status(500).json({
-                error:err
-            });
-        });*/
 });
 
 
@@ -131,22 +83,22 @@ router.post("/", async (req, res, next) => {
  * 
  * User schema described in ../../models/Users
  */
-router.get("/:userId", (req, res, next) => {
-    const id = req.params.userId;
-    User.findById(id)
-        .exec()
-        .then((user) => {
-            //console.log(user);
-            if (user) {
-                res.status(200).json(user);
-            } else {
-                res.status(404).json({message: "No valid entry found for provided ID"});
-            }
-        })
-        .catch((err) => {
-            //console.log(err);
-            res.status(500).json({error: err});
+router.get("/:userId", async (req, res, next) => {
+    const userId = req.params.userId;
+    
+    const result = await helpers.get_user(userId);
+
+    if (result[0] === 1) {
+        res.status(200).json(result[1]);
+    } else if (result[0] == 0) {
+        res.status(500).json({
+            error: result[1]
         });
+    } else {
+        res.status(404).json({
+            error: result[1]
+        });
+    }
 });
 
 
@@ -172,26 +124,27 @@ router.get("/:userId", (req, res, next) => {
  * Response is json error on error with status 500
  * User schema described in ../../models/Users
  */
-router.patch("/:userId", (req, res, next) => {
-    const id = req.params.userId;
+router.patch("/:userId", async (req, res, next) => {
+    const userId = req.params.userId;
     const updateOps = {};
     
     for (const ops of req.body) {
         updateOps[ops.propName] = ops.value;
     }
 
-    User.update({ _id: id }, { $set: updateOps })
-        .exec()
-        .then((result) => {
-            //console.log(res);
-            res.status(200).json(result);
-        })
-        .catch((err) => {
-            //console.log(err);
-            res.status(500).json({
-                error: err
-            });
+    const result = await helpers.patch_user(userId, updateOps);
+
+    if (result[0] === 1) {
+        res.status(200).json(result[1]);
+    } else if (result[0] === 0) {
+        res.status(500).json({
+            error: result[1]
         });
+    } else {
+        res.status(404).json({
+            error: result[1]
+        });
+    }
 });
 
 
@@ -199,76 +152,83 @@ router.patch("/:userId", (req, res, next) => {
  * PATCH localhost:3000/userstore/{id}/addMatch/{id2} - Adds id2 to id's list of matches
  * 
  */
-router.patch("/:userId/addMatch/:userId2", (req, res, next) => {
-    const id = req.params.userId;
-    const id2 = req.params.userId2;
-    User.findById(id)
-        .exec()
-        .then((user) => {
-            //console.log(user);
-            if (user) {
-                user.matches.push(id2);
-            } else {
-                return res.status(404).json({message: "No valid entry found for provided ID"});
-            }
-        })
-        .catch((err) => {
-            return res.status(500).json({error: err});
-        });
+router.patch("/:userId/addMatch/:userId2", async (req, res, next) => {
+    const userId = req.params.userId;
+    const userId2 = req.params.userId2;
+    
+    const result = await helpers.addStatus(userId, userId2, "matches");
 
+    res.status(result[0]).json(result[1]);
 
-    User.update({_id: id }, { $set : {matches: user.matches} })
-        .exec()
-        .then((result) => {
-            //console.log(res);
-            res.status(200).json(result);
-        })
-        .catch((err) => {
-            //console.log(err);
-            res.status(500).json({
-                error: err
-            });
-        });
 });
+
 
 /**
  * PATCH localhost:3000/userstore/{id}/removeMatch/{id2} - Removes id2 from id's list of matches
  * 
  */
-router.patch("/:userId/addMatch/:userId2", (req, res, next) => {
-    const id = req.params.userId;
-    const id2 = req.params.userId2;
-    let userMatches;
 
-    User.findById(id)
-        .exec()
-        .then((user) => {
-            if (user) {
-                const index = user.matches.indexOf(id2);
-                if (index != -1) {
-                    userMatches = user.matches.splice(index, 1);
-                } else {
-                    return res.status(404).json({message: "No valid entry found in matches for userId2"});
-                }
-            } else {
-                return res.status(404).json({message: "No valid entry found for provided userId"});
-            }
-        })
-        .catch((err) => {
-            return res.status(500).json({error: err});
-        });
+router.patch("/:userId/removeMatch/:userId2", async (req, res, next) => {
+    const userId = req.params.userId;
+    const userId2 = req.params.userId2;
+
+    const result = await helpers.removeStatus(userId, userId2, "matches");
+
+    res.status(result[0]).json(result[1]);
+});
+
+/**
+ * PATCH localhost:3000/userstore/{id}/addLike/{id2} - Adds id2 to id's list of likes
+ * 
+ */
+router.patch("/:userId/addLike/:userId2", async (req, res, next) => {
+    const userId = req.params.userId;
+    const userId2 = req.params.userId2;
+    
+    const result = await helpers.addStatus(userId, userId2, "likes");
+
+    res.status(result[0]).json(result[1]);
+});
 
 
-    User.update({_id: id }, { $set : {matches: userMatches} })
-        .exec()
-        .then((result) => {
-            res.status(200).json(result);
-        })
-        .catch((err) => {
-            res.status(500).json({
-                error: err
-            });
-        });
+/**
+ * PATCH localhost:3000/userstore/{id}/removeLike/{id2} - Removes id2 from id's list of likes
+ * 
+ */
+router.patch("/:userId/removeLike/:userId2", async (req, res, next) => {
+    const userId = req.params.userId;
+    const userId2 = req.params.userId2;
+
+    const result = await helpers.removeStatus(userId, userId2, "likes");
+
+    res.status(result[0]).json(result[1]);
+});
+
+/**
+ * PATCH localhost:3000/userstore/{id}/addDislike/{id2} - Adds id2 to id's list of dislikes
+ * 
+ */
+router.patch("/:userId/addDislike/:userId2", async (req, res, next) => {
+    const userId = req.params.userId;
+    const userId2 = req.params.userId2;
+    
+    const result = await helpers.addStatus(userId, userId2, "dislikes");
+
+    res.status(result[0]).json(result[1]);
+});
+
+
+/**
+ * PATCH localhost:3000/userstore/{id}/removeDislike/{id2} - Removes id2 from id's list of dislikes
+ * 
+ */
+router.patch("/:userId/removeDislike/:userId2", async (req, res, next) => {
+    const userId = req.params.userId;
+    const userId2 = req.params.userId2;
+
+    const result = await helpers.removeStatus(userId, userId2, "dislikes");
+
+    res.status(result[0]).json(result[1]);
 });
 
 
@@ -279,19 +239,25 @@ router.patch("/:userId/addMatch/:userId2", (req, res, next) => {
  * 
  * User schema described in ../../models/Users
  */
-router.delete("/:userId", (req, res, next) => {
-    const id = req.params.userId;
-    User.remove({
-        _id: id
-    })
-        .exec()
-        .then((result) => {
-            res.status(200).json(result);
-        })
-        .catch((err) => {
-            //console.log(err);
-            res.statuts(500).json({error: err});
+router.delete("/:userId", async (req, res, next) => {
+    const userId = req.params.userId;
+    
+    const result = await helpers.delete_user(userId);
+
+    console.log(result);
+    
+    if (result[0] === 1) {
+        res.status(200).json(result[1]);
+    } else if (result[0] === 0) {
+        res.status(500).json({
+            error: result[1]
         });
+    } else {
+        res.status(404).json({
+            error: result[1]
+        });
+    }
+    
 });
 
 module.exports = router;

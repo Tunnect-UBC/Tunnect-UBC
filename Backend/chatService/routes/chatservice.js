@@ -92,6 +92,7 @@ router.post("/:receiverid", async (req, res, next) => {
 *add a chat to the chatsdb
 **/
 router.post("/:usrid1/:usrid2", async (req, res, next) => {
+<<<<<<< HEAD
    const usrid1 = req.params.usrid1;
    const usrid2 = req.params.usrid2;
    const timeStamp = 0;
@@ -118,6 +119,14 @@ router.post("/:usrid1/:usrid2", async (req, res, next) => {
    });
    });
    result = await helpers.postChat(chat, usr1, usr2);
+=======
+
+   const usrid1 = req.param.usrid1;
+   const usrid2 = req.param.usrid2;
+   const timeStamp = req.body.timeStamp;
+
+   result = await helpers.postChat(usrid1, usrid2, timeStamp);
+>>>>>>> 96f20de70b67e032ebc225be35c85d986921ab3d
    if(result === 0){
       res.status(500).json({
         message: "db error"
@@ -145,6 +154,7 @@ router.post("/:usrid1/:usrid2", async (req, res, next) => {
 router.delete("/:userId1/:userId2", async (req, res, next) => {
     const id1 = req.params.userId1;
     const id2 = req.params.userId2;
+
     result = await helpers.deleteChat(id1, id2);
     if(result == 0){
       res.status(500).json({
@@ -166,4 +176,33 @@ router.delete("/:userId1/:userId2", async (req, res, next) => {
     }
 });
 
+ async function deleteChat(user1, user2) {
+  var resp = -1;
+     await Chat.deleteMany({
+       usrID1: user1,
+       usrID2: user2
+     }).then(async (result1) => {
+       if(result1.deletedCount === 0){
+           await Chat.deleteMany({
+           usrID1: user2,
+           usrID2: user1
+         }).then((result2) => {
+           if(result2.deletedCount === 1){
+             resp = 1;
+           }
+           else {
+             resp = 0;
+           }
+         });
+       }
+       else {
+          resp = 0;
+       }
+     })
+     .catch((err) => {
+       resp = 2;
+     });
+     return resp;
+  }
+module.exports = deleteChat;
 module.exports = router;

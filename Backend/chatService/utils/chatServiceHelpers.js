@@ -33,59 +33,58 @@ const helpers = {
    },
 
    async getChats(id) {
+     var resp = [];
        if (id == "all"){
          await Chat.find({}, async function(err, result){
            if(err){
-             return 0;
+             resp = [0, err];
            }
            else {
-             return 1;
+             resp = [1, result];
            }
          });
        }
        else {
-         await Chat.find({usrID1: id}, "usrID2 usrColour2 usrName2 lastMessage lastTime", async function(err, result1){
+          await Chat.find({usrID1: id}, "usrID2 usrColour2 usrName2 lastMessage lastTime", async function(err, result1){
            if(err){
-             return 0;
+             resp = [0, err];
            }
-           else if(!result1.length){
-             await Chat.find({usrID2: id}, "usrID1 usrColour1 usrName1 lastMessage lastTime", async function (err, result2) {
+           else {
+             resp = [1, result1];
+          }}).then(async(result) => {
+              await Chat.find({usrID2: id}, "usrID1 usrColour1 usrName1 lastMessage lastTime", async function (err, result2) {
                if(err){
-                 return 0;
+                resp =[0, err];
                }
                else {
-                 return 1;
+                 resp[2] = result2;
                }
              });
-           }
-           else{
-             return 1;
-           }
-         });
+           });
        }
+       return resp;
    },
 
    async getMessages(userid1, userid2){
+     var resp = [];
      await Chat.find({usrID1: userid1, usrID2: userid2}, "messages", async function (err, result1) {
-       if(!result1.length) {
-         await Chat.find({usrID1: userid2, usrID2: userid1}, "messages", function (err, result2) {
-           if(err){
-             return 0;
-           }
-           else {
-             return 1;
-           }
-         });
-       }
-       else if (err){
-          return 0;
+       if (err){
+         resp = [0, err];
        }
        else {
-         return 1;
+         resp = [1, result1];
        }
-      }
-     );
-
+     }).then(async(res) => {
+        await Chat.find({usrID1: userid2, usrID2: userid1}, "messages", async function (err, result2) {
+          if(err){
+           resp = [0, err];
+          }
+          else {
+           resp[2] = result2;
+          }
+        });
+      });
+     return resp;
    },
 
 async postMessage(senderid, receiverid, message, timeStamp) {
@@ -97,60 +96,41 @@ async postMessage(senderid, receiverid, message, timeStamp) {
            {$push: {messages : [{senderid: senderid, message: message, timeStamp: timeStamp}]},
            $set: {lastMessage: message, lastTime: timeStamp}}, function(err, result){});})
           .then((result) => {
-            return 1;
+            resp = [1, result];
           })
           .catch((err) => {
-             return 0;
+             resp = [0];
            });
+           return resp;
  },
 
 
-async postChat(usrid1, usrid2, timeStamp){
-  await axios.get("http://localhost:3000/userstore/" + usrid1, {params: {}})
-  .then(async (response) => {
-  const usr1 = usrid1;
-  const usr2 = usrid2;
-  var usr1name = response.data.username;
-  var usr1colour = response.data.icon_colour;
-
- await axios.get("http://localhost:3000/userstore/" + usrid2, {params: {}})
- .then(async(response2) => {
-  var chat = new Chat({
-    usrID1: usr1,
-    usrColour1: usr1colour,
-    usrName1: usr1name,
-    usrID2: usr2,
-    usrColour2: response2.data.icon_colour,
-    usrName2: response2.data.username,
-    messages: [{senderid: "tunnect", message: "Congrats: you've tunnected! Start a chat and say hi :)", timeStamp: timeStamp}],
-    lastMessage: "Congrats: you've tunnected! Start a chat and say hi :)",
-    lastTime: timeStamp
-  });
+async postChat(chat, usr1, usr2){
+  resp = [];
   await Chat.find({usrID1: usr1, usrID2: usr2}, async function(err, result1){
     if(!result1.length){
       await Chat.find({usrID1: usr2, usrID2: usr1}, async function(err, result2){
         if(!result2.length){
-          chat.save()
+          await chat.save()
                  .then((result) => {
-                   return 1;
+                   resp = [1, result];
                  })
                  .catch((err) => {
-                   return 0;
+                   resp = [0];
                  });
         }
         else {
-          return 2;
+          resp = [2];
         }
       });
     } else {
-      return 2;
+      resp = [2];
     }
-  });
  })
  .catch((err) => {
-  return 0;
+  resp = [0];
  });
-});
+ return resp;
 }
 
 }
