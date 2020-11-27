@@ -5,7 +5,9 @@ import androidx.core.view.GestureDetectorCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -14,6 +16,7 @@ import android.view.MotionEvent;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonArrayRequest;
@@ -25,6 +28,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,9 +43,12 @@ public class MainActivity extends AppCompatActivity {
     private List<Double> scores;
     private JSONObject currObject;
     private int currMatch;
+    private SharedPreferences sharedPreferences;
 
-    // TODO: Delete this when we can get songs
-    private User fakeUser;
+    // Volley queues
+    private RequestQueue userQueue;
+    private RequestQueue matchQueue;
+    private RequestQueue spotifyQueue;
 
     // RecyclerView definitions
     private RecyclerView recyclerView;
@@ -52,16 +60,21 @@ public class MainActivity extends AppCompatActivity {
         USER_ID = Objects.requireNonNull(getIntent().getExtras()).getString("USER_ID");
 
         setContentView(R.layout.activity_main);
+        sharedPreferences = this.getSharedPreferences("SPOTIFY", 0);
 
         mDetector = new GestureDetectorCompat(this, new MyGestureListener());
         user_name = findViewById(R.id.user_name);
         score_view = findViewById(R.id.user_info_button);
-        UserService currUser = new UserService();
 
         recyclerView = findViewById(R.id.match_list);
         recyclerView.setHasFixedSize(true);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(layoutManager);
+
+        // Setup Volley queues
+        userQueue = Volley.newRequestQueue(getApplicationContext());
+        matchQueue = Volley.newRequestQueue(getApplicationContext());
+        spotifyQueue = Volley.newRequestQueue(getApplicationContext());
 
         try {
             getMatches(USER_ID);
@@ -69,18 +82,21 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+        // Like Button
         Button likeBtn = findViewById(R.id.like_btn);
         likeBtn.setOnClickListener(view -> {
-            currUser.like(getApplicationContext());
+            like(getApplicationContext());
             dispNextMatch();
         });
 
+        // Dislike Button
         Button dislikeBtn = findViewById(R.id.dislike_btn);
         dislikeBtn.setOnClickListener(view -> {
-            currUser.dislike(getApplicationContext());
+            dislike(getApplicationContext());
             dispNextMatch();
         });
 
+        // Messages Button
         Button messagesBtn = findViewById(R.id.messages_btn);
         messagesBtn.setOnClickListener(view -> {
             Intent messageIntent = new Intent(MainActivity.this, MessageListActivity.class);
@@ -88,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(messageIntent);
         });
 
+        // Profile Button
         Button profileBtn = findViewById(R.id.profile_btn);
         profileBtn.setOnClickListener(view -> {
             Intent profileIntent = new Intent(MainActivity.this, ProfileActivity.class);
@@ -96,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(profileIntent);
         });
 
+        // Settings Button
         Button settingsBtn = findViewById(R.id.settings_btn);
         settingsBtn.setOnClickListener(view -> {
             Intent settingIntent = new Intent(MainActivity.this, SettingsActivity.class);
@@ -103,6 +121,8 @@ public class MainActivity extends AppCompatActivity {
             startActivity(settingIntent);
         });
 
+        // Test Button
+        // TODO: Get rid of this
         Button testBtn = findViewById(R.id.test);
         testBtn.setOnClickListener(view -> {
             String testurl = "http://52.188.167.58:5000/chatservice/"+USER_ID+"/la12nc34e5";
@@ -123,34 +143,51 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /*
+    * Displays a potential match
+    * Sends a users songs to the SongListAdaptor to be displayed
+    */
     private void dispMatch(User user, Double score) {
+        if (user.getUserId().equals("no_user")) {
+            user_name.setText("No Matches Found!");
+            return;
+        }
+
         user_name.setText(user.getUsername());
         score_view.setText(score.toString());
 
-        // TODO: Change this to display artists and stuff
-        List<Song> fakeSongs = new ArrayList<>();
-        List<String> matchesSongs = user.getSongs();
+        List<Song> matchesSongs = user.getSongs();
         if (matchesSongs == null) {
-            fakeSongs.add(new Song("", "This user has no songs", "", ""));
+            matchesSongs = new ArrayList<>();
+            matchesSongs.add(new Song("", "This user has no songs", "", ""));
         }
-        else {
-            for (int i = 0; i < matchesSongs.size(); i++) {
-                fakeSongs.add(new Song("fakeId", matchesSongs.get(i), "Artist", "Album"));
-            }
-        }
-        RecyclerView.Adapter mAdapter = new SongListAdaptor(this, fakeSongs);
+        RecyclerView.Adapter mAdapter = new SongListAdaptor(this, matchesSongs);
         recyclerView.setAdapter(mAdapter);
     }
 
+    /*
+    * Increments the currMatch counter and begins the process of displaying the next match
+    * by calling getUser
+    */
     private void dispNextMatch() {
         currMatch++;
-        getUser(matches.get(currMatch), scores.get(currMatch));
-        // TODO: Deal with currMatch getting to end of the list
+
+        if (matches.size() == currMatch) {
+            RecyclerView.Adapter mAdapter = new SongListAdaptor(this, new ArrayList<>());
+            recyclerView.setAdapter(mAdapter);
+            user_name.setText("No Matches Left!");
+        } else {
+            getUser(matches.get(currMatch), scores.get(currMatch));
+        }
     }
 
+    /*
+    * Gets a users potential matches and places their userIds in the matches list.
+    * Calls getUser for the first match
+    * Calls dispMatch if the user has no matches
+    */
     private void getMatches(String userId) throws JSONException {
         String match_url = "http://52.188.167.58:3001/matchmaker/" + userId;
-        RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
 
         matches = new ArrayList<>();
         scores = new ArrayList<>();
@@ -171,17 +208,28 @@ public class MainActivity extends AppCompatActivity {
                 scores.add(i, 0.0);
             }
             currMatch = 0;
-            getUser(matches.get(currMatch), scores.get(currMatch));
+            if(matches.size() != 0) {
+                getUser(matches.get(currMatch), scores.get(currMatch));
+            } else {
+                User no_user = new User();
+                no_user.updateUserId("no_user");
+                dispMatch(no_user, 0.0);
+            }
+
         }, error -> {
             Log.d("matches", "failure");
         });
-        queue.add(jsonArrayRequest);
+        matchQueue.add(jsonArrayRequest);
     }
 
+    /*
+    * Fetches a users info and places the user info in user
+    * Calls getSong on each of the users songs
+    * If the user has no songs then it calls dispMatch
+    */
     private void getUser(String userId, double score) {
         User user = new User();
         String get_url = "http://52.188.167.58:3000/userstore/" + userId;
-        RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, get_url, null, response -> {
             JSONObject user_info = response;
             try {
@@ -203,13 +251,79 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
             }
-            currMatch = 0;
-            user.updateSongs(user_songs);
-            dispMatch(user, score);
+            if (user_songs.size() > 0) {
+                for (int i = 0; i < user_songs.size() - 1; i++) {
+                    getSong(user, score, user_songs.get(i), false);
+                }
+                getSong(user, score, user_songs.get(user_songs.size() - 1), true);
+            }
+            else {
+                user.addSong(new Song("", "This user has no songs", "", ""));
+                dispMatch(user, score);
+            }
         }, error -> {
             // TODO: error handling here
         });
-        queue.add(jsonObjectRequest);
+        userQueue.add(jsonObjectRequest);
+    }
+
+    /*
+    * Fetches a song from spotify, parses its data, and places the songs info in the user given
+    * Calls dispMatch on the user if the song is the last of the user's songs
+    */
+    private void getSong(User user, Double score, String song_id, Boolean lastSong) {
+        String url = "https://api.spotify.com/v1/tracks/" + song_id;
+        Song song = new Song();
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, response -> {
+            song.setId(song_id);
+            try {
+                song.setName(response.getString("name"));
+                JSONObject album_info = response.getJSONObject("album");
+                song.setAlbum(album_info.getString("name"));
+                JSONArray artists = album_info.optJSONArray("artists");
+                JSONObject artist_info = artists.getJSONObject(0);
+                String artist = artist_info.getString("name");
+                // Used if a song has multiple artists
+                for (int i = 1; i < artists.length(); i++) {
+                    artist_info = artists.getJSONObject(i);
+                    artist = artist + ", " + artist_info.getString("name");
+                }
+                song.setArtist(artist);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            user.addSong(song);
+            if (lastSong) {
+                dispMatch(user, score);
+            }
+        }, error -> {
+            Toast.makeText(getApplicationContext(), "Error getting songs", Toast.LENGTH_SHORT).show();
+            dispMatch(user, score);
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                String token = sharedPreferences.getString("token", "");
+                String auth = "Bearer " + token;
+                headers.put("Authorization", auth);
+                return headers;
+            }
+        };
+        spotifyQueue.add(jsonObjectRequest);
+    }
+
+    /*
+    * Handles like functionality
+    */
+    public void like(Context context) {
+        Toast.makeText(context, "Likes not implemented yet", Toast.LENGTH_SHORT).show();
+    }
+
+    /*
+    * Handles dislike functionality
+    */
+    public void dislike(Context context) {
+        Toast.makeText(context, "dislikes not implemented yet", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -218,6 +332,9 @@ public class MainActivity extends AppCompatActivity {
         return super.onTouchEvent(event);
     }
 
+    /*
+    * Class that handles swiping
+    */
     class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
         private static final String DEBUG_TAG = "Gestures";
         public final static int SWIPE_UP = 1;
@@ -237,6 +354,9 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
 
+        /*
+        * Performs calculations to determine if a fling motion can be considered a swipe
+        */
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
             final float xDistance = Math.abs(e1.getX() - e2.getX());
@@ -273,17 +393,20 @@ public class MainActivity extends AppCompatActivity {
             return result;
         }
 
+        /*
+        * Handles swipes
+        */
         private void onSwipe(int direction) {
             //Detect the swipe gestures and display toast
             UserService currUser = new UserService();
 
             switch (direction) {
                 case SWIPE_RIGHT:
-                    currUser.like(getApplicationContext());
+                    like(getApplicationContext());
                     dispNextMatch();
                     break;
                 case SWIPE_LEFT:
-                    currUser.dislike(getApplicationContext());
+                    dislike(getApplicationContext());
                     dispNextMatch();
                     break;
                 default:

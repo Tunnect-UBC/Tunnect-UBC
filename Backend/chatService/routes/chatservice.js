@@ -9,6 +9,7 @@ const router = new express.Router();
 const mongoose = require("mongoose");
 const axios = require("axios");
 
+//const deleteChat = require("../utils/chatServiceHelpers");
 
 const Chat = require("../../models/chat");
 
@@ -18,7 +19,7 @@ const Chat = require("../../models/chat");
 /**
 *GET request for a list of available chats for a user
 **/
-router.get("/:userId", (req, res, next) => {
+router.get("/:userId", async (req, res, next) => {
   const id = req.params.userId;
   if (id === "all"){
     Chat.find({}, function(err, result){
@@ -63,7 +64,7 @@ router.get("/:userId", (req, res, next) => {
 *  [ {sender_name: String, message: String} ]
 **/
 
-router.get("/:userid1/:userid2", (req, res, next) => {
+router.get("/:userid1/:userid2", async (req, res, next) => {
    const id1 = req.params.userid1;
    const id2 = req.params.userid2;
 
@@ -96,7 +97,7 @@ router.get("/:userid1/:userid2", (req, res, next) => {
 /**
 *put a message in the messagedb and update the corressponding chat's message list
 **/
-router.post("/:receiverid", (req, res, next) => {
+router.post("/:receiverid", async (req, res, next) => {
   Chat.updateOne({usrID1: req.body.senderid, usrID2: req.params.receiverid},
            {$push: {messages : [{senderid: req.body.senderid, message: req.body.message, timeStamp: req.body.timeStamp}]},
            $set: {lastMessage: req.body.message, lastTime: req.body.timeStamp}})
@@ -117,7 +118,7 @@ router.post("/:receiverid", (req, res, next) => {
 /**
 *add a chat to the chatsdb
 **/
-router.post("/:usrid1/:usrid2", (req, res, next) => {
+router.post("/:usrid1/:usrid2", async (req, res, next) => {
   axios.get("http://localhost:3000/userstore/" + req.params.usrid1, {params: {}})
   .then((response) => {
   const usr1 = req.params.usrid1;
@@ -182,28 +183,49 @@ router.post("/:usrid1/:usrid2", (req, res, next) => {
 /**
 * Deletes a chat(but not all messages tied to the chat)
 **/
-router.delete("/:userId1/:userId2", (req, res, next) => {
+router.delete("/:userId1/:userId2", async (req, res, next) => {
     const id1 = req.params.userId1;
     const id2 = req.params.userId2;
-    Chat.remove({
-        usrID1: id1,
-        usrID2: id2
-    })
-        .then((result) => {
-          if (!result.deletedCount){
-            Chat.remove({
-              usrID1: id2,
-              usrID2: id1
-            }).then((result) => {
-              res.status(200).json(result);
-            });
-          }
-            res.status(200).json(result);
-        })
-        .catch((err) => {
-            //console.log(err);
-            res.statuts(500).json({error: err});
-        });
+
+    const result = await deleteChat(id1, id2);
+    if(result === 1){
+      res.status(200).json({message: "Chat deleted"});
+    }
+    else if(result === 0){
+      res.status(404).json({message: "Chat not found"});
+    }
+    else{
+      res.status(500).json({error: "Request Error"});
+    }
 });
 
+ async function deleteChat(user1, user2) {
+  var resp = -1;
+     await Chat.deleteMany({
+       usrID1: user1,
+       usrID2: user2
+     }).then(async (result1) => {
+       if(result1.deletedCount === 0){
+           await Chat.deleteMany({
+           usrID1: user2,
+           usrID2: user1
+         }).then((result2) => {
+           if(result2.deletedCount === 1){
+             resp = 1;
+           }
+           else {
+             resp = 0;
+           }
+         });
+       }
+       else {
+          resp = 0;
+       }
+     })
+     .catch((err) => {
+       resp = 2;
+     });
+     return resp;
+  }
+module.exports = deleteChat;
 module.exports = router;

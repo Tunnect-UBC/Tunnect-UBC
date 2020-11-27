@@ -122,6 +122,8 @@ class Song {
         this.album = album;
     }
 
+    public Song() {}
+
     public String getId() {
         return id;
     }

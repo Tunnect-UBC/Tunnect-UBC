@@ -58,8 +58,8 @@ public class SearchActivity extends AppCompatActivity {
                 songService.search(() -> {
                     search_songs = songService.getSearchSongs();
                     if (search_songs == null) {
-                        //TODO: Handle no search results
-                        Log.d("search", "Song list empty");
+                        search_songs.add(new Song("", "No Search Results", "", ""));
+                        dispSongs();
                     }
                     else {
                         dispSongs();
