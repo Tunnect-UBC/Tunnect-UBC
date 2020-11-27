@@ -33,6 +33,7 @@ imports.app.use((req, res, next) => {
 imports.app.use("/userstore", userStoreRoutes);
 
 imports.app.use((req, res, next) => {
+    console.log("we found no endpoint");
     const error = new Error("Not found");
     error.status = 404;
     next(error);
