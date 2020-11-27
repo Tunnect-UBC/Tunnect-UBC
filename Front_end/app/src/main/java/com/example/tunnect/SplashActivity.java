@@ -136,3 +136,8 @@ public class SplashActivity extends AppCompatActivity {
         queue.add(jsonObjectRequest);
     }
 }
+
+interface VolleyCallBack {
+
+    void onSuccess();
+}
