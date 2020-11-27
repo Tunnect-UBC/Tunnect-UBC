@@ -202,7 +202,6 @@ public class MessagesActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "Failed to retrieve data from server!", Toast.LENGTH_LONG).show();
                     }
                 }, error -> Toast.makeText(getApplicationContext(), "Connection to server failed", Toast.LENGTH_LONG).show());
-
         queue.add(request);
 
         if (receiverID.equals("tunnect")) {

@@ -1,6 +1,9 @@
 package com.example.tunnect;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
@@ -27,6 +31,7 @@ public class SearchListAdaptor extends RecyclerView.Adapter<SearchListAdaptor.Vi
     private Context context;
     private List<Song> songs;
     private String user_id;
+    private LocalBroadcastManager broadcaster;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView songTitle;
@@ -45,6 +50,7 @@ public class SearchListAdaptor extends RecyclerView.Adapter<SearchListAdaptor.Vi
         this.context = context;
         this.songs = songs;
         this.user_id = USER_ID;
+        broadcaster = LocalBroadcastManager.getInstance(context);
     }
 
     @Override
@@ -78,6 +84,16 @@ public class SearchListAdaptor extends RecyclerView.Adapter<SearchListAdaptor.Vi
     * TODO: Currently the json request always returns an erro but it seems to work anyway?
     */
     private void addSong(String song, ViewHolder holder, JSONArray user_songs) throws JSONException {
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(() -> {
+            Toast.makeText(context, "Song Added", Toast.LENGTH_LONG).show();
+            Intent intent = new Intent("newSong");
+            intent.putExtra("ADDED_SONG", song);
+            if (broadcaster != null) {
+                broadcaster.sendBroadcast(intent);
+            }
+        });
+
         String url = "http://52.188.167.58:3000/userstore/" + user_id;
         RequestQueue queue = Volley.newRequestQueue(context);
         JSONArray addArray = new JSONArray();

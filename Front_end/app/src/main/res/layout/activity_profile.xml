@@ -7,7 +7,7 @@
     <RelativeLayout
         android:id="@+id/gradient_box"
         android:layout_width="match_parent"
-        android:layout_height="181dp"
+        android:layout_height="176dp"
         android:background="@drawable/purple_grad">
 
         <RelativeLayout
@@ -15,7 +15,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="15dp"
             android:background="@drawable/circle_border"
             android:gravity="center">
 
@@ -139,7 +139,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="26dp"
+            android:layout_marginTop="10dp"
             android:layout_marginLeft="30dp"
             android:layout_marginRight="30dp"
             android:orientation="vertical">
@@ -186,23 +186,20 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/fave_art"
+                    android:text="@string/colour"
                     android:textSize="17sp"
                     android:textColor="@color/colorPrimary"/>
 
-                <EditText
-                    android:id="@+id/enter_favourite_artist"
-                    android:hint="@string/enter_fave_art"
-                    android:background="@android:color/transparent"
+                <Button
+                    android:id="@+id/enter_colour"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:singleLine="true"
-                    android:inputType="text"
-                    android:maxLines="1"
-                    android:textSize="19sp"
-                    android:autofillHints="Artist"
-                    android:textColor="@color/white"
-                    android:textColorHint="@color/hint_white"/>
+                    android:autofillHints="Colour"
+                    android:background="@android:color/transparent"
+                    android:fontFamily="serif"
+                    android:text="@string/choose_colour"
+                    android:textColor="@color/hint_white"
+                    android:textSize="19sp" />
 
                 <View
                     android:layout_width="match_parent"
@@ -220,20 +217,14 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/colour"
+                    android:text="@string/user_songs"
                     android:textSize="17sp"
                     android:textColor="@color/colorPrimary"/>
 
-                <Button
-                    android:id="@+id/enter_colour"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:autofillHints="Colour"
-                    android:background="@android:color/transparent"
-                    android:fontFamily="serif"
-                    android:text="@string/choose_colour"
-                    android:textColor="@color/hint_white"
-                    android:textSize="19sp" />
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/selectedSongs"
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp" />
 
                 <View
                     android:layout_width="match_parent"
