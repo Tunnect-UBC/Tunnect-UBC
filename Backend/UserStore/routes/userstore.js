@@ -165,40 +165,46 @@ router.patch("/:userId", (req, res, next) => {
 router.patch("/:userId/addMatch/:userId2", (req, res, next) => {
     const id = req.params.userId;
     const id2 = req.params.userId2;
-    User.findById(id)
+    let userMatches = [];
+    let foundUser = 0;
+	User.findById(id)
         .exec()
         .then((user) => {
             //console.log(user);
             if (user) {
                 user.matches.push(id2);
+		userMatches = user.matches;
+		foundUser = 1;
             } else {
-                return res.status(404).json({message: "No valid entry found for provided ID"});
+                res.status(404).json({message: "No valid entry found for provided ID"});
             }
         })
         .catch((err) => {
-            return res.status(500).json({error: err});
+            res.status(500).json({error: err});
         });
 
 
-    User.update({_id: id }, { $set : {matches: user.matches} })
-        .exec()
-        .then((result) => {
-            //console.log(res);
-            res.status(200).json(result);
-        })
-        .catch((err) => {
-            //console.log(err);
-            res.status(500).json({
-                error: err
+    if (foundUser) {
+    	User.update({_id: id }, { $set : {matches: userMatches} })
+            .exec()
+            .then((result) => {
+                //console.log(res);
+                res.status(200).json(result);
+            })
+            .catch((err) => {
+                //console.log(err);
+                res.status(500).json({
+                    error: err
+                });
             });
-        });
+    }
 });
 
 /**
  * PATCH localhost:3000/userstore/{id}/removeMatch/{id2} - Removes id2 from id's list of matches
  * 
  */
-router.patch("/:userId/addMatch/:userId2", (req, res, next) => {
+router.patch("/:userId/removeMatch/:userId2", (req, res, next) => {
     const id = req.params.userId;
     const id2 = req.params.userId2;
     let userMatches;
