@@ -11,7 +11,7 @@ const helpers = require("../utils/matchmakerHelpers");
 
 //const userstoreMock = require("../../Mocks/userstore.mock");
 
-const userStoreUrl = "http:/localhost:3000/userstore";
+const userStoreUrl = "http:/localhost:3000/userstore/";
 
 
 /**
@@ -25,6 +25,8 @@ const userStoreUrl = "http:/localhost:3000/userstore";
 router.get("/:hostId", (req, res, next) => {
     //hostId is the id of the user who is looking for a match
     const hostId = req.params.hostId;
+
+    console.log(userStoreUrl + hostId + "/matches");
     
     /*const jsonRankings = helpers.rank(userstoreMock(), hostId);
     console.log(jsonRankings);
@@ -33,7 +35,7 @@ router.get("/:hostId", (req, res, next) => {
     //by a call to mock
 
     //this is to get the list of all users, such that we can rank them
-    http.get(userStoreUrl, (resp) => {
+    http.get(userStoreUrl + hostId + "/matches", (resp) => {
         let data = "";
 
         //A chunk of data has been received
@@ -44,14 +46,9 @@ router.get("/:hostId", (req, res, next) => {
         //The whole response has been received. Print out the result.
         resp.on("end", () => {
         //need to call helper function to calculate rank users, based on score
-            if (JSON.parse(data).find((user) => user._id === hostId)) {
-                const jsonRankings = helpers.rank(JSON.parse(data), hostId);
-                res.status(200).json(jsonRankings);
-            } else {
-                res.status(404).json({
-                    error: "HostId not found"
-                });
-            }
+            //if (JSON.parse(data).find((user) => user._id === hostId)) {
+            const jsonRankings = helpers.rank(JSON.parse(data), hostId);
+            res.status(200).json(jsonRankings);
         });
     })
         .on("error", (err) => {
