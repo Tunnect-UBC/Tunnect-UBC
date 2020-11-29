@@ -64,7 +64,7 @@ public class ProfileActivity extends AppCompatActivity {
     private boolean inUserStore;
     private RecyclerView recyclerView;
     private ArrayList<Song> selSongs;
-    private List<String> user_songs;
+    private ArrayList<String> user_songs;
     private SharedPreferences sharedPreferences;
 
     @Override
@@ -89,6 +89,7 @@ public class ProfileActivity extends AppCompatActivity {
         USER_ID = Objects.requireNonNull(getIntent().getExtras()).getString("USER_ID");
         selectedSongs = 0;
         selSongs = new ArrayList<>();
+        user_songs = new ArrayList<>();
         RETRIEVE_URL = ADD_URL + USER_ID;
         sharedPreferences = this.getSharedPreferences("SPOTIFY", 0);
 
@@ -125,19 +126,25 @@ public class ProfileActivity extends AppCompatActivity {
         // save changes into profile
         Button saveBtn = findViewById(R.id.save_profile);
         saveBtn.setOnClickListener(view -> {
-            saveProfileEntries();
+            try {
+                saveProfileEntries();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         });
 
         Button addBtn = findViewById(R.id.add_songs);
         addBtn.setOnClickListener(view -> {
+            Intent searchIntent = new Intent(ProfileActivity.this, SearchActivity.class);
+            searchIntent.putExtra("USER_ID", USER_ID);
+            startActivity(searchIntent);
+            /*
             if (inUserStore) {
-                Intent searchIntent = new Intent(ProfileActivity.this, SearchActivity.class);
-                searchIntent.putExtra("USER_ID", USER_ID);
-                startActivity(searchIntent);
+
             } else {
                 // TODO: handle adding songs during profile creation
                 Toast.makeText(getApplicationContext(), "Please save your profile first", Toast.LENGTH_LONG).show();
-            }
+            }*/
         });
 
         // Read information on current user if it exists and fill screen entries
@@ -157,7 +164,6 @@ public class ProfileActivity extends AppCompatActivity {
                     songs.setText(Integer.toString(numSongs));
                     selectedSongs = numSongs;
 
-                    user_songs = new ArrayList<>();
                     for (int i = 0; i < jsonSongs.length(); i++) {
                         try {
                             user_songs.add(jsonSongs.get(i).toString());
@@ -245,7 +251,7 @@ public class ProfileActivity extends AppCompatActivity {
     * If entries are correct, will create a profile for the current user. If profile already exists,
     * then the current entries will be modified to the new entries provided.
     */
-    private void saveProfileEntries() {
+    private void saveProfileEntries() throws JSONException {
         String selectedUsername = username.getText().toString().trim();
         if (selectedUsername.equals("")) {
             Toast.makeText(getApplicationContext(), "Please enter a username", Toast.LENGTH_LONG).show();
@@ -304,6 +310,17 @@ public class ProfileActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Failed to add profile to the server!", Toast.LENGTH_LONG).show();
             }
             jsonObjectRequest = new JsonObjectRequest(Request.Method.PATCH, ADD_URL, user, response -> {
+            }, error -> {
+                Toast.makeText(getApplicationContext(), "Failed to connect to the server!", Toast.LENGTH_LONG).show();
+            });
+            queue.add(jsonObjectRequest);
+
+            JSONArray addArray = new JSONArray();
+            JSONObject songObject = new JSONObject();
+            songObject.put("propName", "songs");
+            songObject.put("value", user_songs);
+            addArray.put(songObject);
+            JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.PATCH, ADD_URL, addArray, response -> {
                 Intent mainIntent = new Intent(ProfileActivity.this, MainActivity.class);
                 mainIntent.putExtra("USER_ID", USER_ID);
                 startActivity(mainIntent);
@@ -329,7 +346,7 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     // Adds message to screen from received broadcast
-    private final BroadcastReceiver messageReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver songReceiver = new BroadcastReceiver() {
         public void onReceive(@Nullable Context context, @NonNull Intent intent) {
             String song = Objects.requireNonNull(intent.getExtras()).getString("ADDED_SONG");
             selectedSongs ++;
@@ -341,12 +358,12 @@ public class ProfileActivity extends AppCompatActivity {
     // Handles an incoming broadcast
     protected void onStart() {
         super.onStart();
-        LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, new IntentFilter("newSong"));
+        LocalBroadcastManager.getInstance(this).registerReceiver(songReceiver, new IntentFilter("newSong"));
     }
 
     // Handles a finished broadcast
     protected void onStop() {
         super.onStop();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(messageReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(songReceiver);
     }
 }
