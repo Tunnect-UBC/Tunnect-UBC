@@ -1,16 +1,24 @@
 package com.example.tunnect;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -66,6 +74,24 @@ public class SearchActivity extends AppCompatActivity {
                 });
             }
         });
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
+                new IntentFilter("added_song"));
+    }
+
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Get extra data included in the Intent
+            Toast.makeText(context, "Song Added", Toast.LENGTH_LONG).show();
+        }
+    };
+
+    @Override
+    protected void onDestroy() {
+        // Unregister since the activity is about to be closed.
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+        super.onDestroy();
     }
 
     // Code to return to last page when the return button on the title bar is hit
@@ -86,5 +112,4 @@ public class SearchActivity extends AppCompatActivity {
         RecyclerView.Adapter mAdapter = new SearchListAdaptor(this, search_songs, USER_ID);
         recyclerView.setAdapter(mAdapter);
     }
-
 }

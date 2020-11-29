@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.tunnect">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -13,9 +14,7 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity android:name=".SettingsActivity"></activity>
-        <activity android:name=".Settings" />
         <activity android:name=".ProfileActivity" />
-        <activity android:name=".TestActivity" />
 
         <meta-data
             android:name="com.google.android.gms.car.application"
@@ -37,6 +36,16 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
+        <receiver android:name=".ProfileActivity$songReceiver"
+            tools:ignore="Instantiatable">
+            <intent-filter>
+                <action android:name="com.example.tunnect.CUSTOM_INTENT">
+                </action>
+            </intent-filter>
+
+        </receiver>
+
 
         <activity android:name=".MessagesActivity" />
         <activity android:name=".MainActivity" />

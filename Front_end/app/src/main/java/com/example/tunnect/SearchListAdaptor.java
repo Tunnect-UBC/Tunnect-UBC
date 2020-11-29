@@ -84,15 +84,11 @@ public class SearchListAdaptor extends RecyclerView.Adapter<SearchListAdaptor.Vi
     * TODO: Currently the json request always returns an erro but it seems to work anyway?
     */
     private void addSong(String song, ViewHolder holder) {
-        Handler handler = new Handler(Looper.getMainLooper());
-        handler.post(() -> {
-            Toast.makeText(context, "Song Added", Toast.LENGTH_LONG).show();
-            Intent intent = new Intent("newSong");
-            intent.putExtra("ADDED_SONG", song);
-            if (broadcaster != null) {
-                broadcaster.sendBroadcast(intent);
-            }
-        });
+        Intent intent = new Intent("custom-event-name");
+        // You can also include some extra data.
+        intent.putExtra("ADDED_SONG", song);
+        holder.add_btn.setText("Added");
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 
         /*
         String url = "http://52.188.167.58:3000/userstore/" + user_id;

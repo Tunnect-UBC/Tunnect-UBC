@@ -224,7 +224,7 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/selectedSongs"
                     android:layout_width="match_parent"
-                    android:layout_height="45dp" />
+                    android:layout_height="85dp" />
 
                 <View
                     android:layout_width="match_parent"

@@ -138,17 +138,32 @@ public class ProfileActivity extends AppCompatActivity {
             Intent searchIntent = new Intent(ProfileActivity.this, SearchActivity.class);
             searchIntent.putExtra("USER_ID", USER_ID);
             startActivity(searchIntent);
-            /*
-            if (inUserStore) {
-
-            } else {
-                // TODO: handle adding songs during profile creation
-                Toast.makeText(getApplicationContext(), "Please save your profile first", Toast.LENGTH_LONG).show();
-            }*/
         });
 
         // Read information on current user if it exists and fill screen entries
         loadProfileEntries();
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
+                new IntentFilter("added_song"));
+    }
+
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Get extra data included in the Intent
+            Toast.makeText(context, "Song Added", Toast.LENGTH_LONG).show();
+            String song = intent.getStringExtra("ADDED_SONG");
+            selectedSongs ++;
+            user_songs.add(song);
+            getSong(song, true);
+        }
+    };
+
+    @Override
+    protected void onDestroy() {
+        // Unregister since the activity is about to be closed.
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+        super.onDestroy();
     }
 
     // Will attempt to read existing data on current user and fill screen entries
@@ -343,27 +358,5 @@ public class ProfileActivity extends AppCompatActivity {
     }
     public boolean onCreateOptionsMenu(Menu menu) {
         return true;
-    }
-
-    // Adds message to screen from received broadcast
-    private final BroadcastReceiver songReceiver = new BroadcastReceiver() {
-        public void onReceive(@Nullable Context context, @NonNull Intent intent) {
-            String song = Objects.requireNonNull(intent.getExtras()).getString("ADDED_SONG");
-            selectedSongs ++;
-            user_songs.add(song);
-            getSong(song, true);
-        }
-    };
-
-    // Handles an incoming broadcast
-    protected void onStart() {
-        super.onStart();
-        LocalBroadcastManager.getInstance(this).registerReceiver(songReceiver, new IntentFilter("newSong"));
-    }
-
-    // Handles a finished broadcast
-    protected void onStop() {
-        super.onStop();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(songReceiver);
     }
 }
