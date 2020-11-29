@@ -108,6 +108,10 @@ public class ProfileActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
+        selSongs.add(new Song("", "You have no songs", "", "No Album"));
+        RecyclerView.Adapter mAdapter = new SongListAdaptor(this, selSongs);
+        recyclerView.setAdapter(mAdapter);
+        selSongs.remove(0);
 
         /* Show color picker dialog */
         Button getColour = findViewById(R.id.enter_colour);
@@ -179,7 +183,7 @@ public class ProfileActivity extends AppCompatActivity {
                     songs.setText(Integer.toString(numSongs));
                     selectedSongs = numSongs;
 
-                    for (int i = 0; i < jsonSongs.length(); i++) {
+                    for (int i = 0; i < numSongs; i++) {
                         try {
                             user_songs.add(jsonSongs.get(i).toString());
                         } catch (JSONException e) {
@@ -246,6 +250,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
         }, error -> {
             Toast.makeText(getApplicationContext(), "Error getting songs", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), song_id, Toast.LENGTH_SHORT).show();
             selSongs.add(new Song("", "This user has no songs", "", ""));
             RecyclerView.Adapter mAdapter = new SongListAdaptor(this, selSongs);
             recyclerView.setAdapter(mAdapter);
@@ -282,17 +287,15 @@ public class ProfileActivity extends AppCompatActivity {
         JSONObject user = new JSONObject();
         JsonObjectRequest jsonObjectRequest;
         if(!inUserStore) { // Add the user to the server
-            JSONArray addArray = new JSONArray();
+            JSONArray songArray = new JSONArray();
 
-            for (int i = 0; i < selSongs.size(); i++) {
-                JSONObject songObject = new JSONObject();
-            }
+            songArray.put(user_songs);
 
             try {
                 user.put("_id", USER_ID);
                 user.put("username", selectedUsername);
                 user.put("icon_colour", selectedColorRGB);
-                user.put("songs", null);
+                user.put("songs", songArray);
             } catch (JSONException e) {
                 Toast.makeText(getApplicationContext(), "Failed to add profile to the server!", Toast.LENGTH_LONG).show();
             }

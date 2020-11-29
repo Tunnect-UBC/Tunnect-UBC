@@ -37,16 +37,6 @@
             </intent-filter>
         </service>
 
-        <receiver android:name=".ProfileActivity$songReceiver"
-            tools:ignore="Instantiatable">
-            <intent-filter>
-                <action android:name="com.example.tunnect.CUSTOM_INTENT">
-                </action>
-            </intent-filter>
-
-        </receiver>
-
-
         <activity android:name=".MessagesActivity" />
         <activity android:name=".MainActivity" />
         <activity android:name=".MessageListActivity" />
