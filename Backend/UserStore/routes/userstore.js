@@ -40,6 +40,26 @@ router.get("/", async (req, res, next) => {
 
 
 /**
+ * GET localhost:3000/userstore/{id}/matches - Up to 20 users from the database,
+ * such that none of them have been seen by id yet.
+ * 
+ * If list of users is not empty, response is an array of json Users,
+ * or a json error with status 500 on error.
+ * 
+ * User schema described in ../../models/Users
+ */
+router.get("/:userId/matches", async (req, res, next) => {
+    const userId = req.params.userId;
+
+    console.log("we in usermatches");
+    
+    const users = await helpers.get_50(userId);
+
+    res.status(users[0]).json(users[1]);
+});
+
+
+/**
  * POST localhost:3000/userstore - Posts a new user to the database
  *
  * Gets all the values needed from the request body. A body may look like
@@ -56,11 +76,13 @@ router.post("/", async (req, res, next) => {
     const user = new User({
         _id: req.body._id,
         username: req.body.username,
-        topArtist: req.body.topArtist,
+        favGenre: req.body.favGenre,
         iconColour: req.body.iconColour,
         notifId: req.body.notifId,
         songs: req.body.songs,
-        matches: req.body.matches
+        matches: req.body.matches,
+        likes: req.body.likes,
+        dislikes: req.body.dislikes
     });
 
     const result = await helpers.post_user(user);
