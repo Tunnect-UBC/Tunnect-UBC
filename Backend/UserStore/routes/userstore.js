@@ -74,15 +74,21 @@ router.get("/:userId/matches", async (req, res, next) => {
  */
 router.post("/", async (req, res, next) => {
     const user = new User({
-        _id: req.body._id,
-        username: req.body.username,
-        favGenre: req.body.favGenre,
-        iconColour: req.body.iconColour,
-        notifId: req.body.notifId,
-        songs: req.body.songs,
-        matches: req.body.matches,
-        likes: req.body.likes,
-        dislikes: req.body.dislikes
+      _id: String,
+      username: String,
+      topArtist: String,
+      iconColour: String,
+      notifId: String,
+      songs: Array,
+      matches: Array,
+      likes: Array,
+      dislikes: Array,
+      favGenre: String,
+      iconColour: Number,
+      songs: [song],
+      matches: [String],
+      likes: [String],
+      dislikes: [String]
     });
 
     const result = await helpers.post_user(user);
