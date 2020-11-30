@@ -1,6 +1,13 @@
 package com.example.tunnect;
 import com.android.volley.AuthFailureError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
+import com.google.gson.JsonArray;
 import com.pes.androidmaterialcolorpickerdialog.ColorPicker;
 
 import androidx.annotation.NonNull;
@@ -20,6 +27,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
@@ -51,6 +59,7 @@ public class ProfileActivity extends AppCompatActivity {
     private static String USER_ID;
     private static String RETRIEVE_URL;
     private static final String ADD_URL = "http://52.188.167.58:3000/userstore/";
+    private static String token;
     private int selectedColorRGB;
     private Drawable wrappedIconImage;
     private ImageView iconImage;
@@ -64,7 +73,7 @@ public class ProfileActivity extends AppCompatActivity {
     private boolean inUserStore;
     private RecyclerView recyclerView;
     private ArrayList<Song> selSongs;
-    private List<String> user_songs;
+    private ArrayList<String> user_songs;
     private SharedPreferences sharedPreferences;
 
     @Override
@@ -89,6 +98,7 @@ public class ProfileActivity extends AppCompatActivity {
         USER_ID = Objects.requireNonNull(getIntent().getExtras()).getString("USER_ID");
         selectedSongs = 0;
         selSongs = new ArrayList<>();
+        user_songs = new ArrayList<>();
         RETRIEVE_URL = ADD_URL + USER_ID;
         sharedPreferences = this.getSharedPreferences("SPOTIFY", 0);
 
@@ -107,6 +117,10 @@ public class ProfileActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
+        selSongs.add(new Song("", "You have no songs", "", "No Album"));
+        RecyclerView.Adapter mAdapter = new SongListAdaptor(this, selSongs);
+        recyclerView.setAdapter(mAdapter);
+        selSongs.remove(0);
 
         /* Show color picker dialog */
         Button getColour = findViewById(R.id.enter_colour);
@@ -125,23 +139,60 @@ public class ProfileActivity extends AppCompatActivity {
         // save changes into profile
         Button saveBtn = findViewById(R.id.save_profile);
         saveBtn.setOnClickListener(view -> {
-            saveProfileEntries();
+            try {
+                saveProfileEntries();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         });
 
         Button addBtn = findViewById(R.id.add_songs);
         addBtn.setOnClickListener(view -> {
-            if (inUserStore) {
-                Intent searchIntent = new Intent(ProfileActivity.this, SearchActivity.class);
-                searchIntent.putExtra("USER_ID", USER_ID);
-                startActivity(searchIntent);
-            } else {
-                // TODO: handle adding songs during profile creation
-                Toast.makeText(getApplicationContext(), "Please save your profile first", Toast.LENGTH_LONG).show();
-            }
+            Intent searchIntent = new Intent(ProfileActivity.this, SearchActivity.class);
+            searchIntent.putExtra("USER_ID", USER_ID);
+            startActivity(searchIntent);
         });
 
         // Read information on current user if it exists and fill screen entries
         loadProfileEntries();
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
+                new IntentFilter("added_song"));
+
+        // Must first check if device can send and receive messages
+        if (ProfileActivity.this.checkGooglePlayServices()) {
+            FirebaseInstanceId id = FirebaseInstanceId.getInstance();
+            id.getInstanceId().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    token = Objects.requireNonNull(task.getResult()).getToken();
+                } else {
+                    token = "0";
+                }
+            });
+        } else {
+            Toast.makeText(getApplicationContext(), "This device cannot receive notifications! Must have google play services.", Toast.LENGTH_LONG).show();
+            token = "0";
+        }
+    }
+
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Get extra data included in the Intent
+            Toast.makeText(context, "Song Added", Toast.LENGTH_LONG).show();
+            String song = intent.getStringExtra("ADDED_SONG");
+            selectedSongs ++;
+            songs.setText(Integer.toString(selectedSongs));
+            user_songs.add(song);
+            getSong(song, true);
+        }
+    };
+
+    @Override
+    protected void onDestroy() {
+        // Unregister since the activity is about to be closed.
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+        super.onDestroy();
     }
 
     // Will attempt to read existing data on current user and fill screen entries
@@ -157,8 +208,7 @@ public class ProfileActivity extends AppCompatActivity {
                     songs.setText(Integer.toString(numSongs));
                     selectedSongs = numSongs;
 
-                    user_songs = new ArrayList<>();
-                    for (int i = 0; i < jsonSongs.length(); i++) {
+                    for (int i = 0; i < numSongs; i++) {
                         try {
                             user_songs.add(jsonSongs.get(i).toString());
                         } catch (JSONException e) {
@@ -175,6 +225,10 @@ public class ProfileActivity extends AppCompatActivity {
                     JSONArray jsonMatches = response.optJSONArray("matches");
                     int numMatches = jsonMatches.length();
                     matches.setText(Integer.toString(numMatches));
+
+                    DrawableCompat.setTint(wrappedIconImage, Integer.parseInt((String) response.get("iconColour"), 16));
+                    selectedColorRGB = Integer.parseInt((String) response.get("iconColour"), 16);
+                    iconImage.setImageDrawable(wrappedIconImage);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -225,6 +279,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
         }, error -> {
             Toast.makeText(getApplicationContext(), "Error getting songs", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), song_id, Toast.LENGTH_SHORT).show();
             selSongs.add(new Song("", "This user has no songs", "", ""));
             RecyclerView.Adapter mAdapter = new SongListAdaptor(this, selSongs);
             recyclerView.setAdapter(mAdapter);
@@ -245,7 +300,7 @@ public class ProfileActivity extends AppCompatActivity {
     * If entries are correct, will create a profile for the current user. If profile already exists,
     * then the current entries will be modified to the new entries provided.
     */
-    private void saveProfileEntries() {
+    private void saveProfileEntries() throws JSONException {
         String selectedUsername = username.getText().toString().trim();
         if (selectedUsername.equals("")) {
             Toast.makeText(getApplicationContext(), "Please enter a username", Toast.LENGTH_LONG).show();
@@ -261,17 +316,22 @@ public class ProfileActivity extends AppCompatActivity {
         JSONObject user = new JSONObject();
         JsonObjectRequest jsonObjectRequest;
         if(!inUserStore) { // Add the user to the server
-            JSONArray addArray = new JSONArray();
-
-            for (int i = 0; i < selSongs.size(); i++) {
-                JSONObject songObject = new JSONObject();
+            JSONArray songs = new JSONArray();
+            JSONObject song = new JSONObject();
+            for(int i = 0; i < selSongs.size(); i ++) {
+                song.put("_id", selSongs.get(i).getId());
+                song.put("artist", selSongs.get(i).getArtist());
+                song.put("name", selSongs.get(i).getName());
+                song.put("genre", "Awmsonmeness");
+                song.put("relatedArtist", "YEET");
+                songs.put(song);
             }
-
             try {
                 user.put("_id", USER_ID);
                 user.put("username", selectedUsername);
-                user.put("icon_colour", selectedColorRGB);
-                user.put("songs", null);
+                user.put("iconColour", Integer.toString(selectedColorRGB));
+                user.put("songs", songs);
+                user.put("notifId", token);
             } catch (JSONException e) {
                 Toast.makeText(getApplicationContext(), "Failed to add profile to the server!", Toast.LENGTH_LONG).show();
             }
@@ -298,21 +358,48 @@ public class ProfileActivity extends AppCompatActivity {
 
             user = new JSONObject();
             try {
-                user.put("propName", "icon_colour");
+                user.put("propName", "iconColour");
                 user.put("value", selectedColorRGB);
             } catch (JSONException e) {
                 Toast.makeText(getApplicationContext(), "Failed to add profile to the server!", Toast.LENGTH_LONG).show();
             }
             jsonObjectRequest = new JsonObjectRequest(Request.Method.PATCH, ADD_URL, user, response -> {
+            }, error -> {
+                Toast.makeText(getApplicationContext(), "Failed to connect to the server!", Toast.LENGTH_LONG).show();
+            });
+            queue.add(jsonObjectRequest);
+
+            JSONArray addArray = new JSONArray();
+            JSONObject songObject = new JSONObject();
+            songObject.put("propName", "songs");
+            songObject.put("value", user_songs);
+            addArray.put(songObject);
+            JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.PATCH, ADD_URL, addArray, response -> {
                 Intent mainIntent = new Intent(ProfileActivity.this, MainActivity.class);
                 mainIntent.putExtra("USER_ID", USER_ID);
                 startActivity(mainIntent);
             }, error -> {
                 Toast.makeText(getApplicationContext(), "Failed to connect to the server!", Toast.LENGTH_LONG).show();
             });
+            queue.add(jsonArrayRequest);
         }
 
         queue.add(jsonObjectRequest);
+    }
+
+    /*
+     *   This function checks Google Play services to see if the device can receive notifications.
+     *  @return: returns true if it can receive notifications, false otherwise.
+     */
+    private boolean checkGooglePlayServices() {
+        int status = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
+        if (status != ConnectionResult.SUCCESS) {
+            Log.e("MainActivity", "Error");
+            return false;
+        } else {
+            Log.i("MainActivity", "Google play services updated");
+            return true;
+        }
     }
 
     // Code to return to last page when the return button on the title bar is hit
@@ -326,27 +413,5 @@ public class ProfileActivity extends AppCompatActivity {
     }
     public boolean onCreateOptionsMenu(Menu menu) {
         return true;
-    }
-
-    // Adds message to screen from received broadcast
-    private final BroadcastReceiver messageReceiver = new BroadcastReceiver() {
-        public void onReceive(@Nullable Context context, @NonNull Intent intent) {
-            String song = Objects.requireNonNull(intent.getExtras()).getString("ADDED_SONG");
-            selectedSongs ++;
-            user_songs.add(song);
-            getSong(song, true);
-        }
-    };
-
-    // Handles an incoming broadcast
-    protected void onStart() {
-        super.onStart();
-        LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, new IntentFilter("newSong"));
-    }
-
-    // Handles a finished broadcast
-    protected void onStop() {
-        super.onStop();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(messageReceiver);
     }
 }

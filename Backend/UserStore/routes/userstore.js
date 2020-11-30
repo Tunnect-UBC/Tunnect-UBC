@@ -1,6 +1,6 @@
 /**
  * This file handles all the API requests and different routes for the userstore
- * 
+ *
  * The api supports:
  *      GET    localhost:3000/userstore - Gets all users in the database (line 26)
  *      POST   localhost:3000/userstore - Posts a new user to the database, with details passed in through body (line 57)
@@ -20,10 +20,10 @@ const helpers = require("../utils/userstore_helpers");
 
 /**
  * GET localhost:3000/userstore - Gets all users in the database
- * 
+ *
  * If list of users is not empty, response is an array of json Users,
  * or a json error with status 500 on error.
- * 
+ *
  * User schema described in ../../models/Users
  */
 router.get("/", async (req, res, next) => {
@@ -40,30 +40,51 @@ router.get("/", async (req, res, next) => {
 
 
 /**
+ * GET localhost:3000/userstore/{id}/matches - Up to 20 users from the database,
+ * such that none of them have been seen by id yet.
+ *
+ * If list of users is not empty, response is an array of json Users,
+ * or a json error with status 500 on error.
+ *
+ * User schema described in ../../models/Users
+ */
+router.get("/:userId/matches", async (req, res, next) => {
+    const userId = req.params.userId;
+
+    console.log("we in usermatches");
+
+    const users = await helpers.get_50(userId);
+
+    res.status(users[0]).json(users[1]);
+});
+
+
+/**
  * POST localhost:3000/userstore - Posts a new user to the database
- * 
+ *
  * Gets all the values needed from the request body. A body may look like
  *      {
  *          "_id": "56y56gr",
  *          "username": "username123",
  *          "top_artist": "Lil Uzi"
  *      }
- * 
+ *
  * Response is json error on error with status 500
  * User schema described in ../../models/Users
  */
 router.post("/", async (req, res, next) => {
     const user = new User({
-        _id: req.body._id,
-        username: req.body.username,
-        topArtist: req.body.topArtist,
-        iconColour: req.body.iconColour,
-        songs: req.body.songs,
-        matches: req.body.matches
+      _id: req.body._id,
+      username: req.body.username,
+      iconColour: req.body.iconColour,
+      notifId: req.body.notifId,
+      favGenre: req.body.favGenre,
+      songs: req.body.songs,
+      matches: req.body.matches,
+      likes: req.body.likes,
+      dislikes: req.body.dislikes
     });
-    
     const result = await helpers.post_user(user);
-    console.log(result);
 
     if (result[0] === 1) {
         res.status(200).json(result[1]);
@@ -77,15 +98,15 @@ router.post("/", async (req, res, next) => {
 
 /**
  * GET localhost:3000/userstore/{id} - Gets user with id from the database
- * 
+ *
  * Response is a json User on success. If user can not be found, error status 404,
  * error status 500 for any other errors.
- * 
+ *
  * User schema described in ../../models/Users
  */
 router.get("/:userId", async (req, res, next) => {
     const userId = req.params.userId;
-    
+
     const result = await helpers.get_user(userId);
 
     if (result[0] === 1) {
@@ -104,10 +125,10 @@ router.get("/:userId", async (req, res, next) => {
 
 /**
  * PATCH localhost:3000/userstore/{id} - Patches user by id in the database.
- * 
+ *
  * NOTE: we can change as many or a few things in user as we like, but we cannot add new fields,
  * only modify existing ones
- * 
+ *
  * Gets all the values needed from the request body. Body is an array of objects, each with key/value pairs
  *      [
  *          {
@@ -118,16 +139,16 @@ router.get("/:userId", async (req, res, next) => {
  *              "propName": "top_artist",
  *              "value": "Ruel"
  *          }
- * 
+ *
  *      ]
- * 
+ *
  * Response is json error on error with status 500
  * User schema described in ../../models/Users
  */
 router.patch("/:userId", async (req, res, next) => {
     const userId = req.params.userId;
     const updateOps = {};
-    
+
     for (const ops of req.body) {
         updateOps[ops.propName] = ops.value;
     }
@@ -150,12 +171,12 @@ router.patch("/:userId", async (req, res, next) => {
 
 /**
  * PATCH localhost:3000/userstore/{id}/addMatch/{id2} - Adds id2 to id's list of matches
- * 
+ *
  */
 router.patch("/:userId/addMatch/:userId2", async (req, res, next) => {
     const userId = req.params.userId;
     const userId2 = req.params.userId2;
-    
+
     const result = await helpers.addStatus(userId, userId2, "matches");
 
     res.status(result[0]).json(result[1]);
@@ -165,7 +186,7 @@ router.patch("/:userId/addMatch/:userId2", async (req, res, next) => {
 
 /**
  * PATCH localhost:3000/userstore/{id}/removeMatch/{id2} - Removes id2 from id's list of matches
- * 
+ *
  */
 
 router.patch("/:userId/removeMatch/:userId2", async (req, res, next) => {
@@ -179,12 +200,12 @@ router.patch("/:userId/removeMatch/:userId2", async (req, res, next) => {
 
 /**
  * PATCH localhost:3000/userstore/{id}/addLike/{id2} - Adds id2 to id's list of likes
- * 
+ *
  */
 router.patch("/:userId/addLike/:userId2", async (req, res, next) => {
     const userId = req.params.userId;
     const userId2 = req.params.userId2;
-    
+
     const result = await helpers.addStatus(userId, userId2, "likes");
 
     res.status(result[0]).json(result[1]);
@@ -193,7 +214,7 @@ router.patch("/:userId/addLike/:userId2", async (req, res, next) => {
 
 /**
  * PATCH localhost:3000/userstore/{id}/removeLike/{id2} - Removes id2 from id's list of likes
- * 
+ *
  */
 router.patch("/:userId/removeLike/:userId2", async (req, res, next) => {
     const userId = req.params.userId;
@@ -206,12 +227,12 @@ router.patch("/:userId/removeLike/:userId2", async (req, res, next) => {
 
 /**
  * PATCH localhost:3000/userstore/{id}/addDislike/{id2} - Adds id2 to id's list of dislikes
- * 
+ *
  */
 router.patch("/:userId/addDislike/:userId2", async (req, res, next) => {
     const userId = req.params.userId;
     const userId2 = req.params.userId2;
-    
+
     const result = await helpers.addStatus(userId, userId2, "dislikes");
 
     res.status(result[0]).json(result[1]);
@@ -220,7 +241,7 @@ router.patch("/:userId/addDislike/:userId2", async (req, res, next) => {
 
 /**
  * PATCH localhost:3000/userstore/{id}/removeDislike/{id2} - Removes id2 from id's list of dislikes
- * 
+ *
  */
 router.patch("/:userId/removeDislike/:userId2", async (req, res, next) => {
     const userId = req.params.userId;
@@ -234,18 +255,17 @@ router.patch("/:userId/removeDislike/:userId2", async (req, res, next) => {
 
 /**
  * DELETE localhost:3000/userstore/{id} - Deletes user with id from the database
- * 
+ *
  * Response is a json result on success, json error with status 500 on error.
- * 
+ *
  * User schema described in ../../models/Users
  */
 router.delete("/:userId", async (req, res, next) => {
     const userId = req.params.userId;
-    
+
     const result = await helpers.delete_user(userId);
 
-    console.log(result);
-    
+
     if (result[0] === 1) {
         res.status(200).json(result[1]);
     } else if (result[0] === 0) {
@@ -257,7 +277,7 @@ router.delete("/:userId", async (req, res, next) => {
             error: result[1]
         });
     }
-    
+
 });
 
 module.exports = router;
