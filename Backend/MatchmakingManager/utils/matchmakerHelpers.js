@@ -3,25 +3,53 @@
 
 //module.exports = {
 const helpers = {
+    songScore(user1song, user2) {
+        
+        let artistFlag = 0;
+        let relatedFlag = 0;
+        let genreFlag = 0;
+
+        for (let i = 0; i < user2.songs.length; i++) {
+            if (user2.songs[i]._id === user1song._id) {
+                return 3;
+            } else if (user2.songs[i].artist === user1song.artist) {
+                artistFlag = 1;
+            } else if (user2.songs[i].relatedArtists.includes(user1song.artist)) {
+                relatedFlag = 1;
+            } else if (user1song.genre === user2.favGenre) {
+                genreFlag = 1;
+            }
+        }
+        
+        if (artistFlag) {
+            return 2;
+        } else if (relatedFlag) {
+            return 1;
+        } else if (genreFlag) {
+            return 0.5;
+        } else {
+            return 0;
+        }
+    },
+    
     getScore(user1, user2) {
         let score = 0;
-        console.log("we in the real get score");
 
         user1.songs.forEach((song) => {
-            if (user2.songs.includes(song)) {
-                score++;
-            }
+            score += helpers.songScore(song, user2);
         });
 
         if (user1.songs.length !== 0) {    
             score = score / user1.songs.length;
         }
 
-        if (user1.topArtist === user2.topArtist) {
-            score++;
+        const songsScore = score * (7/3);
+        const genreScore = 0;
+        if (user1.favGenre === user2.favGenre) {
+            genreScore = 3;
         }
 
-        return 5 * score;
+        return songsScore + genreScore;
     },
 
         /**
@@ -50,6 +78,5 @@ const helpers = {
         return usersScore;
     }
 };
-//};
 
 module.exports = helpers;

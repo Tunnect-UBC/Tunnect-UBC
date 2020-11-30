@@ -1,5 +1,6 @@
 const Chat = require("../../models/chat");
 const axios = require("axios");
+const utils =  require("../app");
 
 const helpers = {
 
@@ -87,8 +88,14 @@ const helpers = {
      return resp;
    },
 
-async postMessage(senderid, receiverid, message, timeStamp) {
+async postMessage(senderid, receiverid, notifId, message, timeStamp) {
   resp = [];
+  const messNotif = {
+    notification: {
+      title: "Chat:",
+      body: message
+    }
+  };
   await Chat.updateOne({usrID1: senderid, usrID2: receiverid},
            {$push: {messages : [{senderid: senderid, message: message, timeStamp: timeStamp}]},
            $set: {lastMessage: message, lastTime: timeStamp}})
@@ -97,10 +104,12 @@ async postMessage(senderid, receiverid, message, timeStamp) {
            {$push: {messages : [{senderid: senderid, message: message, timeStamp: timeStamp}]},
            $set: {lastMessage: message, lastTime: timeStamp}});})
           .then(async (result) => {
+            const admin = utils.admin;
+            await admin.messaging().sendToDevice(notifId, messNotif, utils.notif_opt);
             resp = [1];
           })
           .catch((err) => {
-             resp = [0];
+             resp = [0, err];
            });
            return resp;
  },

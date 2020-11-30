@@ -9,7 +9,7 @@ const router = new express.Router();
 const mongoose = require("mongoose");
 const axios = require("axios");
 
-const helpers = require("../utils/chatServiceHelpers")
+const helpers = require("../utils/chatServiceHelpers");
 
 const Chat = require("../../models/chat");
 
@@ -19,6 +19,7 @@ const Chat = require("../../models/chat");
 /**
 *GET request for a list of available chats for a user
 **/
+
 router.get("/:userId", async (req, res, next) => {
   const id = req.params.userId;
   const result = await helpers.getChats(id);
@@ -70,12 +71,15 @@ router.post("/:receiverid", async (req, res, next) => {
      const receiverid = req.params.receiverid;
      const message = req.body.message;
      const timeStamp = req.body.timeStamp;
+     var notifId = "";
 
-     result = await helpers.postMessage(senderid, receiverid, message, timeStamp);
+     await axios.get("http://localhost:3000/userstore/" + receiverid, {params: {}})
+     .then(async (response) => {
+        notifId = response.data.notifId;
+     });
+     result = await helpers.postMessage(senderid, receiverid, notifId, message, timeStamp);
      if(result[0] === 0){
-       res.status(500).json({
-         message: "db error"
-       });
+       res.status(500).json(result[1]);
      }
      else if(result[0] === 1){
        res.status(200).json({});
@@ -166,33 +170,5 @@ router.delete("/:userId1/:userId2", async (req, res, next) => {
     }
 });
 
- async function deleteChat(user1, user2) {
-  var resp = -1;
-     await Chat.deleteMany({
-       usrID1: user1,
-       usrID2: user2
-     }).then(async (result1) => {
-       if(result1.deletedCount === 0){
-           await Chat.deleteMany({
-           usrID1: user2,
-           usrID2: user1
-         }).then((result2) => {
-           if(result2.deletedCount === 1){
-             resp = 1;
-           }
-           else {
-             resp = 0;
-           }
-         });
-       }
-       else {
-          resp = 0;
-       }
-     })
-     .catch((err) => {
-       resp = 2;
-     });
-     return resp;
-  }
-module.exports = deleteChat;
+
 module.exports = router;
