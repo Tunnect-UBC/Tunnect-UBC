@@ -59,14 +59,14 @@ const helpers = {
     async post_user(user) {
         //stores this in the database
         let resp = [];
-
+        console.log("here");
         await user.save()
             .then((result) => {
                 console.log(result);
                 resp =  [1, result];
             })
             .catch((err) => {
-                //console.log(err);
+                console.log(err);
                 resp =  [0, err];
             });
 
