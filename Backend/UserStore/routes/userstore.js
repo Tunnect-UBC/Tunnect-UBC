@@ -84,7 +84,6 @@ router.post("/", async (req, res, next) => {
       likes: req.body.likes,
       dislikes: req.body.dislikes
     });
-    console.log(user);
     const result = await helpers.post_user(user);
 
     if (result[0] === 1) {
