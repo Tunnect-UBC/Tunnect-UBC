@@ -20,7 +20,6 @@ const userSchema = new mongoose.Schema({
     likes: Array,
     dislikes: Array,
     favGenre: String,
-    iconColour: Number,
     songs: [song],
     matches: [String],
     likes: [String],
