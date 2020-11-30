@@ -17,7 +17,7 @@ const helpers = {
         return resp;
     },
 
-    async get_20(hostId) {
+    async get_50(hostId) {
         let resp = [];
         
         await User.findById(hostId)
@@ -31,7 +31,7 @@ const helpers = {
                                                 { _id: { $nin: user.dislikes}},
                                                 { _id: { $ne: user._id }}
                                             ]})
-                            .limit(20)
+                            .limit(50)
                             .exec()
                             .then((users) => {
                                 users.push(user);

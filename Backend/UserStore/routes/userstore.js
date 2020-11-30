@@ -53,7 +53,7 @@ router.get("/:userId/matches", async (req, res, next) => {
 
     console.log("we in usermatches");
     
-    const users = await helpers.get_20(userId);
+    const users = await helpers.get_50(userId);
 
     res.status(users[0]).json(users[1]);
 });
@@ -76,10 +76,12 @@ router.post("/", async (req, res, next) => {
     const user = new User({
         _id: req.body._id,
         username: req.body.username,
-        topArtist: req.body.topArtist,
+        favGenre: req.body.favGenre,
         iconColour: req.body.iconColour,
         songs: req.body.songs,
-        matches: req.body.matches
+        matches: req.body.matches,
+        likes: req.body.likes,
+        dislikes: req.body.dislikes
     });
     
     const result = await helpers.post_user(user);
