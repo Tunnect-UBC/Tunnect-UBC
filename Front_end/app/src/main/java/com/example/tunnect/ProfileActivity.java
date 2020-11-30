@@ -1,6 +1,12 @@
 package com.example.tunnect;
 import com.android.volley.AuthFailureError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.google.gson.JsonArray;
 import com.pes.androidmaterialcolorpickerdialog.ColorPicker;
 
@@ -21,6 +27,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
@@ -52,6 +59,7 @@ public class ProfileActivity extends AppCompatActivity {
     private static String USER_ID;
     private static String RETRIEVE_URL;
     private static final String ADD_URL = "http://52.188.167.58:3000/userstore/";
+    private static String token;
     private int selectedColorRGB;
     private Drawable wrappedIconImage;
     private ImageView iconImage;
@@ -150,6 +158,21 @@ public class ProfileActivity extends AppCompatActivity {
 
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
                 new IntentFilter("added_song"));
+
+        // Must first check if device can send and receive messages
+        if (ProfileActivity.this.checkGooglePlayServices()) {
+            FirebaseInstanceId id = FirebaseInstanceId.getInstance();
+            id.getInstanceId().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    token = Objects.requireNonNull(task.getResult()).getToken();
+                } else {
+                    token = "0";
+                }
+            });
+        } else {
+            Toast.makeText(getApplicationContext(), "This device cannot receive notifications! Must have google play services.", Toast.LENGTH_LONG).show();
+            token = "0";
+        }
     }
 
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
@@ -159,6 +182,7 @@ public class ProfileActivity extends AppCompatActivity {
             Toast.makeText(context, "Song Added", Toast.LENGTH_LONG).show();
             String song = intent.getStringExtra("ADDED_SONG");
             selectedSongs ++;
+            songs.setText(Integer.toString(selectedSongs));
             user_songs.add(song);
             getSong(song, true);
         }
@@ -201,6 +225,10 @@ public class ProfileActivity extends AppCompatActivity {
                     JSONArray jsonMatches = response.optJSONArray("matches");
                     int numMatches = jsonMatches.length();
                     matches.setText(Integer.toString(numMatches));
+
+                    DrawableCompat.setTint(wrappedIconImage, Integer.parseInt((String) response.get("iconColour"), 16));
+                    selectedColorRGB = Integer.parseInt((String) response.get("iconColour"), 16);
+                    iconImage.setImageDrawable(wrappedIconImage);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -289,14 +317,21 @@ public class ProfileActivity extends AppCompatActivity {
         JsonObjectRequest jsonObjectRequest;
         if(!inUserStore) { // Add the user to the server
             JSONArray songs = new JSONArray();
-            for(int i = 0; i < user_songs.size(); i ++) {
-                songs.put(user_songs.get(i));
+            JSONObject song = new JSONObject();
+            for(int i = 0; i < selSongs.size(); i ++) {
+                song.put("_id", selSongs.get(i).getId());
+                song.put("artist", selSongs.get(i).getArtist());
+                song.put("name", selSongs.get(i).getName());
+                song.put("genre", "Awmsonmeness");
+                song.put("relatedArtist", "YEET");
+                songs.put(song);
             }
             try {
                 user.put("_id", USER_ID);
                 user.put("username", selectedUsername);
-                user.put("icon_colour", selectedColorRGB);
+                user.put("iconColour", Integer.toString(selectedColorRGB));
                 user.put("songs", songs);
+                user.put("notifId", token);
             } catch (JSONException e) {
                 Toast.makeText(getApplicationContext(), "Failed to add profile to the server!", Toast.LENGTH_LONG).show();
             }
@@ -323,7 +358,7 @@ public class ProfileActivity extends AppCompatActivity {
 
             user = new JSONObject();
             try {
-                user.put("propName", "icon_colour");
+                user.put("propName", "iconColour");
                 user.put("value", selectedColorRGB);
             } catch (JSONException e) {
                 Toast.makeText(getApplicationContext(), "Failed to add profile to the server!", Toast.LENGTH_LONG).show();
@@ -346,9 +381,25 @@ public class ProfileActivity extends AppCompatActivity {
             }, error -> {
                 Toast.makeText(getApplicationContext(), "Failed to connect to the server!", Toast.LENGTH_LONG).show();
             });
+            queue.add(jsonArrayRequest);
         }
 
         queue.add(jsonObjectRequest);
+    }
+
+    /*
+     *   This function checks Google Play services to see if the device can receive notifications.
+     *  @return: returns true if it can receive notifications, false otherwise.
+     */
+    private boolean checkGooglePlayServices() {
+        int status = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
+        if (status != ConnectionResult.SUCCESS) {
+            Log.e("MainActivity", "Error");
+            return false;
+        } else {
+            Log.i("MainActivity", "Google play services updated");
+            return true;
+        }
     }
 
     // Code to return to last page when the return button on the title bar is hit
