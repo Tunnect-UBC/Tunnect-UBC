@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema({
     songs: Array,
     matches: Array,
     likes: Array,
-    dislikes: Array
+    dislikes: Array,
     favGenre: String,
     iconColour: Number,
     songs: [song],
