@@ -70,12 +70,15 @@ router.post("/:receiverid", async (req, res, next) => {
      const receiverid = req.params.receiverid;
      const message = req.body.message;
      const timeStamp = req.body.timeStamp;
-
-     result = await helpers.postMessage(senderid, receiverid, message, timeStamp);
+     var notifId = "";
+     
+     await axios.get("http://localhost:3000/userstore/" + receiverid, {params: {}})
+     .then(async (response) => {
+        notifId = response.data.notifId;
+     });
+     result = await helpers.postMessage(senderid, receiverid, notifId, message, timeStamp);
      if(result[0] === 0){
-       res.status(500).json({
-         message: "db error"
-       });
+       res.status(500).json(result[1]);
      }
      else if(result[0] === 1){
        res.status(200).json({});
@@ -194,5 +197,5 @@ router.delete("/:userId1/:userId2", async (req, res, next) => {
      });
      return resp;
   }
-module.exports = deleteChat;
+
 module.exports = router;

@@ -9,6 +9,7 @@ const express = require("express");
 const app = express();
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
+const admin = require("../firebase-config");
 
 const mongoose = require("mongoose");
 
@@ -18,6 +19,11 @@ var messageDB = mongoose.connect("mongodb://127.0.0.1:27017/messagedb", {
   useNewUrlParser:true,
   useUnifiedTopology:true
 });
+
+const notif_options = {
+  priority: "high",
+  timeToLive: 60 * 60 * 24
+};
 
 mongoose.connection.once("open", (_) => {
   //console.log("Connected to MongoDB")
@@ -63,5 +69,6 @@ app.use((error, req, res, next) => {
         }
     });
 });
-
-module.exports = app;
+exports.app = app;
+exports.admin = admin;
+exports.notif_opt = notif_options;
