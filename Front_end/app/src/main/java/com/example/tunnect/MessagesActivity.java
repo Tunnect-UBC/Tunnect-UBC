@@ -55,11 +55,12 @@ public class MessagesActivity extends AppCompatActivity {
     private String receiverID;
     private String otherUserName;
     private int otherUserColour;
+    private int index;
     private MessageListAdaptor messageAdapter;
     private RecyclerView messageHistory;
     private RequestQueue queue;
     private List<Message> messagesList = new ArrayList<>();
-    private  EditText editText;
+    private EditText editText;
     private Date date;
 
     @Override
@@ -72,6 +73,7 @@ public class MessagesActivity extends AppCompatActivity {
         otherUserName = Objects.requireNonNull(getIntent().getExtras()).getString("OTHER_USER_NAME");
         otherUserColour = Objects.requireNonNull(getIntent().getExtras()).getInt("OTHER_USER_COLOUR");
         USER_ID = Objects.requireNonNull(getIntent().getExtras()).getString("USER_ID");
+        index = Objects.requireNonNull(getIntent().getExtras()).getInt("INDEX");
         BASE_URL = "http://52.188.167.58:5000/chatservice/"+USER_ID+"/"+receiverID;
         SEND_URL = "http://52.188.167.58:5000/chatservice/"+receiverID;
         date = new Date();
@@ -81,27 +83,6 @@ public class MessagesActivity extends AppCompatActivity {
         if(actionBar != null) {
             actionBar.setTitle(otherUserName);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
-
-        // Must first check if device can send and receive messages
-        if (MessagesActivity.this.checkGooglePlayServices()) {
-            FirebaseInstanceId id = FirebaseInstanceId.getInstance();
-            id.getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
-                @Override
-                public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                    if (!task.isSuccessful()) {
-                        Log.w("user", "getInstanceId failed", task.getException());
-                        return;
-                    }
-
-                    // To know if connection works, we want to see the resulting token
-                    String token = Objects.requireNonNull(task.getResult()).getToken();
-                    //Toast.makeText(getApplicationContext(), token, Toast.LENGTH_LONG).show();
-                    Log.d("user", token);
-                }
-            });
-        } else {
-            Toast.makeText(getApplicationContext(), "This device cannot receive notifications! Must have google play services.", Toast.LENGTH_LONG).show();
         }
 
         // Fill the recycler view with the history of chat messages
@@ -135,21 +116,6 @@ public class MessagesActivity extends AppCompatActivity {
         return true;
     }
 
-    /*
-     *   This function checks Google Play services to see if the device can receive notifications.
-     *  @return: returns true if it can receive notifications, false otherwise.
-     */
-    private boolean checkGooglePlayServices() {
-        int status = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
-        if (status != ConnectionResult.SUCCESS) {
-            Log.e("MainActivity", "Error");
-            return false;
-        } else {
-            Log.i("MainActivity", "Google play services updated");
-            return true;
-        }
-    }
-
     // Using a Volley connection, send a message to the server
     private void sendMessage() {
         JSONObject message = new JSONObject();
@@ -169,6 +135,8 @@ public class MessagesActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Failed to send, please check your internet connection.", Toast.LENGTH_LONG).show();
         });
         queue.add(jsonObjectRequest);
+
+        updateLastMessage(editText.getText().toString());
     }
 
     // Using a Volley connection, this method adds entries in the messagesList from the provided server data
@@ -228,12 +196,21 @@ public class MessagesActivity extends AppCompatActivity {
         messageHistory.scrollToPosition(messagesList.size() - 1);
     }
 
+    // Sends a broadcast to update last message on chat list activity
+    private void updateLastMessage(String message) {
+        Intent intent = new Intent("new_last_message");
+        intent.putExtra("LAST_MESSAGE", message);
+        intent.putExtra("INDEX", index);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
+
     // Adds message to screen from received broadcast
     private final BroadcastReceiver messageReceiver = new BroadcastReceiver() {
         public void onReceive(@Nullable Context context, @NonNull Intent intent) {
             String message = Objects.requireNonNull(intent.getExtras()).getString("BROADCAST_MESSAGE");
             updateRecyclerView(message, RECEIVED_MESSAGE);
             Toast.makeText(getBaseContext(), "got broadcast", Toast.LENGTH_LONG).show();
+            updateLastMessage(message);
         }
     };
 

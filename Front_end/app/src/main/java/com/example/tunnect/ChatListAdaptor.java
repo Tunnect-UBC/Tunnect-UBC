@@ -84,7 +84,7 @@ public class ChatListAdaptor extends RecyclerView.Adapter<ChatListAdaptor.ViewHo
             int colour = chatList.get(position).getColour();
 
             if (context instanceof MessageListActivity) {
-                ((MessageListActivity)context).openNewChat(id, name, colour);
+                ((MessageListActivity)context).openNewChat(id, name, colour, position);
             }
         }
     }

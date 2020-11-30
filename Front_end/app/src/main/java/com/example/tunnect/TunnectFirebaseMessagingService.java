@@ -50,7 +50,7 @@ public class TunnectFirebaseMessagingService extends FirebaseMessagingService {
             if (remoteMessage.getNotification() != null) {
                 Toast.makeText(getBaseContext(), "sending broadcast", Toast.LENGTH_LONG).show();
                 Intent intent = new Intent("ReceivedMessage");
-                intent.putExtra("BROADCAST_MESSAGE", remoteMessage.getData().get("Text"));
+                intent.putExtra("BROADCAST_MESSAGE", remoteMessage.getData().get("body"));
                 if (broadcaster != null) {
                     broadcaster.sendBroadcast(intent);
                 }
