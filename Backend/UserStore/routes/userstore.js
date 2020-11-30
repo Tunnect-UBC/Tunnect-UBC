@@ -42,17 +42,17 @@ router.get("/", async (req, res, next) => {
 /**
  * GET localhost:3000/userstore/{id}/matches - Up to 20 users from the database,
  * such that none of them have been seen by id yet.
- * 
+ *
  * If list of users is not empty, response is an array of json Users,
  * or a json error with status 500 on error.
- * 
+ *
  * User schema described in ../../models/Users
  */
 router.get("/:userId/matches", async (req, res, next) => {
     const userId = req.params.userId;
 
     console.log("we in usermatches");
-    
+
     const users = await helpers.get_50(userId);
 
     res.status(users[0]).json(users[1]);
@@ -85,7 +85,7 @@ router.post("/", async (req, res, next) => {
       likes: req.body.likes,
       dislikes: req.body.dislikes
     });
-
+    console.log(user);
     const result = await helpers.post_user(user);
 
     if (result[0] === 1) {

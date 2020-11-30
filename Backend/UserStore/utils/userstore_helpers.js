@@ -19,14 +19,14 @@ const helpers = {
 
     async get_50(hostId) {
         let resp = [];
-        
+
         await User.findById(hostId)
             .exec()
             .then(async (user) => {
                 if (user) {
-                  
+
                     await User.find( { $and: [
-                                                { _id: { $nin: user.matches}}, 
+                                                { _id: { $nin: user.matches}},
                                                 { _id: { $nin: user.likes}},
                                                 { _id: { $nin: user.dislikes}},
                                                 { _id: { $ne: user._id }}
@@ -41,8 +41,8 @@ const helpers = {
                                 //console.log(err);
                                 resp = [500, err];
                             });
-                    
-                            
+
+
                 } else {
                     resp = [404, {message: "No valid entry found for provided ID"}];
                 }
@@ -59,10 +59,10 @@ const helpers = {
     async post_user(user) {
         //stores this in the database
         let resp = [];
-        
+
         await user.save()
             .then((result) => {
-                //console.log(result);
+                console.log(result);
                 resp =  [1, result];
             })
             .catch((err) => {
@@ -93,7 +93,7 @@ const helpers = {
             resp = [0, err];
             //res.status(500).json({error: err});
         });
-        
+
         return resp;
     },
 
@@ -109,7 +109,7 @@ const helpers = {
             }
             else {
                 resp = [-1, {message: "No valid entry found for provided ID or propname"}];
-            } 
+            }
             //res.status(200).json(result);
         })
         .catch((err) => {
@@ -125,7 +125,7 @@ const helpers = {
 
     async delete_user(userId) {
         let resp = [];
-        
+
         await User.deleteOne({
             _id: userId
         })
@@ -147,7 +147,7 @@ const helpers = {
 
     async addStatus(userId1, userId2, status) {
         let resp = [];
-        
+
         await User.findById(userId1)
             .exec()
             .then(async (user) => {
@@ -205,7 +205,7 @@ const helpers = {
             .exec()
             .then(async (user) => {
                 if (user) {
-                    
+
                     if (status === "likes") {
                         await User.updateOne({_id: userId1 }, { $pull : {likes: userId2} })
                             .exec()
