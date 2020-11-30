@@ -76,9 +76,8 @@ router.post("/", async (req, res, next) => {
     const user = new User({
       _id: req.body._id,
       username: req.body.username,
-      topArtist: req.body.topArtist,
       iconColour: req.body.iconColour,
-      notifId: req.body.nodifId,
+      notifId: req.body.notifId,
       favGenre: req.body.favGenre,
       songs: req.body.songs,
       matches: req.body.matches,
