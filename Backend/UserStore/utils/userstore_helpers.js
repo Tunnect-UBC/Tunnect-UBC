@@ -17,6 +17,45 @@ const helpers = {
         return resp;
     },
 
+    async get_50(hostId) {
+        let resp = [];
+        
+        await User.findById(hostId)
+            .exec()
+            .then(async (user) => {
+                if (user) {
+                  
+                    await User.find( { $and: [
+                                                { _id: { $nin: user.matches}}, 
+                                                { _id: { $nin: user.likes}},
+                                                { _id: { $nin: user.dislikes}},
+                                                { _id: { $ne: user._id }}
+                                            ]})
+                            .limit(50)
+                            .exec()
+                            .then((users) => {
+                                users.push(user);
+                                resp = [200, users];
+                            })
+                            .catch((err) => {
+                                //console.log(err);
+                                resp = [500, err];
+                            });
+                    
+                            
+                } else {
+                    resp = [404, {message: "No valid entry found for provided ID"}];
+                }
+            })
+            .catch((err) => {
+                resp = [500, err];
+            });
+
+        //console.log(resp);
+
+        return resp;
+    },
+
     async post_user(user) {
         //stores this in the database
         let resp = [];
