@@ -1,4 +1,5 @@
 const helpers = require("../MatchmakingManager/utils/matchmakerHelpers");
+
 const users = require("../dictionaries/users");
 
 describe("Test for score #1, users have no songs or top artist alike", () => {

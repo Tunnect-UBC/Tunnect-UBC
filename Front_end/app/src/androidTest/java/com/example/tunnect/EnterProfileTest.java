@@ -17,6 +17,7 @@ import static androidx.test.espresso.action.ViewActions.replaceText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 /**
  * Instrumented test, which will execute on an Android device.
@@ -31,10 +32,10 @@ public class EnterProfileTest {
 
     @Test
     public void NewUserEnterProfile() throws InterruptedException {
-        Thread.sleep(10000);
+        Thread.sleep(5000);
 
         // Open up profile from main activity
-        ViewInteraction messageButton = onView(withId(R.id.messages_btn));
+        ViewInteraction messageButton = onView(withId(R.id.profile_btn));
         messageButton.check(matches(isDisplayed()));
         messageButton.perform(click());
 
@@ -55,20 +56,27 @@ public class EnterProfileTest {
         // Try to enter in first field then press save
         editText1.perform(replaceText("Test Name"), closeSoftKeyboard());
         editText1.perform(pressImeActionButton());
+        Thread.sleep(2000);
 
         saveButton.perform(click());
 
         // Try to enter in second field then press save
         editText2.perform(replaceText("Test Artist"), closeSoftKeyboard());
         editText2.perform(pressImeActionButton());
+        Thread.sleep(2000);
 
         saveButton.perform(click());
+
+        editText1.check(matches(withText("Test Name")));
+        editText2.check(matches(withText("Test Artist")));
+        Thread.sleep(2000);
 
         // Select a colour then press save
         enterColour.perform(click());
 
         ViewInteraction okColourBtn = onView(withId(R.id.okColorButton));
         okColourBtn.perform(click());
+        Thread.sleep(2000);
 
         saveButton.perform(click());
     }

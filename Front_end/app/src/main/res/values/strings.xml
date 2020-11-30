@@ -18,4 +18,8 @@
     <string name="enter_fave_art">Enter Favourite Artist</string>
     <string name="colour">Icon Colour</string>
     <string name="choose_colour">Choose Icon Colour</string>
+    <string name="songs">SONGS</string>
+    <string name="matches">MATCHES</string>
+    <string name="zero">0</string>
+    <string name="user_songs">Selected Songs</string>
 </resources>

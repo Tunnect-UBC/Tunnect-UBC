@@ -40,6 +40,7 @@ public class SettingsActivity extends AppCompatActivity {
         });
     }
 
+    // TODO: Have this function return to the SplashActivity
     public void deleteUser() {
         RequestQueue queue = Volley.newRequestQueue(this);
 

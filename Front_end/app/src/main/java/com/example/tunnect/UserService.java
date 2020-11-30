@@ -11,6 +11,7 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+// TODO: Delete this class (just kept here cause it has useful userstore functions to copy)
 public class UserService {
     private User user;
 
