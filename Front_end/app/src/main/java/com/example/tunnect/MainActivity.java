@@ -272,7 +272,7 @@ public class MainActivity extends AppCompatActivity {
                 dispMatch(user, score);
             }
         }, error -> {
-            // TODO: error handling here
+            Toast.makeText(getApplicationContext(), "Could not connect to server", Toast.LENGTH_LONG).show();
         });
         userQueue.add(jsonObjectRequest);
     }
@@ -332,7 +332,7 @@ public class MainActivity extends AppCompatActivity {
         String like_url = "http://52.188.167.58:3000/userstore/" + USER_ID + "/addLike/" + likedUser.getUserId();
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PATCH, like_url, null, response -> {
         }, error -> {
-            // TODO: error handling here
+            Toast.makeText(getApplicationContext(), "Could not connect to server", Toast.LENGTH_LONG).show();
         });
         userQueue.add(jsonObjectRequest);
     }
@@ -344,7 +344,7 @@ public class MainActivity extends AppCompatActivity {
         String dislike_url = "http://52.188.167.58:3000/userstore/" + USER_ID + "/addDislike/" + dislikedUser.getUserId();
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PATCH, dislike_url, null, response -> {
         }, error -> {
-            // TODO: error handling here
+            Toast.makeText(getApplicationContext(), "Could not connect to server", Toast.LENGTH_LONG).show();
         });
         userQueue.add(jsonObjectRequest);
     }
@@ -361,15 +361,15 @@ public class MainActivity extends AppCompatActivity {
         String match_url2 = "http://52.188.167.58:3000/userstore/" + matchedUser.getUserId() + "/addMatch/" + USER_ID;
         JsonObjectRequest removeLikeRequest = new JsonObjectRequest(Request.Method.PATCH, like_url, null, response -> {
         }, error -> {
-            // TODO: error handling here
+            Toast.makeText(getApplicationContext(), "Could not connect to server", Toast.LENGTH_LONG).show();
         });
         JsonObjectRequest matchRequest1 = new JsonObjectRequest(Request.Method.PATCH, match_url1, null, response -> {
         }, error -> {
-            // TODO: error handling here
+            Toast.makeText(getApplicationContext(), "Could not connect to server", Toast.LENGTH_LONG).show();
         });
         JsonObjectRequest matchRequest2 = new JsonObjectRequest(Request.Method.PATCH, match_url2, null, response -> {
         }, error -> {
-            // TODO: error handling here
+            Toast.makeText(getApplicationContext(), "Could not connect to server", Toast.LENGTH_LONG).show();
         });
         userQueue.add(removeLikeRequest);
         userQueue.add(matchRequest1);
@@ -377,7 +377,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent event){
+    public boolean onTouchEvent(MotionEvent event) {
         this.mDetector.onTouchEvent(event);
         return super.onTouchEvent(event);
     }
