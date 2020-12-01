@@ -168,7 +168,7 @@ const helpers = {
                     if (status === "likes") {
                         await User.updateOne({_id: userId1 }, { $set : {likes: userStatus} })
                             .exec()
-                            .then((result) => {
+                            .then(async (result) => {
                                 resp = [200, result];
                             })
                             .catch((err) => {
@@ -177,7 +177,7 @@ const helpers = {
                     } else if (status === "dislikes") {
                         await User.updateOne({_id: userId1 }, { $set : {dislikes: userStatus} })
                             .exec()
-                            .then((result) => {
+                            .then(async (result) => {
                                 resp = [200, result];
                             })
                             .catch((err) => {
