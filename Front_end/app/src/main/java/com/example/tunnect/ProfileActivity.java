@@ -106,7 +106,7 @@ public class ProfileActivity extends AppCompatActivity {
         // Start by setting up a title for the page
         ActionBar actionBar = getSupportActionBar();
         if(actionBar != null) {
-            String title = "Set Profile";
+            String title = "Profile";
             actionBar.setTitle(title);
         }
         if (Objects.requireNonNull(getIntent().getExtras()).getBoolean("FROM_MENU")) {
@@ -247,8 +247,7 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     /*
-     * Fetches a song from spotify, parses its data, and places the songs info in the user given
-     * Calls dispMatch on the user if the song is the last of the user's songs
+     * Fetches a song from spotify, parses its data, and calls getArtistInfo
      */
     private void getSong(String song_id) {
         String url = "https://api.spotify.com/v1/tracks/" + song_id;
@@ -292,6 +291,10 @@ public class ProfileActivity extends AppCompatActivity {
         spotifyQueue.add(jsonObjectRequest);
     }
 
+    /*
+    * Fetches an artists info from spotify and adds the related artists to the song object
+    * then adds the son to selSongs
+    */
     private void getArtistInfo(Song song) {
         String url = "https://api.spotify.com/v1/artists/" + song.getArtistId() + "/related-artists";
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, response -> {
@@ -353,7 +356,6 @@ public class ProfileActivity extends AppCompatActivity {
             for (int j = 0; j < selSongs.get(i).getRelatedArtists().size(); j++) {
                 relatedArtists.put(selSongs.get(i).getRelatedArtists().get(j));
             }
-            // TODO: related artist array isn't adding properly, check with Nick
             song.put("relatedArtists", relatedArtists);
             songs.put(i, song);
         }
@@ -374,22 +376,17 @@ public class ProfileActivity extends AppCompatActivity {
             }, error -> {
                 Toast.makeText(getApplicationContext(), "Failed to connect to the server!", Toast.LENGTH_LONG).show();
             });
+            queue.add(jsonObjectRequest);
 
         } else { // If modifying profile then use patch requests
+            JSONArray patchArray = new JSONArray();
             try {
                 user.put("propName", "username");
                 user.put("value", selectedUsername);
             } catch (JSONException e) {
                 Toast.makeText(getApplicationContext(), "Failed to add profile to the server!", Toast.LENGTH_LONG).show();
             }
-            // TODO: This patch request times out, check it with Nick
-            jsonObjectRequest = new JsonObjectRequest(Request.Method.PATCH, ADD_URL + USER_ID, user, response -> {
-                Toast.makeText(getApplicationContext(), "Updated username succesfully", Toast.LENGTH_LONG).show();
-            }, error -> {
-                Toast.makeText(getApplicationContext(), "Failed to connect to the server!", Toast.LENGTH_LONG).show();
-            });
-            queue.add(jsonObjectRequest);
-
+            patchArray.put(user);
             user = new JSONObject();
             try {
                 user.put("propName", "iconColour");
@@ -397,18 +394,13 @@ public class ProfileActivity extends AppCompatActivity {
             } catch (JSONException e) {
                 Toast.makeText(getApplicationContext(), "Failed to add profile to the server!", Toast.LENGTH_LONG).show();
             }
-            jsonObjectRequest = new JsonObjectRequest(Request.Method.PATCH, ADD_URL + USER_ID, user, response -> {
-            }, error -> {
-                Toast.makeText(getApplicationContext(), "Failed to connect to the server!", Toast.LENGTH_LONG).show();
-            });
-            queue.add(jsonObjectRequest);
+            patchArray.put(user);
 
-            JSONArray addArray = new JSONArray();
             JSONObject songObject = new JSONObject();
             songObject.put("propName", "songs");
             songObject.put("value", songs);
-            addArray.put(songObject);
-            JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.PATCH, ADD_URL + USER_ID, addArray, response -> {
+            patchArray.put(songObject);
+            JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.PATCH, ADD_URL + USER_ID, patchArray, response -> {
                 Intent mainIntent = new Intent(ProfileActivity.this, MainActivity.class);
                 mainIntent.putExtra("USER_ID", USER_ID);
                 startActivity(mainIntent);
@@ -417,8 +409,6 @@ public class ProfileActivity extends AppCompatActivity {
             });
             queue.add(jsonArrayRequest);
         }
-
-        queue.add(jsonObjectRequest);
     }
 
     /*
