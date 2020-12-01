@@ -72,12 +72,17 @@ router.post("/:receiverid", async (req, res, next) => {
      const message = req.body.message;
      const timeStamp = req.body.timeStamp;
      var notifId = "";
+     var senderName = "";
 
      await axios.get("http://localhost:3000/userstore/" + receiverid, {params: {}})
-     .then(async (response) => {
-        notifId = response.data.notifId;
+     .then(async (response1) => {
+        notifId = response1.data.notifId;
+        await axios.get("http://localhost:3000/userstore/" + senderid, {params: {}})
+        .then(async (response2) => {
+          senderName = response2.data.username;
+        });
      });
-     result = await helpers.postMessage(senderid, receiverid, notifId, message, timeStamp);
+     result = await helpers.postMessage(senderid, senderName, receiverid, notifId, message, timeStamp);
      if(result[0] === 0){
        res.status(500).json(result[1]);
      }
@@ -104,7 +109,7 @@ router.post("/:usrid1/:usrid2", async (req, res, next) => {
     await axios.get("http://localhost:3000/userstore/" + usrid1, {params: {}})
    .then(async (response) => {
     usr1name = response.data.username;
-    usr1colour = response.data.icon_colour;
+    usr1colour = response.data.iconColour;
     await axios.get("http://localhost:3000/userstore/" + usrid2, {params: {}})
     .then(async(response2) => {
      chat = new Chat({
@@ -112,7 +117,7 @@ router.post("/:usrid1/:usrid2", async (req, res, next) => {
       usrColour1: usr1colour,
       usrName1: usr1name,
       usrID2: usrid2,
-      usrColour2: response2.data.icon_colour,
+      usrColour2: response2.data.iconColour,
       usrName2: response2.data.username,
       messages: [{senderid: "tunnect", message: "Congrats: you've tunnected! Start a chat and say hi :)", timeStamp: timeStamp}],
       lastMessage: "Congrats: you've tunnected! Start a chat and say hi :)",

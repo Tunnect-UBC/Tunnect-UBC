@@ -229,8 +229,8 @@ public class ProfileActivity extends AppCompatActivity {
                     int numMatches = jsonMatches.length();
                     matches.setText(Integer.toString(numMatches));
 
-                    DrawableCompat.setTint(wrappedIconImage, Integer.parseInt((String) response.get("iconColour"), 16));
-                    selectedColorRGB = Integer.parseInt((String) response.get("iconColour"), 16);
+                    DrawableCompat.setTint(wrappedIconImage, Integer.parseInt((String) response.get("iconColour")));
+                    selectedColorRGB = Integer.parseInt((String) response.get("iconColour"));
                     iconImage.setImageDrawable(wrappedIconImage);
                 } catch (JSONException e) {
                     e.printStackTrace();

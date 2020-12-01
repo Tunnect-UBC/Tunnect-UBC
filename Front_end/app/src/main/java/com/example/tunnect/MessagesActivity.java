@@ -119,10 +119,11 @@ public class MessagesActivity extends AppCompatActivity {
     // Using a Volley connection, send a message to the server
     private void sendMessage() {
         JSONObject message = new JSONObject();
+        long time = date.getTime();
         try {
             message.put("senderid", USER_ID);
             message.put("message", editText.getText().toString());
-            message.put("timeStamp", date.getTime());
+            message.put("timeStamp", time);
         } catch (JSONException e) {
             e.printStackTrace();
             Toast.makeText(getApplicationContext(), "Failed to send your message into the server.", Toast.LENGTH_LONG).show();
@@ -136,7 +137,7 @@ public class MessagesActivity extends AppCompatActivity {
         });
         queue.add(jsonObjectRequest);
 
-        updateLastMessage(editText.getText().toString());
+        updateLastMessage(editText.getText().toString(), time);
     }
 
     // Using a Volley connection, this method adds entries in the messagesList from the provided server data
@@ -197,9 +198,10 @@ public class MessagesActivity extends AppCompatActivity {
     }
 
     // Sends a broadcast to update last message on chat list activity
-    private void updateLastMessage(String message) {
+    private void updateLastMessage(String message, long time) {
         Intent intent = new Intent("new_last_message");
         intent.putExtra("LAST_MESSAGE", message);
+        intent.putExtra("TIME", time);
         intent.putExtra("INDEX", index);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
@@ -209,13 +211,13 @@ public class MessagesActivity extends AppCompatActivity {
         public void onReceive(@Nullable Context context, @NonNull Intent intent) {
             String message = Objects.requireNonNull(intent.getExtras()).getString("BROADCAST_MESSAGE");
             updateRecyclerView(message, RECEIVED_MESSAGE);
-            Toast.makeText(getBaseContext(), "got broadcast", Toast.LENGTH_LONG).show();
-            updateLastMessage(message);
+            updateLastMessage(message, date.getTime());
         }
     };
 
     // Handles an incoming broadcast
     protected void onStart() {
+
         super.onStart();
         LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, new IntentFilter("ReceivedMessage"));
     }

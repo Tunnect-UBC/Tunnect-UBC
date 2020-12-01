@@ -9,7 +9,7 @@ const express = require("express");
 const app = express();
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
-const admin = require("../firebase-config");
+
 
 const mongoose = require("mongoose");
 
@@ -70,5 +70,4 @@ app.use((error, req, res, next) => {
     });
 });
 exports.app = app;
-exports.admin = admin;
 exports.notif_opt = notif_options;
