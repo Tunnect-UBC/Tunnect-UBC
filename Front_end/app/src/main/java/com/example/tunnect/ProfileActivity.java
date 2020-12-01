@@ -342,18 +342,19 @@ public class ProfileActivity extends AppCompatActivity {
         JsonObjectRequest jsonObjectRequest;
         JSONArray songs = new JSONArray();
         JSONObject song;
-        String[] relatedArtists;
+        JSONArray relatedArtists;
         for(int i = 0; i < selSongs.size(); i++) {
-            relatedArtists = new String[selSongs.get(i).getRelatedArtists().size()];
+            relatedArtists = new JSONArray();
             song = new JSONObject();
             song.put("_id", selSongs.get(i).getId());
             song.put("artist", selSongs.get(i).getArtist());
             song.put("name", selSongs.get(i).getName());
             song.put("genre", "Awmsonmeness");
             for (int j = 0; j < selSongs.get(i).getRelatedArtists().size(); j++) {
-                relatedArtists[j] = selSongs.get(i).getRelatedArtists().get(j);
+                relatedArtists.put(selSongs.get(i).getRelatedArtists().get(j));
             }
-            song.put("relatedArtist", relatedArtists);
+            // TODO: related artist array isn't adding properly, check with Nick
+            song.put("relatedArtists", relatedArtists);
             songs.put(i, song);
         }
         if(!inUserStore) { // Add the user to the server
@@ -366,7 +367,7 @@ public class ProfileActivity extends AppCompatActivity {
             } catch (JSONException e) {
                 Toast.makeText(getApplicationContext(), "Failed to add profile to the server!", Toast.LENGTH_LONG).show();
             }
-            jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, ADD_URL + USER_ID, user, response -> {
+            jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, ADD_URL, user, response -> {
                 Intent mainIntent = new Intent(ProfileActivity.this, MainActivity.class);
                 mainIntent.putExtra("USER_ID", USER_ID);
                 startActivity(mainIntent);
@@ -381,7 +382,9 @@ public class ProfileActivity extends AppCompatActivity {
             } catch (JSONException e) {
                 Toast.makeText(getApplicationContext(), "Failed to add profile to the server!", Toast.LENGTH_LONG).show();
             }
+            // TODO: This patch request times out, check it with Nick
             jsonObjectRequest = new JsonObjectRequest(Request.Method.PATCH, ADD_URL + USER_ID, user, response -> {
+                Toast.makeText(getApplicationContext(), "Updated username succesfully", Toast.LENGTH_LONG).show();
             }, error -> {
                 Toast.makeText(getApplicationContext(), "Failed to connect to the server!", Toast.LENGTH_LONG).show();
             });
@@ -410,6 +413,7 @@ public class ProfileActivity extends AppCompatActivity {
                 mainIntent.putExtra("USER_ID", USER_ID);
                 startActivity(mainIntent);
             }, error -> {
+                // TODO: This adds the song correctly but it returns error for some reason, check it with Nick
             });
             queue.add(jsonArrayRequest);
         }
