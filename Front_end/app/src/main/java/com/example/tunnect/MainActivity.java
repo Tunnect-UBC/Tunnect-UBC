@@ -148,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
     * Displays a potential match
     * Sends a users songs to the SongListAdaptor to be displayed
     */
-    private void dispMatch(User user, Double score) {
+    private void dispMatch(User user) {
         displayedUser = user;
         if (user.getUserId().equals("no_user")) {
             user_name.setText("No Matches Found!");
@@ -156,12 +156,13 @@ public class MainActivity extends AppCompatActivity {
         }
 
         user_name.setText(user.getUsername());
-        score_view.setText(score.toString());
+        // TODO: Change this from score_view to genre_view
+        score_view.setText(user.getFavGenre());
 
         List<Song> matchesSongs = user.getSongs();
         if (matchesSongs == null) {
             matchesSongs = new ArrayList<>();
-            matchesSongs.add(new Song("", "This user has no songs", "", ""));
+            matchesSongs.add(new Song("", "This user has no songs", "", "", new ArrayList<>(), ""));
         }
         RecyclerView.Adapter mAdapter = new SongListAdaptor(this, matchesSongs);
         recyclerView.setAdapter(mAdapter);
@@ -215,7 +216,7 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 User no_user = new User();
                 no_user.updateUserId("no_user");
-                dispMatch(no_user, 0.0);
+                dispMatch(no_user);
             }
 
         }, error -> {
@@ -253,34 +254,40 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
             JSONArray json_songs = user_info.optJSONArray("songs");
-            List<String> user_songs = new ArrayList<>();
             for (int i = 0; i < json_songs.length(); i++) {
                 try {
-                    user_songs.add(json_songs.get(i).toString());
+                    user.addSong(parseSong((JSONObject) json_songs.get(i)));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
-            if (user_songs.size() > 0) {
-                for (int i = 0; i < user_songs.size() - 1; i++) {
-                    getSong(user, score, user_songs.get(i), false);
-                }
-                getSong(user, score, user_songs.get(user_songs.size() - 1), true);
+            if (user.getSongs().size() <= 0) {
+                user.addSong(new Song("", "This user has no songs", "", "", new ArrayList<>(), ""));
             }
-            else {
-                user.addSong(new Song("", "This user has no songs", "", ""));
-                dispMatch(user, score);
-            }
+            dispMatch(user);
         }, error -> {
             Toast.makeText(getApplicationContext(), "Could not connect to server", Toast.LENGTH_LONG).show();
         });
         userQueue.add(jsonObjectRequest);
     }
 
+    private Song parseSong(JSONObject songInfo) throws JSONException {
+        Song song = new Song();
+        song.setId(songInfo.getString("_id"));
+        song.setArtist(songInfo.getString("artist"));
+        song.setName(songInfo.getString("name"));
+        JSONArray relatedArtists = songInfo.getJSONArray("relatedArtists");
+        for (int i = 0; i < relatedArtists.length(); i++) {
+            song.addRelatedArtist(relatedArtists.getString(i));
+        }
+        return song;
+    }
+
     /*
     * Fetches a song from spotify, parses its data, and places the songs info in the user given
     * Calls dispMatch on the user if the song is the last of the user's songs
     */
+    /* TODO: Delete this method
     private void getSong(User user, Double score, String song_id, Boolean lastSong) {
         String url = "https://api.spotify.com/v1/tracks/" + song_id;
         Song song = new Song();
@@ -320,7 +327,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         spotifyQueue.add(jsonObjectRequest);
-    }
+    } */
 
     /*
     * Handles like functionality

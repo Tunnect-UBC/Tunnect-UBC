@@ -16,6 +16,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -54,20 +55,23 @@ public class SongService {
                     for (int n = 0; n < jsonArray.length(); n++) {
                         try {
                             // Parse the search result (have to do some extra gets to get album and artist)
+                            // Doesn't set related artists and genre (those are set when song is added to profile
+                            Song song_to_add = new Song();
                             JSONObject object = jsonArray.getJSONObject(n);
-                            String id = (String) object.get("id");
-                            String name = (String) object.get("name");
+                            song_to_add.setId((String) object.get("id"));
+                            song_to_add.setName((String) object.get("name"));
                             JSONObject album_data = object.getJSONObject("album");
-                            String album = (String) album_data.get("name");
+                            song_to_add.setAlbum((String) album_data.get("name"));
                             JSONArray artists = album_data.optJSONArray("artists");
                             JSONObject artist_obj = artists.getJSONObject(0);
+                            song_to_add.setArtistId((String) artist_obj.get("id"));
                             String artist = (String) artist_obj.get("name");
                             // Used if a song has multiple artists
                             for (int i = 1; i < artists.length(); i++) {
                                 artist_obj = artists.getJSONObject(i);
                                 artist = artist + ", " + (String) artist_obj.get("name");
                             }
-                            Song song_to_add = new Song(id, name, artist, album);
+                            song_to_add.setArtist(artist);
                             search_songs.add(song_to_add);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -114,15 +118,21 @@ class Song {
     private String name;
     private String artist;
     private String album;
+    private List<String> relatedArtists;
+    private String artistId;
 
-    public Song(String id, String name, String artist, String album) {
+    public Song(String id, String name, String artist, String album, List<String> relatedArtists, String artistId) {
         this.name = name;
         this.id = id;
         this.artist = artist;
         this.album = album;
+        this.relatedArtists = relatedArtists;
+        this.artistId = artistId;
     }
 
-    public Song() {}
+    public Song() {
+        relatedArtists = new ArrayList<>();
+    }
 
     public String getId() {
         return id;
@@ -155,6 +165,16 @@ class Song {
     public void setAlbum(String album) {
         this.album = album;
     }
+
+    public List<String> getRelatedArtists() { return relatedArtists; }
+
+    public void setRelatedArtists(List<String> relatedArtists) { this.relatedArtists = relatedArtists; }
+
+    public void addRelatedArtist(String relatedArtist) { relatedArtists.add(relatedArtist); }
+
+    public String getArtistId() { return artistId; }
+
+    public void setArtistId(String artistId) { this.artistId = artistId; }
 
 }
 

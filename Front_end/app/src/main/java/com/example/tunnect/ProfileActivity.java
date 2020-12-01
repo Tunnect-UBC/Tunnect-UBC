@@ -84,6 +84,7 @@ public class ProfileActivity extends AppCompatActivity {
         queue = Volley.newRequestQueue(getApplicationContext());
         spotifyQueue = Volley.newRequestQueue(getApplicationContext());
 
+        // TODO: add a field for genre
         matches = findViewById(R.id.num_matches);
         songs = findViewById(R.id.num_songs);
         iconImage = findViewById(R.id.profile_icon);
@@ -117,7 +118,7 @@ public class ProfileActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-        selSongs.add(new Song("", "You have no songs", "", "No Album"));
+        selSongs.add(new Song("", "You have no songs", "", "No Album", new ArrayList<String>(), ""));
         RecyclerView.Adapter mAdapter = new SongListAdaptor(this, selSongs);
         recyclerView.setAdapter(mAdapter);
         selSongs.remove(0);
@@ -184,7 +185,7 @@ public class ProfileActivity extends AppCompatActivity {
             selectedSongs ++;
             songs.setText(Integer.toString(selectedSongs));
             user_songs.add(song);
-            getSong(song, true);
+            getSong(song);
         }
     };
 
@@ -208,19 +209,21 @@ public class ProfileActivity extends AppCompatActivity {
                     songs.setText(Integer.toString(numSongs));
                     selectedSongs = numSongs;
 
+                    JSONObject jsonSong;
+                    Song song;
                     for (int i = 0; i < numSongs; i++) {
-                        try {
-                            user_songs.add(jsonSongs.get(i).toString());
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                        jsonSong = (JSONObject) jsonSongs.get(i);
+                        song = new Song();
+                        song.setId(jsonSong.getString("_id"));
+                        song.setArtist(jsonSong.getString("artist"));
+                        song.setName(jsonSong.getString("name"));
+                        selSongs.add(song);
                     }
-                    if (user_songs.size() > 0) {
-                        for (int i = 0; i < user_songs.size() - 1; i++) {
-                            getSong(user_songs.get(i), false);
-                        }
-                        getSong(user_songs.get(user_songs.size() - 1), true);
+                    if (numSongs > 0) {
+                        RecyclerView.Adapter mAdapter = new SongListAdaptor(this, selSongs);
+                        recyclerView.setAdapter(mAdapter);
                     }
+
 
                     JSONArray jsonMatches = response.optJSONArray("matches");
                     int numMatches = jsonMatches.length();
@@ -247,7 +250,7 @@ public class ProfileActivity extends AppCompatActivity {
      * Fetches a song from spotify, parses its data, and places the songs info in the user given
      * Calls dispMatch on the user if the song is the last of the user's songs
      */
-    private void getSong(String song_id, Boolean lastSong) {
+    private void getSong(String song_id) {
         String url = "https://api.spotify.com/v1/tracks/" + song_id;
         Song song = new Song();
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, response -> {
@@ -258,6 +261,7 @@ public class ProfileActivity extends AppCompatActivity {
                 song.setAlbum(album_info.getString("name"));
                 JSONArray artists = album_info.optJSONArray("artists");
                 JSONObject artist_info = artists.getJSONObject(0);
+                song.setArtistId((String) artist_info.get("id"));
                 String artist = artist_info.getString("name");
                 // Used if a song has multiple artists
                 for (int i = 1; i < artists.length(); i++) {
@@ -265,24 +269,45 @@ public class ProfileActivity extends AppCompatActivity {
                     artist = artist + ", " + artist_info.getString("name");
                 }
                 song.setArtist(artist);
+                getArtistInfo(song);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error -> {
+            Toast.makeText(getApplicationContext(), "Error getting songs", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), song_id, Toast.LENGTH_SHORT).show();
+            selSongs.add(new Song("", "This user has no songs", "", "", new ArrayList<>(), ""));
+            RecyclerView.Adapter mAdapter = new SongListAdaptor(this, selSongs);
+            recyclerView.setAdapter(mAdapter);
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                String token = sharedPreferences.getString("token", "");
+                String auth = "Bearer " + token;
+                headers.put("Authorization", auth);
+                return headers;
+            }
+        };
+        spotifyQueue.add(jsonObjectRequest);
+    }
+
+    private void getArtistInfo(Song song) {
+        String url = "https://api.spotify.com/v1/artists/" + song.getArtistId() + "/related-artists";
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, response -> {
+            try {
+                JSONArray artists = response.getJSONArray("artists");
+                for (int i = 0; i < 5; i++) {
+                    JSONObject relatedArtist = (JSONObject) artists.get(i);
+                    song.addRelatedArtist((String) relatedArtist.get("name"));
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
             selSongs.add(song);
 
-            if (lastSong) {
-                if (selSongs.size() == 0) {
-                    selSongs.add(new Song("", "This user has no songs", "", ""));
-                }
-                RecyclerView.Adapter mAdapter = new SongListAdaptor(this, selSongs);
-                recyclerView.setAdapter(mAdapter);
-            }
         }, error -> {
-            Toast.makeText(getApplicationContext(), "Error getting songs", Toast.LENGTH_SHORT).show();
-            Toast.makeText(getApplicationContext(), song_id, Toast.LENGTH_SHORT).show();
-            selSongs.add(new Song("", "This user has no songs", "", ""));
-            RecyclerView.Adapter mAdapter = new SongListAdaptor(this, selSongs);
-            recyclerView.setAdapter(mAdapter);
+            Toast.makeText(getApplicationContext(), "Could not fetch related artists", Toast.LENGTH_LONG).show();
         }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
@@ -315,17 +340,23 @@ public class ProfileActivity extends AppCompatActivity {
 
         JSONObject user = new JSONObject();
         JsonObjectRequest jsonObjectRequest;
-        if(!inUserStore) { // Add the user to the server
-            JSONArray songs = new JSONArray();
-            JSONObject song = new JSONObject();
-            for(int i = 0; i < selSongs.size(); i ++) {
-                song.put("_id", selSongs.get(i).getId());
-                song.put("artist", selSongs.get(i).getArtist());
-                song.put("name", selSongs.get(i).getName());
-                song.put("genre", "Awmsonmeness");
-                song.put("relatedArtist", "YEET");
-                songs.put(song);
+        JSONArray songs = new JSONArray();
+        JSONObject song;
+        String[] relatedArtists;
+        for(int i = 0; i < selSongs.size(); i++) {
+            relatedArtists = new String[selSongs.get(i).getRelatedArtists().size()];
+            song = new JSONObject();
+            song.put("_id", selSongs.get(i).getId());
+            song.put("artist", selSongs.get(i).getArtist());
+            song.put("name", selSongs.get(i).getName());
+            song.put("genre", "Awmsonmeness");
+            for (int j = 0; j < selSongs.get(i).getRelatedArtists().size(); j++) {
+                relatedArtists[j] = selSongs.get(i).getRelatedArtists().get(j);
             }
+            song.put("relatedArtist", relatedArtists);
+            songs.put(i, song);
+        }
+        if(!inUserStore) { // Add the user to the server
             try {
                 user.put("_id", USER_ID);
                 user.put("username", selectedUsername);
@@ -335,7 +366,7 @@ public class ProfileActivity extends AppCompatActivity {
             } catch (JSONException e) {
                 Toast.makeText(getApplicationContext(), "Failed to add profile to the server!", Toast.LENGTH_LONG).show();
             }
-            jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, ADD_URL, user, response -> {
+            jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, ADD_URL + USER_ID, user, response -> {
                 Intent mainIntent = new Intent(ProfileActivity.this, MainActivity.class);
                 mainIntent.putExtra("USER_ID", USER_ID);
                 startActivity(mainIntent);
@@ -350,7 +381,7 @@ public class ProfileActivity extends AppCompatActivity {
             } catch (JSONException e) {
                 Toast.makeText(getApplicationContext(), "Failed to add profile to the server!", Toast.LENGTH_LONG).show();
             }
-            jsonObjectRequest = new JsonObjectRequest(Request.Method.PATCH, ADD_URL, user, response -> {
+            jsonObjectRequest = new JsonObjectRequest(Request.Method.PATCH, ADD_URL + USER_ID, user, response -> {
             }, error -> {
                 Toast.makeText(getApplicationContext(), "Failed to connect to the server!", Toast.LENGTH_LONG).show();
             });
@@ -363,7 +394,7 @@ public class ProfileActivity extends AppCompatActivity {
             } catch (JSONException e) {
                 Toast.makeText(getApplicationContext(), "Failed to add profile to the server!", Toast.LENGTH_LONG).show();
             }
-            jsonObjectRequest = new JsonObjectRequest(Request.Method.PATCH, ADD_URL, user, response -> {
+            jsonObjectRequest = new JsonObjectRequest(Request.Method.PATCH, ADD_URL + USER_ID, user, response -> {
             }, error -> {
                 Toast.makeText(getApplicationContext(), "Failed to connect to the server!", Toast.LENGTH_LONG).show();
             });
@@ -372,14 +403,13 @@ public class ProfileActivity extends AppCompatActivity {
             JSONArray addArray = new JSONArray();
             JSONObject songObject = new JSONObject();
             songObject.put("propName", "songs");
-            songObject.put("value", user_songs);
+            songObject.put("value", songs);
             addArray.put(songObject);
-            JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.PATCH, ADD_URL, addArray, response -> {
+            JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.PATCH, ADD_URL + USER_ID, addArray, response -> {
                 Intent mainIntent = new Intent(ProfileActivity.this, MainActivity.class);
                 mainIntent.putExtra("USER_ID", USER_ID);
                 startActivity(mainIntent);
             }, error -> {
-                Toast.makeText(getApplicationContext(), "Failed to connect to the server!", Toast.LENGTH_LONG).show();
             });
             queue.add(jsonArrayRequest);
         }

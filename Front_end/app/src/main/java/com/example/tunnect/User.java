@@ -10,14 +10,16 @@ public class User {
     private List<String> matches;
     private List<String> dislikes;
     private List<String> likes;
+    private String favGenre;
 
-    public User(String userId, String username, List<Song> songs, List<String> matches, List<String> dislikes, List<String> likes) {
+    public User(String userId, String username, List<Song> songs, List<String> matches, List<String> dislikes, List<String> likes, String favGenre) {
         this.userId = userId;
         this.username = username;
         this.songs = songs;
         this.matches = matches;
         this.likes = likes;
         this.dislikes = dislikes;
+        this.favGenre = favGenre;
     }
 
     public User() {
@@ -51,9 +53,7 @@ public class User {
 
     public List<String> getDislikes() {return dislikes;}
 
-    public void addLike(String userId) {
-        likes.add(userId);
-    }
+    public void addLike(String userId) { likes.add(userId); }
 
     public void addDislike(String userId) {
         dislikes.add(userId);
@@ -66,4 +66,10 @@ public class User {
     public void addSong(Song song) {
         songs.add(song);
     }
+
+    public void setSongs(List<Song> songs) { this.songs = songs; }
+
+    public void setFavGenre(String favGenre) { this.favGenre = favGenre; }
+
+    public String getFavGenre() { return favGenre; }
 }
