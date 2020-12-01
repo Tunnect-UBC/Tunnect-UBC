@@ -4,7 +4,7 @@
 //module.exports = {
 const helpers = {
     songScore(user1song, user2) {
-        
+
         let artistFlag = 0;
         let relatedFlag = 0;
         let genreFlag = 0;
@@ -20,7 +20,7 @@ const helpers = {
                 genreFlag = 1;
             }
         }
-        
+
         if (artistFlag) {
             return 2;
         } else if (relatedFlag) {
@@ -31,7 +31,7 @@ const helpers = {
             return 0;
         }
     },
-    
+
     getScore(user1, user2) {
         let score = 0;
 
@@ -39,12 +39,12 @@ const helpers = {
             score += helpers.songScore(song, user2);
         });
 
-        if (user1.songs.length !== 0) {    
+        if (user1.songs.length !== 0) {
             score = score / user1.songs.length;
         }
 
         const songsScore = score * (7/3);
-        const genreScore = 0;
+        var genreScore = 0;
         if (user1.favGenre === user2.favGenre) {
             genreScore = 3;
         }
@@ -54,7 +54,7 @@ const helpers = {
 
         /**
          * VERY IMPORTANT
-         * 
+         *
          * this function requires that the host is present in the allUsers list. This is
          * the case for the basic implementation of of matchmaker where all users in db will be selected.
          * This will be different tho if we get more users and start to only select a subset of them...
