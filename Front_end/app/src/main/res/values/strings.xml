@@ -22,4 +22,7 @@
     <string name="matches">MATCHES</string>
     <string name="zero">0</string>
     <string name="user_songs">Selected Songs</string>
+    <string name="fav_genre">Favourite Genre</string>
+    <string name="enter_fav_genre">Enter Favourite Genre</string>
+
 </resources>

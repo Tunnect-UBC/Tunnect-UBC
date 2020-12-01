@@ -9,9 +9,15 @@
 
     <Button
         android:id="@+id/delete_account"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="245dp"
+        android:layout_height="57dp"
+        android:layout_gravity="center"
+        android:background="@drawable/purple_grad_ovel"
+
+        android:fontFamily="sans-serif-medium"
         android:text="Delete Account"
+        android:textColor="@color/white"
+        android:textSize="25sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

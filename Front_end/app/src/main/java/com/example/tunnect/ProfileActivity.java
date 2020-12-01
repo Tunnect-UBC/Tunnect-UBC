@@ -64,6 +64,7 @@ public class ProfileActivity extends AppCompatActivity {
     private Drawable wrappedIconImage;
     private ImageView iconImage;
     private EditText username;
+    private EditText favGenre;
     private TextView profileTitle;
     private TextView matches;
     private TextView songs;
@@ -84,11 +85,13 @@ public class ProfileActivity extends AppCompatActivity {
         queue = Volley.newRequestQueue(getApplicationContext());
         spotifyQueue = Volley.newRequestQueue(getApplicationContext());
 
-        // TODO: add a field for genre
+        // TODO: Test the field for genre
+        // TODO: Add a delete function for songs
         matches = findViewById(R.id.num_matches);
         songs = findViewById(R.id.num_songs);
         iconImage = findViewById(R.id.profile_icon);
         username = findViewById(R.id.enter_username);
+        favGenre = findViewById(R.id.enter_fav_genre);
         profileTitle = findViewById(R.id.username_title);
         Drawable unwrappedIconImage = AppCompatResources.getDrawable(this, R.drawable.profile_circle);
         wrappedIconImage = DrawableCompat.wrap(unwrappedIconImage);
@@ -204,6 +207,7 @@ public class ProfileActivity extends AppCompatActivity {
                 try {
                     profileTitle.setText((String) response.get("username"));
                     username.setText((String) response.get("username"));
+                    favGenre.setText((String) response.get("favGenre"));
                     JSONArray jsonSongs = response.optJSONArray("songs");
                     int numSongs = jsonSongs.length();
                     songs.setText(Integer.toString(numSongs));
@@ -330,14 +334,18 @@ public class ProfileActivity extends AppCompatActivity {
     */
     private void saveProfileEntries() throws JSONException {
         String selectedUsername = username.getText().toString().trim();
+        String selectedGenre = favGenre.getText().toString().trim();
         if (selectedUsername.equals("")) {
             Toast.makeText(getApplicationContext(), "Please enter a username", Toast.LENGTH_LONG).show();
+            return;
+        } else if (selectedGenre.equals("")) {
+            Toast.makeText(getApplicationContext(), "Please enter your favourite genre", Toast.LENGTH_LONG).show();
             return;
         } else if (selectedColorRGB == 0) {
             Toast.makeText(getApplicationContext(), "Please select a profile icon colour", Toast.LENGTH_LONG).show();
             return;
         } else if (selectedSongs < 5) {
-            Toast.makeText(getApplicationContext(), "Please select at least 5 songs before completing your account", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Please select at least 5 songs before saving your account", Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -363,6 +371,7 @@ public class ProfileActivity extends AppCompatActivity {
             try {
                 user.put("_id", USER_ID);
                 user.put("username", selectedUsername);
+                user.put("favGenre", selectedGenre);
                 user.put("iconColour", Integer.toString(selectedColorRGB));
                 user.put("songs", songs);
                 user.put("notifId", token);
@@ -383,6 +392,14 @@ public class ProfileActivity extends AppCompatActivity {
             try {
                 user.put("propName", "username");
                 user.put("value", selectedUsername);
+            } catch (JSONException e) {
+                Toast.makeText(getApplicationContext(), "Failed to add profile to the server!", Toast.LENGTH_LONG).show();
+            }
+            patchArray.put(user);
+            user = new JSONObject();
+            try {
+                user.put("propName", "favGenre");
+                user.put("value", selectedGenre);
             } catch (JSONException e) {
                 Toast.makeText(getApplicationContext(), "Failed to add profile to the server!", Toast.LENGTH_LONG).show();
             }

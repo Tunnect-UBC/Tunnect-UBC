@@ -11,8 +11,9 @@ public class User {
     private List<String> dislikes;
     private List<String> likes;
     private String favGenre;
+    private String notifId;
 
-    public User(String userId, String username, List<Song> songs, List<String> matches, List<String> dislikes, List<String> likes, String favGenre) {
+    public User(String userId, String username, List<Song> songs, List<String> matches, List<String> dislikes, List<String> likes, String favGenre, String notifId) {
         this.userId = userId;
         this.username = username;
         this.songs = songs;
@@ -72,4 +73,8 @@ public class User {
     public void setFavGenre(String favGenre) { this.favGenre = favGenre; }
 
     public String getFavGenre() { return favGenre; }
+
+    public String getNotifId() { return notifId; }
+
+    public void setNotifId(String notifId) { this.notifId = notifId; }
 }

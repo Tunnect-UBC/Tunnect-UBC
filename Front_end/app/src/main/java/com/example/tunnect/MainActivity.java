@@ -334,7 +334,11 @@ public class MainActivity extends AppCompatActivity {
     */
     public void like(User likedUser) {
         if (likedUser.getLikes().contains(USER_ID)) {
-            match(likedUser);
+            try {
+                match(likedUser);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
         String like_url = "http://52.188.167.58:3000/userstore/" + USER_ID + "/addLike/" + likedUser.getUserId();
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PATCH, like_url, null, response -> {
@@ -361,19 +365,26 @@ public class MainActivity extends AppCompatActivity {
     * Adds both users to the others matches list
     * TODO: Have this function create a chat between users
     */
-    public void match(User matchedUser) {
+    public void match(User matchedUser) throws JSONException {
         Toast.makeText(getApplicationContext(), "You matched with " + matchedUser.getUsername(), Toast.LENGTH_LONG).show();
         String like_url = "http://52.188.167.58:3000/userstore/" + USER_ID + "/removeLike/" + matchedUser.getUserId();
         String match_url1 = "http://52.188.167.58:3000/userstore/" + USER_ID + "/addMatch/" + matchedUser.getUserId();
         String match_url2 = "http://52.188.167.58:3000/userstore/" + matchedUser.getUserId() + "/addMatch/" + USER_ID;
-        JsonObjectRequest removeLikeRequest = new JsonObjectRequest(Request.Method.PATCH, like_url, null, response -> {
+        JSONObject notifId = new JSONObject();
+        notifId.put("notifId", matchedUser.getNotifId());
+        notifId.put("username", matchedUser.getUsername());
+        JsonObjectRequest removeLikeRequest = new JsonObjectRequest(Request.Method.PATCH, like_url, notifId, response -> {
         }, error -> {
             Toast.makeText(getApplicationContext(), "Could not connect to server", Toast.LENGTH_LONG).show();
         });
-        JsonObjectRequest matchRequest1 = new JsonObjectRequest(Request.Method.PATCH, match_url1, null, response -> {
+        notifId = new JSONObject();
+        notifId.put("notifId", "0");
+        notifId.put("username", matchedUser.getUsername());
+        JsonObjectRequest matchRequest1 = new JsonObjectRequest(Request.Method.PATCH, match_url1, notifId, response -> {
         }, error -> {
             Toast.makeText(getApplicationContext(), "Could not connect to server", Toast.LENGTH_LONG).show();
         });
+
         JsonObjectRequest matchRequest2 = new JsonObjectRequest(Request.Method.PATCH, match_url2, null, response -> {
         }, error -> {
             Toast.makeText(getApplicationContext(), "Could not connect to server", Toast.LENGTH_LONG).show();
