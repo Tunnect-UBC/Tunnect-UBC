@@ -89,11 +89,11 @@ const helpers = {
      return resp;
    },
 
-async postMessage(senderid, receiverid, notifId, message, timeStamp) {
+async postMessage(senderid, senderName, receiverid, notifId, message, timeStamp) {
   resp = [];
   const messNotif = {
     notification: {
-      title: "Chat:",
+      title: senderName,
       body: message
     }
   };

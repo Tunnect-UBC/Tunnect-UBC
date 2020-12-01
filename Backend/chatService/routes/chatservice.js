@@ -72,12 +72,17 @@ router.post("/:receiverid", async (req, res, next) => {
      const message = req.body.message;
      const timeStamp = req.body.timeStamp;
      var notifId = "";
+     var senderName = "";
 
      await axios.get("http://localhost:3000/userstore/" + receiverid, {params: {}})
-     .then(async (response) => {
-        notifId = response.data.notifId;
+     .then(async (response1) => {
+        notifId = response1.data.notifId;
+        await axios.get("http://localhost:3000/userstore/" + senderid, {params: {}})
+        .then(async (response2) => {
+          senderName = response2.data.username;
+        });
      });
-     result = await helpers.postMessage(senderid, receiverid, notifId, message, timeStamp);
+     result = await helpers.postMessage(senderid, senderName, receiverid, notifId, message, timeStamp);
      if(result[0] === 0){
        res.status(500).json(result[1]);
      }
