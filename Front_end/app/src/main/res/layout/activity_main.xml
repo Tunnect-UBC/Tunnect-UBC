@@ -4,9 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/background_dark"
-    tools:context=".MainActivity" >
+    android:backgroundTint="@color/background_dark"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
 
 
     <androidx.appcompat.widget.Toolbar
@@ -59,7 +60,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/hint_white"/>
+        android:background="@color/hint_white" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/match_list"
@@ -69,7 +70,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/hint_white"/>
+        android:background="@color/hint_white" />
 
     <TextView
         android:id="@+id/user_name"
@@ -94,8 +95,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/dislike_btn"
