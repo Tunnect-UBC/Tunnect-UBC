@@ -381,6 +381,26 @@ public class MainActivity extends AppCompatActivity {
         userQueue.add(removeLikeRequest);
         userQueue.add(matchRequest1);
         userQueue.add(matchRequest2);
+        createChat(USER_ID, matchedUser.getUserId());
+    }
+
+    /*
+    * Creates a chat between user1 and user2
+    */
+    private void createChat(String userId1, String userId2) {
+        String chatUrl = "http://52.188.167.58:5000/chatservice/" + userId1 + "/" + userId2;
+        JSONObject user = new JSONObject();
+        try {
+            Date date = new Date();
+            user.put("timeStamp", date.getTime());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, chatUrl, user, response -> {
+        }, error -> {
+            Toast.makeText(getApplicationContext(), "Failed to create chat", Toast.LENGTH_LONG).show();
+        });
+        userQueue.add(jsonObjectRequest);
     }
 
     @Override
