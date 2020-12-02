@@ -122,7 +122,7 @@ public class ProfileActivity extends AppCompatActivity {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         selSongs.add(new Song("", "You have no songs", "", "No Album", new ArrayList<String>(), ""));
-        RecyclerView.Adapter mAdapter = new SongListAdaptor(this, selSongs);
+        RecyclerView.Adapter mAdapter = new ProfileSongsAdaptor(this, selSongs);
         recyclerView.setAdapter(mAdapter);
         selSongs.remove(0);
 
@@ -161,7 +161,7 @@ public class ProfileActivity extends AppCompatActivity {
         loadProfileEntries();
 
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
-                new IntentFilter("added_song"));
+                new IntentFilter("edited_song"));
 
         // Must first check if device can send and receive messages
         if (ProfileActivity.this.checkGooglePlayServices()) {
@@ -183,12 +183,20 @@ public class ProfileActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             // Get extra data included in the Intent
-            Toast.makeText(context, "Song Added", Toast.LENGTH_LONG).show();
-            String song = intent.getStringExtra("ADDED_SONG");
-            selectedSongs ++;
-            songs.setText(Integer.toString(selectedSongs));
-            user_songs.add(song);
-            getSong(song);
+            String adding = intent.getStringExtra("ADDING");
+            if (adding.equals("True")) {
+                Toast.makeText(context, "Song Added", Toast.LENGTH_LONG).show();
+                String song = intent.getStringExtra("ADDED_SONG");
+                selectedSongs++;
+                songs.setText(Integer.toString(selectedSongs));
+                getSong(song);
+            } else {
+                Toast.makeText(context, "Song Deleted", Toast.LENGTH_LONG).show();
+                String song = intent.getStringExtra("DELETED_SONG");
+                selectedSongs--;
+                songs.setText(Integer.toString(selectedSongs));
+                deleteSong(song);
+            }
         }
     };
 
@@ -224,7 +232,7 @@ public class ProfileActivity extends AppCompatActivity {
                         selSongs.add(song);
                     }
                     if (numSongs > 0) {
-                        RecyclerView.Adapter mAdapter = new SongListAdaptor(this, selSongs);
+                        RecyclerView.Adapter mAdapter = new ProfileSongsAdaptor(this, selSongs);
                         recyclerView.setAdapter(mAdapter);
                     }
 
@@ -280,7 +288,7 @@ public class ProfileActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Error getting songs", Toast.LENGTH_SHORT).show();
             Toast.makeText(getApplicationContext(), song_id, Toast.LENGTH_SHORT).show();
             selSongs.add(new Song("", "This user has no songs", "", "", new ArrayList<>(), ""));
-            RecyclerView.Adapter mAdapter = new SongListAdaptor(this, selSongs);
+            RecyclerView.Adapter mAdapter = new ProfileSongsAdaptor(this, selSongs);
             recyclerView.setAdapter(mAdapter);
         }) {
             @Override
@@ -312,6 +320,8 @@ public class ProfileActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
             selSongs.add(song);
+            RecyclerView.Adapter mAdapter = new ProfileSongsAdaptor(this, selSongs);
+            recyclerView.setAdapter(mAdapter);
 
         }, error -> {
             Toast.makeText(getApplicationContext(), "Could not fetch related artists", Toast.LENGTH_LONG).show();
@@ -326,6 +336,18 @@ public class ProfileActivity extends AppCompatActivity {
             }
         };
         spotifyQueue.add(jsonObjectRequest);
+    }
+
+    /*
+    * Deletes a song from selSongs given the songId
+    */
+    private void deleteSong(String songId) {
+        for (int i = 0; i < selSongs.size(); i++) {
+            if (songId.equals(selSongs.get(i).getId())) {
+                selSongs.remove(i);
+                break;
+            }
+        }
     }
 
     /*
@@ -423,6 +445,9 @@ public class ProfileActivity extends AppCompatActivity {
                 startActivity(mainIntent);
             }, error -> {
                 // TODO: This adds the song correctly but it returns error for some reason, check it with Nick
+                Intent mainIntent = new Intent(ProfileActivity.this, MainActivity.class);
+                mainIntent.putExtra("USER_ID", USER_ID);
+                startActivity(mainIntent);
             });
             queue.add(jsonArrayRequest);
         }
