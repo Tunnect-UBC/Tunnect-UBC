@@ -4,9 +4,6 @@ const request = supertest(utils.app);
 const helpers = require("../chatService/utils/chatServiceHelpers");
 const mockAxios = require("jest-mock-axios");
 
-afterEach(() => {
-mockAxios.reset();
-});
 
 const mockdeleteChat = jest.fn().mockReturnValueOnce(0)
                                 .mockReturnValueOnce(1)
@@ -162,13 +159,11 @@ describe("POST/:userId/:userId2 endpoint", () => {
   it("Request to post a chat", async () => {
     mockAxios.get.mockResponse(() => {
        data: {
-        username : "123",
-        iconColour : "yellow"
+        username : "123"
        }
      }).mockResponse(() => {
             data: {
-              username: "456",
-              iconColour: "green"
+              username: "456"
             }
           }
         );
@@ -182,13 +177,11 @@ describe("POST/:userId/:userId2 endpoint", () => {
   it("Request to post a chat", async () => {
     mockAxios.get.mockResponse(() => {
        data: {
-         username : "123",
-         iconColour : "yellow"
+         username : "123"
        }
      }).mockResponse(() => {
             data: {
-              username: "456",
-              iconColour: "green"
+              username: "456"
             }
           }
         );
@@ -202,13 +195,11 @@ describe("POST/:userId/:userId2 endpoint", () => {
   it("Request to post a chat", async () => {
     mockAxios.get.mockResponse(() => {
        data: {
-         username : "123",
-         iconColour : "yellow"
+         username : "123"
        }
      }).mockResponse(() => {
             data: {
-              username: "456",
-              iconColour: "green"
+              username: "456"
             }
           }
         );
@@ -222,14 +213,12 @@ describe("POST/:userId/:userId2 endpoint", () => {
   it("Request to post a chat", async () => {
     mockAxios.get.mockResponse(() => {
        data: {
-         username : "123",
-         iconColour : "yellow"
+         username : "123"
        }
      }
    ).mockResponse(() => {
             data: {
-              username: "456",
-              iconColour: "green"
+              username: "456"
             }
           }
         );
