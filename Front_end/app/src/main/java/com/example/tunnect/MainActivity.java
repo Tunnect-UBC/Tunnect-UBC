@@ -39,7 +39,6 @@ public class MainActivity extends AppCompatActivity {
     private JSONObject currObject;
     private int currMatch;
     private User displayedUser;
-    private SharedPreferences sharedPreferences;
 
     // Volley queues
     private RequestQueue userQueue;
@@ -55,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
         USER_ID = Objects.requireNonNull(getIntent().getExtras()).getString("USER_ID");
 
         setContentView(R.layout.activity_main);
-        sharedPreferences = this.getSharedPreferences("SPOTIFY", 0);
 
         mDetector = new GestureDetectorCompat(this, new MyGestureListener());
         user_name = findViewById(R.id.user_name);
