@@ -1,4 +1,10 @@
 const User = require("../../models/users");
+const {admin} = require("../../firebase-config");
+
+const notif_opt = {
+  priority: "high",
+  timeToLive: 60 * 60 * 24
+};
 
 const helpers = {
     async get_all() {
@@ -142,9 +148,15 @@ const helpers = {
         return resp;
     },
 
-    async addStatus(userId1, userId2, status) {
+    async addStatus(userId1, userId2, username, notifId, status) {
         let resp = [];
-
+        var message = "Say hi to " + username + "!";
+        const matchNotif = {
+          notification: {
+            title: "You've Tunnected",
+            body: message
+          }
+        };
         await User.findById(userId1)
             .exec()
             .then(async (user) => {
@@ -156,7 +168,7 @@ const helpers = {
                     if (status === "likes") {
                         await User.updateOne({_id: userId1 }, { $set : {likes: userStatus} })
                             .exec()
-                            .then((result) => {
+                            .then(async (result) => {
                                 resp = [200, result];
                             })
                             .catch((err) => {
@@ -165,7 +177,7 @@ const helpers = {
                     } else if (status === "dislikes") {
                         await User.updateOne({_id: userId1 }, { $set : {dislikes: userStatus} })
                             .exec()
-                            .then((result) => {
+                            .then(async (result) => {
                                 resp = [200, result];
                             })
                             .catch((err) => {
@@ -174,8 +186,10 @@ const helpers = {
                     } else {
                         await User.updateOne({_id: userId1 }, { $set : {matches: userStatus} })
                             .exec()
-                            .then((result) => {
-                                resp = [200, result];
+                            .then(async (result) => {
+                              console.log(notifId);
+                                await admin.messaging().sendToDevice(notifId, matchNotif, notif_opt);
+                              resp = [200, result];
                             })
                             .catch((err) => {
                                 resp = [500, err];

@@ -177,7 +177,10 @@ router.patch("/:userId/addMatch/:userId2", async (req, res, next) => {
     const userId = req.params.userId;
     const userId2 = req.params.userId2;
 
-    const result = await helpers.addStatus(userId, userId2, "matches");
+    const notifId = req.body.notifId;
+    const username = req.body.username;
+    console.log(notifId);
+    const result = await helpers.addStatus(userId, userId2, username, notifId, "matches");
 
     res.status(result[0]).json(result[1]);
 
@@ -205,8 +208,10 @@ router.patch("/:userId/removeMatch/:userId2", async (req, res, next) => {
 router.patch("/:userId/addLike/:userId2", async (req, res, next) => {
     const userId = req.params.userId;
     const userId2 = req.params.userId2;
+    const notifId = "";
+    const username = "";
 
-    const result = await helpers.addStatus(userId, userId2, "likes");
+    const result = await helpers.addStatus(userId, userId2, username, notifId, "likes");
 
     res.status(result[0]).json(result[1]);
 });
@@ -220,6 +225,7 @@ router.patch("/:userId/removeLike/:userId2", async (req, res, next) => {
     const userId = req.params.userId;
     const userId2 = req.params.userId2;
 
+
     const result = await helpers.removeStatus(userId, userId2, "likes");
 
     res.status(result[0]).json(result[1]);
@@ -232,8 +238,10 @@ router.patch("/:userId/removeLike/:userId2", async (req, res, next) => {
 router.patch("/:userId/addDislike/:userId2", async (req, res, next) => {
     const userId = req.params.userId;
     const userId2 = req.params.userId2;
+    const username = "";
+    const notifId = "";
 
-    const result = await helpers.addStatus(userId, userId2, "dislikes");
+    const result = await helpers.addStatus(userId, userId2, username, notifId, "dislikes");
 
     res.status(result[0]).json(result[1]);
 });
