@@ -184,11 +184,15 @@ public class ProfileActivity extends AppCompatActivity {
             // Get extra data included in the Intent
             String adding = intent.getStringExtra("ADDING");
             if (adding.equals("True")) {
-                Toast.makeText(context, "Song Added", Toast.LENGTH_LONG).show();
                 String song = intent.getStringExtra("ADDED_SONG");
-                selectedSongs++;
-                songs.setText(Integer.toString(selectedSongs));
-                getSong(song);
+                if (containsSong(song)) {
+                    Toast.makeText(context, "Song Already Added", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(context, "Song Added", Toast.LENGTH_LONG).show();
+                    selectedSongs++;
+                    songs.setText(Integer.toString(selectedSongs));
+                    getSong(song);
+                }
             } else {
                 Toast.makeText(context, "Song Deleted", Toast.LENGTH_LONG).show();
                 String song = intent.getStringExtra("DELETED_SONG");
@@ -348,6 +352,19 @@ public class ProfileActivity extends AppCompatActivity {
                 break;
             }
         }
+    }
+
+    /*
+    * Returns true if selSongs contains the given songId
+    * returns false otherwise
+    */
+    private boolean containsSong(String songId) {
+        for (int i = 0; i < selSongs.size(); i++) {
+            if (songId.equals(selSongs.get(i).getId())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /*

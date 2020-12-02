@@ -45,11 +45,6 @@
             android:text="@string/settings_btn" />
     </androidx.appcompat.widget.Toolbar>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/hint_white" />
-
     <TextView
         android:id="@+id/user_name"
         android:layout_width="match_parent"
@@ -76,11 +71,6 @@
         android:id="@+id/match_list"
         android:layout_width="match_parent"
         android:layout_height="357dp" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/hint_white" />
 
     <LinearLayout
         android:layout_width="match_parent"
