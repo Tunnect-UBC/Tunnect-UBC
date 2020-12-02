@@ -109,31 +109,26 @@ const mockpostMessages = jest.fn().mockReturnValueOnce([0])
 
 describe("POST/:userId endpoint", () => {
   it("Request to post a message", async () => {
-    axios.get.mockImplementationOnce(() =>
-     Promise.resolve({
+    axios.get.mockResolvedValue(() => {
        data: { notifId: "123"}
-     })).mockImplementationOnce(() =>
-          Promise.resolve({
+     }).mockImplementationOnce(() => {
             data: {username: "456"}
-          })
+          }
         );
 
     helpers.postMessages = mockpostMessages;
     const res = await request.post("/chatservice/123/456");
-    expect(mockAxios.get).toHaveBeenCalledTimes(2);
     expect(res.statusCode).toEqual(500);
   });
 });
 
 describe("POST/:userId endpoint", () => {
   it("Request to post a message", async () => {
-    axios.get.mockImplementationOnce(() =>
-     Promise.resolve({
+    axios.get.mockResolvedValue(() => {
        data: { notifId: "123"}
-     })).mockImplementationOnce(() =>
-          Promise.resolve({
+     }).mockImplementationOnce(() => {
             data: {username: "456"}
-          })
+          }
         );
     helpers.postMessages = mockpostMessages;
     const res = await request.post("/chatservice/456/789");
@@ -142,13 +137,11 @@ describe("POST/:userId endpoint", () => {
 });
 describe("POST/:userId endpoint", () => {
   it("Request to post a message", async () => {
-    axios.get.mockImplementationOnce(() =>
-     Promise.resolve({
+    axios.get.mockResolvedValue(() => {
        data: { notifId: "123"}
-     })).mockImplementationOnce(() =>
-          Promise.resolve({
+     }).mockImplementationOnce(() => {
             data: {username: "456"}
-          })
+          }
         );
     helpers.postMessages = mockpostMessages;
     const res = await request.post("/chatservice/456/789");
@@ -164,19 +157,17 @@ const mockpostChat = jest.fn().mockReturnValueOnce(0)
 
 describe("POST/:userId/:userId2 endpoint", () => {
   it("Request to post a chat", async () => {
-    axios.get.mockImplementationOnce(() =>
-     Promise.resolve({
+    axios.get.mockResolvedValue(() => {
        data: {
         username : "123",
         iconColour : "yellow"
        }
-     })).mockImplementationOnce(() =>
-          Promise.resolve({
+     }).mockResolvedValue(() => {
             data: {
               username: "456",
               iconColour: "green"
             }
-          })
+          }
         );
     helpers.postChat = mockpostChat;
     const res = await request.post("/chatservice/123/456");
@@ -186,19 +177,17 @@ describe("POST/:userId/:userId2 endpoint", () => {
 
 describe("POST/:userId/:userId2 endpoint", () => {
   it("Request to post a chat", async () => {
-    axios.get.mockImplementationOnce(() =>
-     Promise.resolve({
+    axios.get.mockResolvedValue(() => {
        data: {
          username : "123",
          iconColour : "yellow"
        }
-     })).mockImplementationOnce(() =>
-          Promise.resolve({
+     }).mockResolvedValue(() => {
             data: {
               username: "456",
               iconColour: "green"
             }
-          })
+          }
         );
     helpers.postChat = mockpostChat;
     const res = await request.post("/chatservice/456/78");
@@ -208,19 +197,17 @@ describe("POST/:userId/:userId2 endpoint", () => {
 
 describe("POST/:userId/:userId2 endpoint", () => {
   it("Request to post a chat", async () => {
-    axios.get.mockImplementationOnce(() =>
-     Promise.resolve({
+    axios.get.mockResolvedValue(() => {
        data: {
          username : "123",
          iconColour : "yellow"
        }
-     })).mockImplementationOnce(() =>
-          Promise.resolve({
+     }).mockResolvedValue(() => {
             data: {
               username: "456",
               iconColour: "green"
             }
-          })
+          }
         );
     helpers.postChat = mockpostChat;
     const res = await request.post("/chatservice/123/789");
@@ -230,19 +217,18 @@ describe("POST/:userId/:userId2 endpoint", () => {
 
 describe("POST/:userId/:userId2 endpoint", () => {
   it("Request to post a chat", async () => {
-    axios.get.mockImplementationOnce(() =>
-     Promise.resolve({
+    axios.get.mockResolvedValue(() => {
        data: {
          username : "123",
          iconColour : "yellow"
        }
-     })).mockImplementationOnce(() =>
-          Promise.resolve({
+     }
+   ).mockResolvedValue(() => {
             data: {
               username: "456",
               iconColour: "green"
             }
-          })
+          }
         );
     helpers.postChat = mockpostChat;
     const res = await request.post("/chatservice/123/789");
