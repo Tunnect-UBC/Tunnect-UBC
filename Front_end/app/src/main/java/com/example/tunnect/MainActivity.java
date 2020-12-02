@@ -350,22 +350,23 @@ public class MainActivity extends AppCompatActivity {
         String like_url = "http://52.188.167.58:3000/userstore/" + USER_ID + "/removeLike/" + matchedUser.getUserId();
         String match_url1 = "http://52.188.167.58:3000/userstore/" + USER_ID + "/addMatch/" + matchedUser.getUserId();
         String match_url2 = "http://52.188.167.58:3000/userstore/" + matchedUser.getUserId() + "/addMatch/" + USER_ID;
-        JSONObject notifId = new JSONObject();
-        notifId.put("notifId", matchedUser.getNotifId());
-        notifId.put("username", matchedUser.getUsername());
-        JsonObjectRequest removeLikeRequest = new JsonObjectRequest(Request.Method.PATCH, like_url, notifId, response -> {
+        JSONObject notifId1 = new JSONObject();
+        notifId1.put("notifId", matchedUser.getNotifId());
+        //TODO: Wrong username
+        notifId1.put("username", matchedUser.getUsername());
+        JsonObjectRequest removeLikeRequest = new JsonObjectRequest(Request.Method.PATCH, like_url, notifId1, response -> {
         }, error -> {
             Toast.makeText(getApplicationContext(), "Could not connect to server", Toast.LENGTH_LONG).show();
         });
-        notifId = new JSONObject();
-        notifId.put("notifId", "0");
-        notifId.put("username", matchedUser.getUsername());
-        JsonObjectRequest matchRequest1 = new JsonObjectRequest(Request.Method.PATCH, match_url1, notifId, response -> {
+        JSONObject notifId2 = new JSONObject();
+        notifId2.put("notifId", "0");
+        notifId2.put("username", matchedUser.getUsername());
+        JsonObjectRequest matchRequest1 = new JsonObjectRequest(Request.Method.PATCH, match_url1, notifId1, response -> {
         }, error -> {
             Toast.makeText(getApplicationContext(), "Could not connect to server", Toast.LENGTH_LONG).show();
         });
 
-        JsonObjectRequest matchRequest2 = new JsonObjectRequest(Request.Method.PATCH, match_url2, null, response -> {
+        JsonObjectRequest matchRequest2 = new JsonObjectRequest(Request.Method.PATCH, match_url2, notifId2, response -> {
         }, error -> {
             Toast.makeText(getApplicationContext(), "Could not connect to server", Toast.LENGTH_LONG).show();
         });
