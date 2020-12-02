@@ -12,12 +12,20 @@ const song = {
 const userSchema = new mongoose.Schema({
     _id: String,
     username: String,
+    topArtist: String,
+    iconColour: String,
+    notifId: String,
+    songs: Array,
+    matches: Array,
+    likes: Array,
+    dislikes: Array,
     favGenre: String,
     iconColour: Number,
     songs: [song],
     matches: [String],
     likes: [String],
     dislikes: [String]
+
 });
 
 module.exports = mongoose.model("User", userSchema);
