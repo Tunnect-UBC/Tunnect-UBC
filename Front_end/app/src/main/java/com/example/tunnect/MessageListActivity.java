@@ -63,6 +63,7 @@ public class MessageListActivity extends AppCompatActivity {
         USER_ID = Objects.requireNonNull(getIntent().getExtras()).getString("USER_ID");
         LOAD_URL = BASE_URL + USER_ID;
         date = new Date();
+        isInFront = true;
 
         // Start by setting up a title for the page
         ActionBar actionBar = getSupportActionBar();
@@ -183,31 +184,13 @@ public class MessageListActivity extends AppCompatActivity {
     private final BroadcastReceiver messageReceiver = new BroadcastReceiver() {
         public void onReceive(@Nullable Context context, @NonNull Intent intent) {
             if (isInFront) {
-                JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, LOAD_URL, null,
-                        response -> {
-                            try {
-                                chatsList.clear();
-                                for (int i = 0; i < response.length(); i++) {
-                                    JSONObject chat = response.getJSONObject(i);
-                                    if (chat.has("usrID1")) {
-                                        chatsList.add(new Chat(chat.getString("usrID1"), chat.getString("usrName1"), chat.getString("lastMessage"), chat.getLong("lastTime"), Integer.parseInt((String) chat.get("usrColour1"))));
-                                    } else {
-                                        chatsList.add(new Chat(chat.getString("usrID2"), chat.getString("usrName2"), chat.getString("lastMessage"), chat.getLong("lastTime"), Integer.parseInt((String) chat.get("usrColour2"))));
-                                    }
-                                }
-
-                                String title = Objects.requireNonNull(intent.getExtras()).getString("BROADCAST_TITLE");
-                                for(int i = 0; i < chatsList.size(); i ++) {
-                                    if (chatsList.get(i).getName().equals(title)) {
-                                        chatListAdaptor.notifyItemChanged(i);
-                                    }
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                                Toast.makeText(getApplicationContext(), "Failed to retrieve data from server!", Toast.LENGTH_LONG).show();
-                            }
-                        }, error -> Toast.makeText(getApplicationContext(), "Connection to server failed", Toast.LENGTH_LONG).show());
-                queue.add(request);
+                chatsList.clear();
+                try {
+                    Thread.sleep(600);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                populateChatList();
             }
         }
     };

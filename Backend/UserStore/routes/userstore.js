@@ -50,9 +50,6 @@ router.get("/", async (req, res, next) => {
  */
 router.get("/:userId/matches", async (req, res, next) => {
     const userId = req.params.userId;
-
-    console.log("we in usermatches");
-
     const users = await helpers.get_50(userId);
 
     res.status(users[0]).json(users[1]);
@@ -179,7 +176,6 @@ router.patch("/:userId/addMatch/:userId2", async (req, res, next) => {
 
     const notifId = req.body.notifId;
     const username = req.body.username;
-    console.log(notifId);
     const result = await helpers.addStatus(userId, userId2, username, notifId, "matches");
 
     res.status(result[0]).json(result[1]);

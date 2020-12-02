@@ -105,7 +105,9 @@ async postMessage(senderid, senderName, receiverid, notifId, message, timeStamp)
            {$push: {messages : [{senderid: senderid, message: message, timeStamp: timeStamp}]},
            $set: {lastMessage: message, lastTime: timeStamp}});})
           .then(async (result) => {
+            if(notifId != "0"){
             await admin.messaging().sendToDevice(notifId, messNotif, utils.notif_opt);
+          }
             resp = [1];
           })
           .catch((err) => {
