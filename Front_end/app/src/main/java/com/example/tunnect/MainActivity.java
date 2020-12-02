@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private List<Double> scores;
     private JSONObject currObject;
     private int currMatch;
+    private User displayedUser;
     private SharedPreferences sharedPreferences;
 
     // Volley queues
@@ -85,14 +86,14 @@ public class MainActivity extends AppCompatActivity {
         // Like Button
         Button likeBtn = findViewById(R.id.like_btn);
         likeBtn.setOnClickListener(view -> {
-            like(getApplicationContext());
+            like(displayedUser);
             dispNextMatch();
         });
 
         // Dislike Button
         Button dislikeBtn = findViewById(R.id.dislike_btn);
         dislikeBtn.setOnClickListener(view -> {
-            dislike(getApplicationContext());
+            dislike(displayedUser);
             dispNextMatch();
         });
 
@@ -147,19 +148,21 @@ public class MainActivity extends AppCompatActivity {
     * Displays a potential match
     * Sends a users songs to the SongListAdaptor to be displayed
     */
-    private void dispMatch(User user, Double score) {
+    private void dispMatch(User user) {
+        displayedUser = user;
         if (user.getUserId().equals("no_user")) {
             user_name.setText("No Matches Found!");
             return;
         }
 
         user_name.setText(user.getUsername());
-        score_view.setText(score.toString());
+        // TODO: Change this from score_view to genre_view
+        score_view.setText(user.getFavGenre());
 
         List<Song> matchesSongs = user.getSongs();
         if (matchesSongs == null) {
             matchesSongs = new ArrayList<>();
-            matchesSongs.add(new Song("", "This user has no songs", "", ""));
+            matchesSongs.add(new Song("", "This user has no songs", "", "", new ArrayList<>(), ""));
         }
         RecyclerView.Adapter mAdapter = new SongListAdaptor(this, matchesSongs);
         recyclerView.setAdapter(mAdapter);
@@ -213,7 +216,7 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 User no_user = new User();
                 no_user.updateUserId("no_user");
-                dispMatch(no_user, 0.0);
+                dispMatch(no_user);
             }
 
         }, error -> {
@@ -234,43 +237,58 @@ public class MainActivity extends AppCompatActivity {
             JSONObject user_info = response;
             try {
                 user.updateUserId((String) user_info.get("_id"));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            try {
                 user.updateUsername((String) user_info.get("username"));
+                user.setNotifId((String) user_info.get("notifId"));
+                JSONArray jsonMatches = user_info.optJSONArray("matches");
+                for (int i = 0; i < jsonMatches.length(); i++) {
+                    user.addMatch(jsonMatches.get(i).toString());
+                }
+                JSONArray jsonLikes = user_info.optJSONArray("likes");
+                for (int i = 0; i < jsonLikes.length(); i++) {
+                    user.addLike(jsonLikes.get(i).toString());
+                }
+                JSONArray jsonDislikes = user_info.optJSONArray("dislikes");
+                for (int i = 0; i < jsonDislikes.length(); i++) {
+                    user.addDislike(jsonDislikes.get(i).toString());
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
             JSONArray json_songs = user_info.optJSONArray("songs");
-            List<String> user_songs = new ArrayList<>();
             for (int i = 0; i < json_songs.length(); i++) {
                 try {
-                    user_songs.add(json_songs.get(i).toString());
+                    user.addSong(parseSong((JSONObject) json_songs.get(i)));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
-            if (user_songs.size() > 0) {
-                for (int i = 0; i < user_songs.size() - 1; i++) {
-                    getSong(user, score, user_songs.get(i), false);
-                }
-                getSong(user, score, user_songs.get(user_songs.size() - 1), true);
+            if (user.getSongs().size() <= 0) {
+                user.addSong(new Song("", "This user has no songs", "", "", new ArrayList<>(), ""));
             }
-            else {
-                user.addSong(new Song("", "This user has no songs", "", ""));
-                dispMatch(user, score);
-            }
+            dispMatch(user);
         }, error -> {
-            // TODO: error handling here
+            Toast.makeText(getApplicationContext(), "Could not connect to server", Toast.LENGTH_LONG).show();
         });
         userQueue.add(jsonObjectRequest);
+    }
+
+    private Song parseSong(JSONObject songInfo) throws JSONException {
+        Song song = new Song();
+        song.setId(songInfo.getString("_id"));
+        song.setArtist(songInfo.getString("artist"));
+        song.setName(songInfo.getString("name"));
+        JSONArray relatedArtists = songInfo.getJSONArray("relatedArtists");
+        for (int i = 0; i < relatedArtists.length(); i++) {
+            song.addRelatedArtist(relatedArtists.getString(i));
+        }
+        return song;
     }
 
     /*
     * Fetches a song from spotify, parses its data, and places the songs info in the user given
     * Calls dispMatch on the user if the song is the last of the user's songs
     */
+    /* TODO: Delete this method
     private void getSong(User user, Double score, String song_id, Boolean lastSong) {
         String url = "https://api.spotify.com/v1/tracks/" + song_id;
         Song song = new Song();
@@ -310,24 +328,96 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         spotifyQueue.add(jsonObjectRequest);
-    }
+    } */
 
     /*
     * Handles like functionality
     */
-    public void like(Context context) {
-        Toast.makeText(context, "Likes not implemented yet", Toast.LENGTH_SHORT).show();
+    public void like(User likedUser) {
+        if (likedUser.getLikes().contains(USER_ID)) {
+            try {
+                match(likedUser);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        String like_url = "http://52.188.167.58:3000/userstore/" + USER_ID + "/addLike/" + likedUser.getUserId();
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PATCH, like_url, null, response -> {
+        }, error -> {
+            Toast.makeText(getApplicationContext(), "Could not connect to server", Toast.LENGTH_LONG).show();
+        });
+        userQueue.add(jsonObjectRequest);
     }
 
     /*
     * Handles dislike functionality
     */
-    public void dislike(Context context) {
-        Toast.makeText(context, "dislikes not implemented yet", Toast.LENGTH_SHORT).show();
+    public void dislike(User dislikedUser) {
+        String dislike_url = "http://52.188.167.58:3000/userstore/" + USER_ID + "/addDislike/" + dislikedUser.getUserId();
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PATCH, dislike_url, null, response -> {
+        }, error -> {
+            Toast.makeText(getApplicationContext(), "Could not connect to server", Toast.LENGTH_LONG).show();
+        });
+        userQueue.add(jsonObjectRequest);
+    }
+
+    /*
+    * Removes the current user from the matched users likes
+    * Adds both users to the others matches list
+    * TODO: Have this function create a chat between users
+    */
+    public void match(User matchedUser) throws JSONException {
+        Toast.makeText(getApplicationContext(), "You matched with " + matchedUser.getUsername(), Toast.LENGTH_LONG).show();
+        String like_url = "http://52.188.167.58:3000/userstore/" + USER_ID + "/removeLike/" + matchedUser.getUserId();
+        String match_url1 = "http://52.188.167.58:3000/userstore/" + USER_ID + "/addMatch/" + matchedUser.getUserId();
+        String match_url2 = "http://52.188.167.58:3000/userstore/" + matchedUser.getUserId() + "/addMatch/" + USER_ID;
+        JSONObject notifId1 = new JSONObject();
+        notifId1.put("notifId", matchedUser.getNotifId());
+        //TODO: Wrong username
+        notifId1.put("username", matchedUser.getUsername());
+        JsonObjectRequest removeLikeRequest = new JsonObjectRequest(Request.Method.PATCH, like_url, notifId1, response -> {
+        }, error -> {
+            Toast.makeText(getApplicationContext(), "Could not connect to server", Toast.LENGTH_LONG).show();
+        });
+        JSONObject notifId2 = new JSONObject();
+        notifId2.put("notifId", "0");
+        notifId2.put("username", matchedUser.getUsername());
+        JsonObjectRequest matchRequest1 = new JsonObjectRequest(Request.Method.PATCH, match_url1, notifId1, response -> {
+        }, error -> {
+            Toast.makeText(getApplicationContext(), "Could not connect to server", Toast.LENGTH_LONG).show();
+        });
+
+        JsonObjectRequest matchRequest2 = new JsonObjectRequest(Request.Method.PATCH, match_url2, notifId2, response -> {
+        }, error -> {
+            Toast.makeText(getApplicationContext(), "Could not connect to server", Toast.LENGTH_LONG).show();
+        });
+        userQueue.add(removeLikeRequest);
+        userQueue.add(matchRequest1);
+        userQueue.add(matchRequest2);
+        createChat(USER_ID, matchedUser.getUserId());
+    }
+
+    /*
+    * Creates a chat between user1 and user2
+    */
+    private void createChat(String userId1, String userId2) {
+        String chatUrl = "http://52.188.167.58:5000/chatservice/" + userId1 + "/" + userId2;
+        JSONObject user = new JSONObject();
+        try {
+            Date date = new Date();
+            user.put("timeStamp", date.getTime());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, chatUrl, user, response -> {
+        }, error -> {
+            Toast.makeText(getApplicationContext(), "Failed to create chat", Toast.LENGTH_LONG).show();
+        });
+        userQueue.add(jsonObjectRequest);
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent event){
+    public boolean onTouchEvent(MotionEvent event) {
         this.mDetector.onTouchEvent(event);
         return super.onTouchEvent(event);
     }
@@ -402,11 +492,11 @@ public class MainActivity extends AppCompatActivity {
 
             switch (direction) {
                 case SWIPE_RIGHT:
-                    like(getApplicationContext());
+                    like(displayedUser);
                     dispNextMatch();
                     break;
                 case SWIPE_LEFT:
-                    dislike(getApplicationContext());
+                    dislike(displayedUser);
                     dispNextMatch();
                     break;
                 default:

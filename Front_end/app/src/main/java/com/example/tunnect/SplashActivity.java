@@ -100,7 +100,7 @@ public class SplashActivity extends AppCompatActivity {
         RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, "https://api.spotify.com/v1/me", null, response -> {
             try {
-                USER_ID = response.get("id").toString();
+               USER_ID = response.get("id").toString();
             } catch (JSONException e) {
                 e.printStackTrace();
             }

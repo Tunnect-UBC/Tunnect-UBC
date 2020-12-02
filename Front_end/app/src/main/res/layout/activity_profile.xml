@@ -7,15 +7,15 @@
     <RelativeLayout
         android:id="@+id/gradient_box"
         android:layout_width="match_parent"
-        android:layout_height="181dp"
+        android:layout_height="146dp"
         android:background="@drawable/purple_grad">
 
         <RelativeLayout
             android:id="@+id/profile_icon_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="80dp"
+            android:layout_height="78dp"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="15dp"
             android:background="@drawable/circle_border"
             android:gravity="center">
 
@@ -139,101 +139,121 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="26dp"
+            android:layout_marginTop="10dp"
             android:layout_marginLeft="30dp"
             android:layout_marginRight="30dp"
             android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="53dp"
                 android:orientation="vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/name"
-                    android:textSize="17sp"
-                    android:textColor="@color/colorPrimary"/>
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="17sp" />
 
                 <EditText
                     android:id="@+id/enter_username"
-                    android:hint="@string/enter_name"
-                    android:background="@android:color/transparent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:singleLine="true"
+                    android:autofillHints="Name"
+                    android:background="@android:color/transparent"
+                    android:hint="@string/enter_name"
                     android:inputType="text"
                     android:maxLines="1"
-                    android:textSize="19sp"
-                    android:autofillHints="Name"
+                    android:singleLine="true"
                     android:textColor="@color/white"
-                    android:textColorHint="@color/hint_white"/>
+                    android:textColorHint="@color/hint_white"
+                    android:textSize="19sp" />
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginTop="15dp"
-                    android:background="@color/hint_white"/>
+                    android:background="@color/hint_white" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="20dp">
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:id="@+id/fav_genre"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/fave_art"
-                    android:textSize="17sp"
-                    android:textColor="@color/colorPrimary"/>
+                    android:text="@string/fav_genre"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="17sp" />
 
                 <EditText
-                    android:id="@+id/enter_favourite_artist"
-                    android:hint="@string/enter_fave_art"
-                    android:background="@android:color/transparent"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/enter_fav_genre"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:singleLine="true"
+                    android:autofillHints="Name"
+                    android:background="@android:color/transparent"
+                    android:hint="@string/enter_fav_genre"
                     android:inputType="text"
                     android:maxLines="1"
-                    android:textSize="19sp"
-                    android:autofillHints="Artist"
+                    android:singleLine="true"
                     android:textColor="@color/white"
-                    android:textColorHint="@color/hint_white"/>
+                    android:textColorHint="@color/hint_white"
+                    android:textSize="19sp" />
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="15dp"
-                    android:background="@color/hint_white"/>
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="20dp">
+                android:layout_height="50dp"
+                android:layout_marginTop="10dp"
+                android:orientation="vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/colour"
-                    android:textSize="17sp"
-                    android:textColor="@color/colorPrimary"/>
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="17sp" />
 
                 <Button
                     android:id="@+id/enter_colour"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="30dp"
                     android:autofillHints="Colour"
                     android:background="@android:color/transparent"
                     android:fontFamily="serif"
                     android:text="@string/choose_colour"
                     android:textColor="@color/hint_white"
                     android:textSize="19sp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="15dp"
+                    android:background="@color/hint_white" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/user_songs"
+                    android:textSize="17sp"
+                    android:textColor="@color/colorPrimary"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/selectedSongs"
+                    android:layout_width="match_parent"
+                    android:layout_height="109dp" />
 
                 <View
                     android:layout_width="match_parent"
@@ -247,7 +267,7 @@
                 android:layout_width="200dp"
                 android:layout_height="45dp"
                 android:layout_gravity="center"
-                android:layout_marginTop="25dp"
+                android:layout_marginTop="10dp"
                 android:background="@drawable/purple_grad_ovel"
 
                 android:fontFamily="sans-serif-medium"
@@ -260,7 +280,8 @@
                 android:layout_width="200dp"
                 android:layout_height="45dp"
                 android:layout_gravity="center"
-                android:layout_marginTop="25dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="16dp"
                 android:background="@drawable/purple_grad_ovel"
 
                 android:fontFamily="sans-serif-medium"

@@ -1,4 +1,10 @@
 const User = require("../../models/users");
+const {admin} = require("../../firebase-config");
+
+const notif_opt = {
+  priority: "high",
+  timeToLive: 60 * 60 * 24
+};
 
 const helpers = {
     async get_all() {
@@ -6,12 +12,14 @@ const helpers = {
         await User.find()
             .exec()
             .then((users) => {
+
                 //console.log(users);
                 resp = [200, users];
             })
             .catch((err) => {
                 //console.log(err);
                 resp = [500, err];
+
             });
 
         return resp;
@@ -19,14 +27,14 @@ const helpers = {
 
     async get_50(hostId) {
         let resp = [];
-        
+
         await User.findById(hostId)
             .exec()
             .then(async (user) => {
                 if (user) {
-                  
+
                     await User.find( { $and: [
-                                                { _id: { $nin: user.matches}}, 
+                                                { _id: { $nin: user.matches}},
                                                 { _id: { $nin: user.likes}},
                                                 { _id: { $nin: user.dislikes}},
                                                 { _id: { $ne: user._id }}
@@ -38,11 +46,10 @@ const helpers = {
                                 resp = [200, users];
                             })
                             .catch((err) => {
-                                //console.log(err);
                                 resp = [500, err];
                             });
-                    
-                            
+
+
                 } else {
                     resp = [404, {message: "No valid entry found for provided ID"}];
                 }
@@ -51,17 +58,15 @@ const helpers = {
                 resp = [500, err];
             });
 
-        //console.log(resp);
-
         return resp;
     },
 
     async post_user(user) {
         //stores this in the database
         let resp = [];
-        
         await user.save()
             .then((result) => {
+
                 //console.log(result);
                 resp =  [200, result];
             })
@@ -79,8 +84,8 @@ const helpers = {
         await User.findById(userId)
         .exec()
         .then((user) => {
-            //console.log(user);
             if (user) {
+
                 resp = [200, user];
                 //res.status(200).json(user);
             } else {
@@ -93,7 +98,7 @@ const helpers = {
             resp = [500, err];
             //res.status(500).json({error: err});
         });
-        
+
         return resp;
     },
 
@@ -103,21 +108,15 @@ const helpers = {
         await User.updateOne({ _id: userId }, { $set: updateOps })
         .exec()
         .then((result) => {
-            //console.log(res);
             if (result.n > 0) {
                 resp = [1, result];
             }
             else {
                 resp = [-1, {message: "No valid entry found for provided ID or propname"}];
-            } 
-            //res.status(200).json(result);
+            }
         })
         .catch((err) => {
-            //console.log(err);
             resp = [0, err];
-            //res.status(500).json({
-            //    error: err
-            //});
         });
 
         return resp;
@@ -125,7 +124,7 @@ const helpers = {
 
     async delete_user(userId) {
         let resp = [];
-        
+
         await User.deleteOne({
             _id: userId
         })
@@ -138,16 +137,21 @@ const helpers = {
                 }
             })
             .catch((err) => {
-                //console.log(err);
                 resp = [0, err];
             });
 
         return resp;
     },
 
-    async addStatus(userId1, userId2, status) {
+    async addStatus(userId1, userId2, username, notifId, status) {
         let resp = [];
-        
+        var message = "Say hi to " + username + "!";
+        const matchNotif = {
+          notification: {
+            title: "You've Tunnected",
+            body: message
+          }
+        };
         await User.findById(userId1)
             .exec()
             .then(async (user) => {
@@ -159,7 +163,7 @@ const helpers = {
                     if (status === "likes") {
                         await User.updateOne({_id: userId1 }, { $set : {likes: userStatus} })
                             .exec()
-                            .then((result) => {
+                            .then(async (result) => {
                                 resp = [200, result];
                             })
                             .catch((err) => {
@@ -168,7 +172,7 @@ const helpers = {
                     } else if (status === "dislikes") {
                         await User.updateOne({_id: userId1 }, { $set : {dislikes: userStatus} })
                             .exec()
-                            .then((result) => {
+                            .then(async (result) => {
                                 resp = [200, result];
                             })
                             .catch((err) => {
@@ -177,8 +181,11 @@ const helpers = {
                     } else {
                         await User.updateOne({_id: userId1 }, { $set : {matches: userStatus} })
                             .exec()
-                            .then((result) => {
-                                resp = [200, result];
+                            .then(async (result) => {
+                              if(notifId != "0"){
+                                await admin.messaging().sendToDevice(notifId, matchNotif, notif_opt);
+                              }
+                              resp = [200, result];
                             })
                             .catch((err) => {
                                 resp = [500, err];
@@ -205,7 +212,7 @@ const helpers = {
             .exec()
             .then(async (user) => {
                 if (user) {
-                    
+
                     if (status === "likes") {
                         await User.updateOne({_id: userId1 }, { $pull : {likes: userId2} })
                             .exec()

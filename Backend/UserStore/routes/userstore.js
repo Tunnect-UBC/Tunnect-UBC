@@ -42,10 +42,10 @@ router.get("/", async (req, res, next) => {
 /**
  * GET localhost:3000/userstore/{id}/matches - Up to 20 users from the database,
  * such that none of them have been seen by id yet.
- * 
+ *
  * If list of users is not empty, response is an array of json Users,
  * or a json error with status 500 on error.
- * 
+ *
  * User schema described in ../../models/Users
  */
 router.get("/:userId/matches", async (req, res, next) => {
@@ -71,17 +71,16 @@ router.get("/:userId/matches", async (req, res, next) => {
  */
 router.post("/", async (req, res, next) => {
     const user = new User({
-        _id: req.body._id,
-        username: req.body.username,
-        favGenre: req.body.favGenre,
-        iconColour: req.body.iconColour,
-        notifId: req.body.notifId,
-        songs: req.body.songs,
-        matches: req.body.matches,
-        likes: req.body.likes,
-        dislikes: req.body.dislikes
+      _id: req.body._id,
+      username: req.body.username,
+      iconColour: req.body.iconColour,
+      notifId: req.body.notifId,
+      favGenre: req.body.favGenre,
+      songs: req.body.songs,
+      matches: req.body.matches,
+      likes: req.body.likes,
+      dislikes: req.body.dislikes
     });
-
     const result = await helpers.post_user(user);
 
     if (result[0] === 200) {
@@ -175,7 +174,9 @@ router.patch("/:userId/addMatch/:userId2", async (req, res, next) => {
     const userId = req.params.userId;
     const userId2 = req.params.userId2;
 
-    const result = await helpers.addStatus(userId, userId2, "matches");
+    const notifId = req.body.notifId;
+    const username = req.body.username;
+    const result = await helpers.addStatus(userId, userId2, username, notifId, "matches");
 
     res.status(result[0]).json(result[1]);
 
@@ -203,8 +204,10 @@ router.patch("/:userId/removeMatch/:userId2", async (req, res, next) => {
 router.patch("/:userId/addLike/:userId2", async (req, res, next) => {
     const userId = req.params.userId;
     const userId2 = req.params.userId2;
+    const notifId = "";
+    const username = "";
 
-    const result = await helpers.addStatus(userId, userId2, "likes");
+    const result = await helpers.addStatus(userId, userId2, username, notifId, "likes");
 
     res.status(result[0]).json(result[1]);
 });
@@ -218,6 +221,7 @@ router.patch("/:userId/removeLike/:userId2", async (req, res, next) => {
     const userId = req.params.userId;
     const userId2 = req.params.userId2;
 
+
     const result = await helpers.removeStatus(userId, userId2, "likes");
 
     res.status(result[0]).json(result[1]);
@@ -230,8 +234,10 @@ router.patch("/:userId/removeLike/:userId2", async (req, res, next) => {
 router.patch("/:userId/addDislike/:userId2", async (req, res, next) => {
     const userId = req.params.userId;
     const userId2 = req.params.userId2;
+    const username = "";
+    const notifId = "";
 
-    const result = await helpers.addStatus(userId, userId2, "dislikes");
+    const result = await helpers.addStatus(userId, userId2, username, notifId, "dislikes");
 
     res.status(result[0]).json(result[1]);
 });

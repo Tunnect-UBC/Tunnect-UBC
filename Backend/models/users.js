@@ -12,14 +12,13 @@ const song = {
 const userSchema = new mongoose.Schema({
     _id: String,
     username: String,
+    iconColour: Number,
     notifId: String,
     favGenre: String,
-    iconColour: Number,
     songs: [song],
     matches: [String],
     likes: [String],
     dislikes: [String]
-
 });
 
 module.exports = mongoose.model("User", userSchema);

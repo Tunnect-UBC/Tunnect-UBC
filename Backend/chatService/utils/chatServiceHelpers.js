@@ -1,6 +1,7 @@
 const Chat = require("../../models/chat");
 const axios = require("axios");
 const utils =  require("../app");
+const {admin} = require("../../firebase-config");
 
 const helpers = {
 
@@ -88,11 +89,11 @@ const helpers = {
      return resp;
    },
 
-async postMessage(senderid, receiverid, notifId, message, timeStamp) {
+async postMessage(senderid, senderName, receiverid, notifId, message, timeStamp) {
   resp = [];
   const messNotif = {
     notification: {
-      title: "Chat:",
+      title: senderName,
       body: message
     }
   };
@@ -104,8 +105,9 @@ async postMessage(senderid, receiverid, notifId, message, timeStamp) {
            {$push: {messages : [{senderid: senderid, message: message, timeStamp: timeStamp}]},
            $set: {lastMessage: message, lastTime: timeStamp}});})
           .then(async (result) => {
-            const admin = utils.admin;
+            if(notifId != "0"){
             await admin.messaging().sendToDevice(notifId, messNotif, utils.notif_opt);
+          }
             resp = [1];
           })
           .catch((err) => {
