@@ -23,10 +23,9 @@ const helpers = {
               resp = 2;
             }
           });
-        }
-        else {
+        } else {
            resp = 1;
-        }
+         }
       })
       .catch((err) => {
         resp = 0;
@@ -36,7 +35,7 @@ const helpers = {
 
    async getChats(id) {
      var resp = [];
-       if (id == "all"){
+       if (id === "all"){
          await Chat.find({}, async function(err, result){
            if(err){
              resp = [0, err];
@@ -90,7 +89,7 @@ const helpers = {
    },
 
 async postMessage(senderid, senderName, receiverid, notifId, message, timeStamp) {
-  resp = [];
+  var resp = [];
   const messNotif = {
     notification: {
       title: senderName,
@@ -98,15 +97,15 @@ async postMessage(senderid, senderName, receiverid, notifId, message, timeStamp)
     }
   };
   await Chat.updateOne({usrID1: senderid, usrID2: receiverid},
-           {$push: {messages : [{senderid: senderid, message: message, timeStamp: timeStamp}]},
+           {$push: {messages : [{senderid, message, timeStamp}]},
            $set: {lastMessage: message, lastTime: timeStamp}})
            .then(async (result) => {
              await Chat.updateOne({usrID1: receiverid, usrID2: senderid},
-           {$push: {messages : [{senderid: senderid, message: message, timeStamp: timeStamp}]},
+           {$push: {messages : [{ senderid, message, timeStamp}]},
            $set: {lastMessage: message, lastTime: timeStamp}});})
           .then(async (result) => {
-            if(notifId != "0"){
-            await admin.messaging().sendToDevice(notifId, messNotif, utils.notif_opt);
+            if(notifId !== "0"){
+            await admin.messaging().sendToDevice(notifId, messNotif, utils.notifOpt);
           }
             resp = [1];
           })
@@ -118,7 +117,7 @@ async postMessage(senderid, senderName, receiverid, notifId, message, timeStamp)
 
 
 async postChat(chat, usr1, usr2){
-  resp = [];
+  var resp = [];
   await Chat.find({usrID1: usr1, usrID2: usr2}, async function(err, result1){
       if (err) {
         resp = [0,err];
@@ -135,7 +134,7 @@ async postChat(chat, usr1, usr2){
       else {
         resp[2] = result2;
       }
-   })
+   });
   })
   .then(async (res2) => {
     if(resp[1].length === 0 && resp[2].length === 0){
@@ -157,5 +156,5 @@ async postChat(chat, usr1, usr2){
  return resp;
 }
 
-}
+};
 module.exports = helpers;

@@ -7,4 +7,4 @@ admin.initializeApp({
   databaseURL: "https://tunnect-b7a87.firebaseio.com"
 });
 
-module.exports.admin = admin 
+module.exports.admin = admin;

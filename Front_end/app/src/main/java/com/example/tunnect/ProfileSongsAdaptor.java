@@ -17,8 +17,6 @@ import java.util.List;
 public class ProfileSongsAdaptor extends RecyclerView.Adapter<ProfileSongsAdaptor.ViewHolder> {
     private Context context;
     private List<Song> songs;
-    private String user_id;
-    private LocalBroadcastManager broadcaster;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView songTitle;
@@ -36,7 +34,6 @@ public class ProfileSongsAdaptor extends RecyclerView.Adapter<ProfileSongsAdapto
     public ProfileSongsAdaptor(Context context, List<Song> songs) {
         this.context = context;
         this.songs = songs;
-        broadcaster = LocalBroadcastManager.getInstance(context);
     }
 
     @Override

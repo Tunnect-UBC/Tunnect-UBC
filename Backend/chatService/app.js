@@ -20,7 +20,7 @@ var messageDB = mongoose.connect("mongodb://127.0.0.1:27017/messagedb", {
   useUnifiedTopology:true
 });
 
-const notif_options = {
+const notifOpt = {
   priority: "high",
   timeToLive: 60 * 60 * 24
 };
@@ -70,4 +70,4 @@ app.use((error, req, res, next) => {
     });
 });
 exports.app = app;
-exports.notif_opt = notif_options;
+exports.notifOpt = notifOpt;

@@ -5,7 +5,6 @@ import androidx.core.view.GestureDetectorCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -16,7 +15,6 @@ import android.view.MotionEvent;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonArrayRequest;
@@ -41,12 +39,10 @@ public class MainActivity extends AppCompatActivity {
     private JSONObject currObject;
     private int currMatch;
     private User displayedUser;
-    private SharedPreferences sharedPreferences;
 
     // Volley queues
     private RequestQueue userQueue;
     private RequestQueue matchQueue;
-    private RequestQueue spotifyQueue;
 
     // RecyclerView definitions
     private RecyclerView recyclerView;
@@ -58,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
         USER_ID = Objects.requireNonNull(getIntent().getExtras()).getString("USER_ID");
 
         setContentView(R.layout.activity_main);
-        sharedPreferences = this.getSharedPreferences("SPOTIFY", 0);
 
         mDetector = new GestureDetectorCompat(this, new MyGestureListener());
         user_name = findViewById(R.id.user_name);
@@ -72,7 +67,6 @@ public class MainActivity extends AppCompatActivity {
         // Setup Volley queues
         userQueue = Volley.newRequestQueue(getApplicationContext());
         matchQueue = Volley.newRequestQueue(getApplicationContext());
-        spotifyQueue = Volley.newRequestQueue(getApplicationContext());
 
         try {
             getMatches(USER_ID);
@@ -415,9 +409,6 @@ public class MainActivity extends AppCompatActivity {
         * Handles swipes
         */
         private void onSwipe(int direction) {
-            //Detect the swipe gestures and display toast
-            UserService currUser = new UserService();
-
             switch (direction) {
                 case SWIPE_RIGHT:
                     like(displayedUser);

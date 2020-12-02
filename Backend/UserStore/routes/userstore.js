@@ -27,7 +27,7 @@ const helpers = require("../utils/userstore_helpers");
  * User schema described in ../../models/Users
  */
 router.get("/", async (req, res, next) => {
-    const users = await helpers.get_all();
+    const users = await helpers.getAll();
 
     if (users[0] === 200) {
         res.status(200).json(users[1]);
@@ -81,7 +81,7 @@ router.post("/", async (req, res, next) => {
       likes: req.body.likes,
       dislikes: req.body.dislikes
     });
-    const result = await helpers.post_user(user);
+    const result = await helpers.postUser(user);
 
     if (result[0] === 200) {
         res.status(200).json(result[1]);
@@ -104,7 +104,7 @@ router.post("/", async (req, res, next) => {
 router.get("/:userId", async (req, res, next) => {
     const userId = req.params.userId;
 
-    const result = await helpers.get_user(userId);
+    const result = await helpers.getUser(userId);
 
     if (result[0] === 200) {
         res.status(200).json(result[1]);
@@ -150,7 +150,7 @@ router.patch("/:userId", async (req, res, next) => {
         updateOps[ops.propName] = ops.value;
     }
 
-    const result = await helpers.patch_user(userId, updateOps);
+    const result = await helpers.patchUser(userId, updateOps);
 
     if (result[0] === 1) {
         res.status(200).json(result[1]);
@@ -267,7 +267,7 @@ router.patch("/:userId/removeDislike/:userId2", async (req, res, next) => {
 router.delete("/:userId", async (req, res, next) => {
     const userId = req.params.userId;
 
-    const result = await helpers.delete_user(userId);
+    const result = await helpers.deleteUser(userId);
 
 
     if (result[0] === 1) {
