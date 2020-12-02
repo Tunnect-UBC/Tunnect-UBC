@@ -2,8 +2,9 @@ const supertest = require("supertest");
 const utils = require("../chatService/app");
 const request = supertest(utils.app);
 const helpers = require("../chatService/utils/chatServiceHelpers");
-const mockAxios = require("jest-mock-axios");
+const axios = require("axios");
 
+jest.mock("axios");
 
 const mockdeleteChat = jest.fn().mockReturnValueOnce(0)
                                 .mockReturnValueOnce(1)
@@ -43,7 +44,7 @@ describe("DELETE/:userId endpoint", () => {
 });
 
 const mockgetChats = jest.fn().mockReturnValueOnce([0])
-                              .mockReturnValueOnce([1,1,1])
+                              .mockReturnValueOnce([1,[1],[1]])
                               .mockReturnValueOnce([-1]);
 
 /////////////////////GET chatService/usrID
@@ -73,7 +74,7 @@ describe("GET/:userId endpoint", () => {
 
 //////////////////////GET chatService/userid1/userId2
 const mockgetMessages = jest.fn().mockReturnValueOnce([0])
-                                 .mockReturnValueOnce([1,1,1])
+                                 .mockReturnValueOnce([1,[1],[1]])
                                  .mockReturnValueOnce([-1]);
 
 describe("GET/:userId1/:userId2 endpoint", () => {
@@ -102,68 +103,59 @@ describe("GET/:userId/:userId2 endpoint", () => {
 
 ///////////////////////POST chatService/receiverid
 const mockpostMessages = jest.fn().mockReturnValueOnce([0])
-                                 .mockReturnValueOnce([1,1])
+                                 .mockReturnValueOnce([1,[1],[1]])
                                  .mockReturnValueOnce([-1]);
 
 
 describe("POST/:userId endpoint", () => {
   it("Request to post a message", async () => {
-    mockAxios.get.mockResponse(() => {
-       data: { notifId: "123"}
-     })
-     mockAxios.get.mockResponse(() => {
-            data: {username: "456"}
-          }
-        );
-
-    helpers.postMessages = mockpostMessages;
-    const res = await request.post("/chatservice/123/456");
+    axios.get.mockResolvedValue({
+       data: { notifId: "123", username: "123"}
+     });
+    helpers.postMessage = mockpostMessages;
+    const res = await request.post("/chatservice/123");
     expect(res.statusCode).toEqual(500);
   });
 });
 
 describe("POST/:userId endpoint", () => {
   it("Request to post a message", async () => {
-    mockAxios.get.mockResponse(() => {
-       data: { notifId: "123"}
-     }).mockResponse(() => {
-            data: {username: "456"}
-          }
-        );
-    helpers.postMessages = mockpostMessages;
-    const res = await request.post("/chatservice/456/789");
+    axios.get.mockResolvedValue( {
+       data: { notifId: "123", username: "456"}
+     });
+    helpers.postMessage = mockpostMessages;
+    const res = await request.post("/chatservice/456");
     expect(res.statusCode).toEqual(200);
   });
 });
 describe("POST/:userId endpoint", () => {
   it("Request to post a message", async () => {
-    mockAxios.get.mockResponse(() => {
-       data: { notifId: "123"}
-     }).mockResponse(() => {
-            data: {username: "456"}
-          }
-        );
-    helpers.postMessages = mockpostMessages;
-    const res = await request.post("/chatservice/456/789");
+    axios.get.mockResolvedValue({
+       data: { notifId: "123", username: "456"}
+     });
+    helpers.postMessage = mockpostMessages;
+    const res = await request.post("/chatservice/789");
     expect(res.statusCode).toEqual(400);
   });
 });
 
 ///////////////////POST chat
-const mockpostChat = jest.fn().mockReturnValueOnce(0)
-                               .mockReturnValueOnce(1)
-                               .mockReturnValueOnce(2)
-                               .mockReturnValueOnce(-1);
+const mockpostChat = jest.fn().mockReturnValueOnce([0])
+                               .mockReturnValueOnce([1,[1],[1]])
+                               .mockReturnValueOnce([2])
+                               .mockReturnValueOnce([-1]);
 
 describe("POST/:userId/:userId2 endpoint", () => {
   it("Request to post a chat", async () => {
-    mockAxios.get.mockResponse(() => {
+    axios.get.mockResolvedValue({
        data: {
-        username : "123"
+        username : "123",
+        iconColour : "yellow"
        }
-     }).mockResponse(() => {
+     }).mockResolvedValue({
             data: {
-              username: "456"
+              username: "456",
+              iconColour : "green"
             }
           }
         );
@@ -175,13 +167,15 @@ describe("POST/:userId/:userId2 endpoint", () => {
 
 describe("POST/:userId/:userId2 endpoint", () => {
   it("Request to post a chat", async () => {
-    mockAxios.get.mockResponse(() => {
+    axios.get.mockResolvedValue({
        data: {
-         username : "123"
+         username : "123",
+         iconColour : "yellow"
        }
-     }).mockResponse(() => {
+     }).mockResolvedValue( {
             data: {
-              username: "456"
+              username: "456",
+              iconColour : "green"
             }
           }
         );
@@ -193,13 +187,15 @@ describe("POST/:userId/:userId2 endpoint", () => {
 
 describe("POST/:userId/:userId2 endpoint", () => {
   it("Request to post a chat", async () => {
-    mockAxios.get.mockResponse(() => {
+    axios.get.mockResolvedValue({
        data: {
-         username : "123"
+         username : "123",
+         iconColour : "yellow"
        }
-     }).mockResponse(() => {
+     }).mockResolvedValue({
             data: {
-              username: "456"
+              username: "456",
+              iconColour : "green"
             }
           }
         );
@@ -211,14 +207,16 @@ describe("POST/:userId/:userId2 endpoint", () => {
 
 describe("POST/:userId/:userId2 endpoint", () => {
   it("Request to post a chat", async () => {
-    mockAxios.get.mockResponse(() => {
+    axios.get.mockResolvedValue( {
        data: {
-         username : "123"
+         username : "123",
+         iconColour : "yellow"
        }
      }
-   ).mockResponse(() => {
+   ).mockResolvedValue({
             data: {
-              username: "456"
+              username: "456",
+              iconColour : "green"
             }
           }
         );
