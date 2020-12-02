@@ -176,7 +176,7 @@ router.patch("/:userId/addMatch/:userId2", async (req, res, next) => {
 
     const notifId = req.body.notifId;
     const username = req.body.username;
-    console.log(notifId);
+    console.log(req.body);
     const result = await helpers.addStatus(userId, userId2, username, notifId, "matches");
 
     res.status(result[0]).json(result[1]);
