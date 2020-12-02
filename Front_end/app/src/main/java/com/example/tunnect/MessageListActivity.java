@@ -125,7 +125,7 @@ public class MessageListActivity extends AppCompatActivity {
         return true;
     }
 
-    // Using a Volley connection, this method adds entries in the chatsList from the provided server data
+    // Using a Volley connection, this method adds entries in the chatsList to display onto the recycler view
     private void populateChatList() {
         chatsList.add(new Chat("tunnect", "Tunnect", "Welcome to tunnect messaging! \nWhen making matches with other users, a chat will appear here.", date.getTime(), 0xFFD2691E));
         chatListAdaptor = new ChatListAdaptor(this, chatsList, chatOptions);
@@ -146,6 +146,32 @@ public class MessageListActivity extends AppCompatActivity {
                         chatListAdaptor = new ChatListAdaptor(this, chatsList, chatOptions);
                         chatOptions.setAdapter(chatListAdaptor);
 
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Toast.makeText(getApplicationContext(), "Failed to retrieve data from server!", Toast.LENGTH_LONG).show();
+                    }
+                }, error -> Toast.makeText(getApplicationContext(), "Connection to server failed", Toast.LENGTH_LONG).show());
+        queue.add(request);
+    }
+
+    // Using a Volley connection, this method adds entries in the chatsList to update the entries on the recycler view
+    private void updateChatList() {
+        chatsList.add(new Chat("tunnect", "Tunnect", "Welcome to tunnect messaging! \nWhen making matches with other users, a chat will appear here.", date.getTime(), 0xFFD2691E));
+        chatListAdaptor = new ChatListAdaptor(this, chatsList, chatOptions);
+        chatOptions.setAdapter(chatListAdaptor);
+
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, LOAD_URL, null,
+                response -> {
+                    try {
+                        for (int i = 0; i < response.length(); i++) {
+                            JSONObject chat = response.getJSONObject(i);
+                            if (chat.has("usrID1")) {
+                                chatsList.add(new Chat(chat.getString("usrID1"), chat.getString("usrName1"), chat.getString("lastMessage"), chat.getLong("lastTime"), Integer.parseInt((String) chat.get("usrColour1"))));
+                            } else {
+                                chatsList.add(new Chat(chat.getString("usrID2"), chat.getString("usrName2"), chat.getString("lastMessage"), chat.getLong("lastTime"), Integer.parseInt((String) chat.get("usrColour2"))));
+                            }
+                        }
+                        chatOptions.notifyAll();
                     } catch (JSONException e) {
                         e.printStackTrace();
                         Toast.makeText(getApplicationContext(), "Failed to retrieve data from server!", Toast.LENGTH_LONG).show();
@@ -186,11 +212,12 @@ public class MessageListActivity extends AppCompatActivity {
             if (isInFront) {
                 chatsList.clear();
                 try {
+                    // There may be a delay for server to update so must wait for adequate time
                     Thread.sleep(600);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                populateChatList();
+                updateChatList();
             }
         }
     };

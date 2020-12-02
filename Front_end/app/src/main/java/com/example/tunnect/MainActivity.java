@@ -121,27 +121,6 @@ public class MainActivity extends AppCompatActivity {
             settingIntent.putExtra("USER_ID", USER_ID);
             startActivity(settingIntent);
         });
-
-        // Test Button
-        // TODO: Get rid of this
-        Button testBtn = findViewById(R.id.test);
-        testBtn.setOnClickListener(view -> {
-            String testurl = "http://52.188.167.58:5000/chatservice/"+USER_ID+"/la12nc34e5";
-            RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
-            JSONObject user = new JSONObject();
-            try {
-                Date date = new Date();
-                user.put("timeStamp", date.getTime());
-            } catch (JSONException e) {
-                e.printStackTrace();
-                Toast.makeText(getApplicationContext(), "Failed to add profile to the server!", Toast.LENGTH_LONG).show();
-            }
-            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, testurl, user, response -> {
-            }, error -> {
-                Toast.makeText(getApplicationContext(), "BADDDDD", Toast.LENGTH_LONG).show();
-            });
-            queue.add(jsonObjectRequest);
-        });
     }
 
     /*
