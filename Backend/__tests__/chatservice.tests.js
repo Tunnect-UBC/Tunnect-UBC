@@ -2,7 +2,9 @@ const supertest = require("supertest");
 const utils = require("../chatService/app");
 const request = supertest(utils.app);
 const helpers = require("../chatService/utils/chatServiceHelpers");
-const mockAxios = require("../__mocks__/axios");
+const axios = require("axios");
+
+jest.mock("axios");
 
 const mockdeleteChat = jest.fn().mockReturnValueOnce(0)
                                 .mockReturnValueOnce(1)
@@ -107,7 +109,7 @@ const mockpostMessages = jest.fn().mockReturnValueOnce([0])
 
 describe("POST/:userId endpoint", () => {
   it("Request to post a message", async () => {
-    mockAxios.get.mockImplementationOnce(() =>
+    axios.get.mockImplementationOnce(() =>
      Promise.resolve({
        data: { notifId: "123"}
      })).mockImplementationOnce(() =>
@@ -125,7 +127,7 @@ describe("POST/:userId endpoint", () => {
 
 describe("POST/:userId endpoint", () => {
   it("Request to post a message", async () => {
-    mockAxios.get.mockImplementationOnce(() =>
+    axios.get.mockImplementationOnce(() =>
      Promise.resolve({
        data: { notifId: "123"}
      })).mockImplementationOnce(() =>
@@ -140,7 +142,7 @@ describe("POST/:userId endpoint", () => {
 });
 describe("POST/:userId endpoint", () => {
   it("Request to post a message", async () => {
-    mockAxios.get.mockImplementationOnce(() =>
+    axios.get.mockImplementationOnce(() =>
      Promise.resolve({
        data: { notifId: "123"}
      })).mockImplementationOnce(() =>
@@ -162,7 +164,7 @@ const mockpostChat = jest.fn().mockReturnValueOnce(0)
 
 describe("POST/:userId/:userId2 endpoint", () => {
   it("Request to post a chat", async () => {
-    mockAxios.get.mockImplementationOnce(() =>
+    axios.get.mockImplementationOnce(() =>
      Promise.resolve({
        data: {
         username : "123",
@@ -184,7 +186,7 @@ describe("POST/:userId/:userId2 endpoint", () => {
 
 describe("POST/:userId/:userId2 endpoint", () => {
   it("Request to post a chat", async () => {
-    mockAxios.get.mockImplementationOnce(() =>
+    axios.get.mockImplementationOnce(() =>
      Promise.resolve({
        data: {
          username : "123",
@@ -206,7 +208,7 @@ describe("POST/:userId/:userId2 endpoint", () => {
 
 describe("POST/:userId/:userId2 endpoint", () => {
   it("Request to post a chat", async () => {
-    mockAxios.get.mockImplementationOnce(() =>
+    axios.get.mockImplementationOnce(() =>
      Promise.resolve({
        data: {
          username : "123",
@@ -228,7 +230,7 @@ describe("POST/:userId/:userId2 endpoint", () => {
 
 describe("POST/:userId/:userId2 endpoint", () => {
   it("Request to post a chat", async () => {
-    mockAxios.get.mockImplementationOnce(() =>
+    axios.get.mockImplementationOnce(() =>
      Promise.resolve({
        data: {
          username : "123",
