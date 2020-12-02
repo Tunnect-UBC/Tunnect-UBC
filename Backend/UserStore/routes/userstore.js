@@ -29,7 +29,7 @@ const helpers = require("../utils/userstore_helpers");
 router.get("/", async (req, res, next) => {
     const users = await helpers.get_all();
 
-    if (users[0] === 1) {
+    if (users[0] === 200) {
         res.status(200).json(users[1]);
     } else {
         res.status(500).json({
@@ -83,7 +83,7 @@ router.post("/", async (req, res, next) => {
     });
     const result = await helpers.post_user(user);
 
-    if (result[0] === 1) {
+    if (result[0] === 200) {
         res.status(200).json(result[1]);
     } else {
         res.status(500).json({
@@ -106,9 +106,9 @@ router.get("/:userId", async (req, res, next) => {
 
     const result = await helpers.get_user(userId);
 
-    if (result[0] === 1) {
+    if (result[0] === 200) {
         res.status(200).json(result[1]);
-    } else if (result[0] == 0) {
+    } else if (result[0] == 500) {
         res.status(500).json({
             error: result[1]
         });

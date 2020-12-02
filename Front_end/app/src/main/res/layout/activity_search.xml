@@ -31,7 +31,10 @@
                 android:id="@+id/search_button"
                 android:layout_width="107dp"
                 android:layout_height="wrap_content"
-                android:text="Search" />
+                android:background="@color/colorPrimaryLight"
+                android:text="Search"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
 
         </LinearLayout>
 

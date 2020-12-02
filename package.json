@@ -4,7 +4,7 @@
   "description": "UserStore responsible for GETTING groups of users, or PUT/PATCH/DELETE/GETTING an individual user",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --coverage",
     "start-userstore": "nodemon ./Backend/UserStore/server.js",
     "start-matchmaker": "nodemon ./Backend/MatchmakingManager/server.js",
     "start-chat": "nodemon ./Backend/chatService/server.js"
