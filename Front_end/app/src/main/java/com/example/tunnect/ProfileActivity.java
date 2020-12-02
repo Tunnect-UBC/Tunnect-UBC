@@ -69,6 +69,7 @@ public class ProfileActivity extends AppCompatActivity {
     private TextView matches;
     private TextView songs;
     private ColorPicker cp;
+    private Button saveBtn;
 
     private int selectedSongs;
     private boolean inUserStore;
@@ -85,8 +86,6 @@ public class ProfileActivity extends AppCompatActivity {
         queue = Volley.newRequestQueue(getApplicationContext());
         spotifyQueue = Volley.newRequestQueue(getApplicationContext());
 
-        // TODO: Test the field for genre
-        // TODO: Add a delete function for songs
         matches = findViewById(R.id.num_matches);
         songs = findViewById(R.id.num_songs);
         iconImage = findViewById(R.id.profile_icon);
@@ -141,7 +140,7 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
         // save changes into profile
-        Button saveBtn = findViewById(R.id.save_profile);
+        saveBtn = findViewById(R.id.save_profile);
         saveBtn.setOnClickListener(view -> {
             try {
                 saveProfileEntries();
@@ -254,6 +253,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
         }, error -> {
             inUserStore = false;
+            saveBtn.setText("Create Profile");
         });
         queue.add(jsonObjectRequest);
     }
