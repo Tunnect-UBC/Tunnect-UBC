@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
 
         user_name.setText(user.getUsername());
         // TODO: Change this from score_view to genre_view
-        score_view.setText("Prefers " + user.getFavGenre() + "Music");
+        score_view.setText("Prefers " + user.getFavGenre() + " Music");
 
         List<Song> matchesSongs = user.getSongs();
         if (matchesSongs == null) {
@@ -343,6 +343,7 @@ public class MainActivity extends AppCompatActivity {
         userQueue.add(jsonObjectRequest);
     }
 
+    // TODO: Maybe delete the swiping
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         this.mDetector.onTouchEvent(event);
