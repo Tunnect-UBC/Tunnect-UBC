@@ -28,8 +28,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
     private TextView user_name;
     private TextView score_view;
     private List<String> matches;
-    private List<Double> scores;
     private JSONObject currObject;
     private int currMatch;
     private User displayedUser;
@@ -136,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
 
         user_name.setText(user.getUsername());
         // TODO: Change this from score_view to genre_view
-        score_view.setText(user.getFavGenre());
+        score_view.setText("Prefers " + user.getFavGenre() + " Music");
 
         List<Song> matchesSongs = user.getSongs();
         if (matchesSongs == null) {
@@ -159,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
             recyclerView.setAdapter(mAdapter);
             user_name.setText("No Matches Left!");
         } else {
-            getUser(matches.get(currMatch), scores.get(currMatch));
+            getUser(matches.get(currMatch));
         }
     }
 
@@ -172,7 +169,6 @@ public class MainActivity extends AppCompatActivity {
         String match_url = "http://52.188.167.58:3001/matchmaker/" + userId;
 
         matches = new ArrayList<>();
-        scores = new ArrayList<>();
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, match_url, null, response -> {
             for (int i = 0; i < response.length(); i++) {
@@ -186,12 +182,10 @@ public class MainActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                //scores.add(i, (double) currObject.get("score"));
-                scores.add(i, 0.0);
             }
             currMatch = 0;
             if(matches.size() != 0) {
-                getUser(matches.get(currMatch), scores.get(currMatch));
+                getUser(matches.get(currMatch));
             } else {
                 User no_user = new User();
                 no_user.updateUserId("no_user");
@@ -209,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
     * Calls getSong on each of the users songs
     * If the user has no songs then it calls dispMatch
     */
-    private void getUser(String userId, double score) {
+    private void getUser(String userId) {
         User user = new User();
         String get_url = "http://52.188.167.58:3000/userstore/" + userId;
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, get_url, null, response -> {
@@ -218,6 +212,7 @@ public class MainActivity extends AppCompatActivity {
                 user.updateUserId((String) user_info.get("_id"));
                 user.updateUsername((String) user_info.get("username"));
                 user.setNotifId((String) user_info.get("notifId"));
+                user.setFavGenre((String) user_info.get("favGenre"));
                 JSONArray jsonMatches = user_info.optJSONArray("matches");
                 for (int i = 0; i < jsonMatches.length(); i++) {
                     user.addMatch(jsonMatches.get(i).toString());
@@ -264,52 +259,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /*
-    * Fetches a song from spotify, parses its data, and places the songs info in the user given
-    * Calls dispMatch on the user if the song is the last of the user's songs
-    */
-    /* TODO: Delete this method
-    private void getSong(User user, Double score, String song_id, Boolean lastSong) {
-        String url = "https://api.spotify.com/v1/tracks/" + song_id;
-        Song song = new Song();
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, response -> {
-            song.setId(song_id);
-            try {
-                song.setName(response.getString("name"));
-                JSONObject album_info = response.getJSONObject("album");
-                song.setAlbum(album_info.getString("name"));
-                JSONArray artists = album_info.optJSONArray("artists");
-                JSONObject artist_info = artists.getJSONObject(0);
-                String artist = artist_info.getString("name");
-                // Used if a song has multiple artists
-                for (int i = 1; i < artists.length(); i++) {
-                    artist_info = artists.getJSONObject(i);
-                    artist = artist + ", " + artist_info.getString("name");
-                }
-                song.setArtist(artist);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            user.addSong(song);
-            if (lastSong) {
-                dispMatch(user, score);
-            }
-        }, error -> {
-            Toast.makeText(getApplicationContext(), "Error getting songs", Toast.LENGTH_SHORT).show();
-            dispMatch(user, score);
-        }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                String token = sharedPreferences.getString("token", "");
-                String auth = "Bearer " + token;
-                headers.put("Authorization", auth);
-                return headers;
-            }
-        };
-        spotifyQueue.add(jsonObjectRequest);
-    } */
-
-    /*
     * Handles like functionality
     */
     public void like(User likedUser) {
@@ -343,7 +292,6 @@ public class MainActivity extends AppCompatActivity {
     /*
     * Removes the current user from the matched users likes
     * Adds both users to the others matches list
-    * TODO: Have this function create a chat between users
     */
     public void match(User matchedUser) throws JSONException {
         Toast.makeText(getApplicationContext(), "You matched with " + matchedUser.getUsername(), Toast.LENGTH_LONG).show();
@@ -395,6 +343,7 @@ public class MainActivity extends AppCompatActivity {
         userQueue.add(jsonObjectRequest);
     }
 
+    // TODO: Maybe delete the swiping
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         this.mDetector.onTouchEvent(event);
