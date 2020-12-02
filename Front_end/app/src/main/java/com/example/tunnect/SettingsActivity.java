@@ -119,12 +119,13 @@ public class SettingsActivity extends AppCompatActivity {
 
                                         JSONObject songObject = new JSONObject();
                                         songObject.put("propName", "matches");
-                                        songObject.put("value", newMatches);
+                                        if (newMatches.size() == 0) {
+                                            songObject.put("value", null);
+                                        } 
                                         patchArray.put(songObject);
                                         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.PATCH, DELETE_URL+userID, patchArray, r -> {
                                         }, error -> {
-                                            // TODO: This adds the song correctly but it returns error for some reason, check it with Nick
-                                            Toast.makeText(getApplicationContext(), "Failed to patch match!", Toast.LENGTH_LONG).show();
+                                            // TODO: This removes the match correctly but it returns error for some reason, check it with Nick
                                         });
                                         queue.add(jsonArrayRequest);
                                     }
