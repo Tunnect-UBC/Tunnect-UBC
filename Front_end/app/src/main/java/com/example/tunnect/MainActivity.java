@@ -238,6 +238,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 user.updateUserId((String) user_info.get("_id"));
                 user.updateUsername((String) user_info.get("username"));
+                user.setNotifId((String) user_info.get("notifId"));
                 JSONArray jsonMatches = user_info.optJSONArray("matches");
                 for (int i = 0; i < jsonMatches.length(); i++) {
                     user.addMatch(jsonMatches.get(i).toString());
