@@ -50,9 +50,6 @@ router.get("/", async (req, res, next) => {
  */
 router.get("/:userId/matches", async (req, res, next) => {
     const userId = req.params.userId;
-
-    console.log("we in usermatches");
-
     const users = await helpers.get_50(userId);
 
     res.status(users[0]).json(users[1]);
