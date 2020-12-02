@@ -187,7 +187,7 @@ const helpers = {
                         await User.updateOne({_id: userId1 }, { $set : {matches: userStatus} })
                             .exec()
                             .then(async (result) => {
-                              console.log("notifId");
+                              console.log(notifId);
                                 await admin.messaging().sendToDevice(notifId, matchNotif, notif_opt);
                               resp = [200, result];
                             })
