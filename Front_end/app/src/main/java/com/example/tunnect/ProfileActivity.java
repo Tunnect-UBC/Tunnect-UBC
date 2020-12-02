@@ -3,15 +3,9 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
-import com.google.gson.JsonArray;
 import com.pes.androidmaterialcolorpickerdialog.ColorPicker;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
@@ -47,7 +41,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -75,7 +68,6 @@ public class ProfileActivity extends AppCompatActivity {
     private boolean inUserStore;
     private RecyclerView recyclerView;
     private ArrayList<Song> selSongs;
-    private ArrayList<String> user_songs;
     private SharedPreferences sharedPreferences;
 
     @Override
@@ -101,7 +93,6 @@ public class ProfileActivity extends AppCompatActivity {
         USER_ID = Objects.requireNonNull(getIntent().getExtras()).getString("USER_ID");
         selectedSongs = 0;
         selSongs = new ArrayList<>();
-        user_songs = new ArrayList<>();
         RETRIEVE_URL = ADD_URL + USER_ID;
         sharedPreferences = this.getSharedPreferences("SPOTIFY", 0);
 

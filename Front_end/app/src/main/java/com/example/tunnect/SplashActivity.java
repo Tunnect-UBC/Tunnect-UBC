@@ -67,6 +67,7 @@ public class SplashActivity extends AppCompatActivity {
                     editor.apply();
                     sharedPreferences = getApplicationContext().getSharedPreferences("SPOTIFY", 0);
                     getUserId();
+                    break;
                 // Auth flow returned an error
                 case ERROR:
                     Log.d("spotAuth", "Auth Error");
