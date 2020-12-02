@@ -2,9 +2,11 @@ const supertest = require("supertest");
 const utils = require("../chatService/app");
 const request = supertest(utils.app);
 const helpers = require("../chatService/utils/chatServiceHelpers");
-const axios = require("axios");
+const mockAxios = require("jest-mock-axios");
 
-jest.mock("axios");
+afterEach(() => {
+mockAxios.reset();
+});
 
 const mockdeleteChat = jest.fn().mockReturnValueOnce(0)
                                 .mockReturnValueOnce(1)
@@ -109,9 +111,10 @@ const mockpostMessages = jest.fn().mockReturnValueOnce([0])
 
 describe("POST/:userId endpoint", () => {
   it("Request to post a message", async () => {
-    axios.get.mockResolvedValue(() => {
+    mockAxios.get.mockResponse(() => {
        data: { notifId: "123"}
-     }).mockImplementationOnce(() => {
+     })
+     mockAxios.get.mockResponse(() => {
             data: {username: "456"}
           }
         );
@@ -124,9 +127,9 @@ describe("POST/:userId endpoint", () => {
 
 describe("POST/:userId endpoint", () => {
   it("Request to post a message", async () => {
-    axios.get.mockResolvedValue(() => {
+    mockAxios.get.mockResponse(() => {
        data: { notifId: "123"}
-     }).mockImplementationOnce(() => {
+     }).mockResponse(() => {
             data: {username: "456"}
           }
         );
@@ -137,9 +140,9 @@ describe("POST/:userId endpoint", () => {
 });
 describe("POST/:userId endpoint", () => {
   it("Request to post a message", async () => {
-    axios.get.mockResolvedValue(() => {
+    mockAxios.get.mockResponse(() => {
        data: { notifId: "123"}
-     }).mockImplementationOnce(() => {
+     }).mockResponse(() => {
             data: {username: "456"}
           }
         );
@@ -157,12 +160,12 @@ const mockpostChat = jest.fn().mockReturnValueOnce(0)
 
 describe("POST/:userId/:userId2 endpoint", () => {
   it("Request to post a chat", async () => {
-    axios.get.mockResolvedValue(() => {
+    mockAxios.get.mockResponse(() => {
        data: {
         username : "123",
         iconColour : "yellow"
        }
-     }).mockResolvedValue(() => {
+     }).mockResponse(() => {
             data: {
               username: "456",
               iconColour: "green"
@@ -177,12 +180,12 @@ describe("POST/:userId/:userId2 endpoint", () => {
 
 describe("POST/:userId/:userId2 endpoint", () => {
   it("Request to post a chat", async () => {
-    axios.get.mockResolvedValue(() => {
+    mockAxios.get.mockResponse(() => {
        data: {
          username : "123",
          iconColour : "yellow"
        }
-     }).mockResolvedValue(() => {
+     }).mockResponse(() => {
             data: {
               username: "456",
               iconColour: "green"
@@ -197,12 +200,12 @@ describe("POST/:userId/:userId2 endpoint", () => {
 
 describe("POST/:userId/:userId2 endpoint", () => {
   it("Request to post a chat", async () => {
-    axios.get.mockResolvedValue(() => {
+    mockAxios.get.mockResponse(() => {
        data: {
          username : "123",
          iconColour : "yellow"
        }
-     }).mockResolvedValue(() => {
+     }).mockResponse(() => {
             data: {
               username: "456",
               iconColour: "green"
@@ -217,13 +220,13 @@ describe("POST/:userId/:userId2 endpoint", () => {
 
 describe("POST/:userId/:userId2 endpoint", () => {
   it("Request to post a chat", async () => {
-    axios.get.mockResolvedValue(() => {
+    mockAxios.get.mockResponse(() => {
        data: {
          username : "123",
          iconColour : "yellow"
        }
      }
-   ).mockResolvedValue(() => {
+   ).mockResponse(() => {
             data: {
               username: "456",
               iconColour: "green"
