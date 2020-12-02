@@ -12,7 +12,7 @@ const song = {
 const userSchema = new mongoose.Schema({
     _id: String,
     username: String,
-    iconColour: String,
+    iconColour: Number,
     notifId: String,
     favGenre: String,
     songs: [song],

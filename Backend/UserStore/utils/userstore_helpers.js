@@ -12,10 +12,14 @@ const helpers = {
         await User.find()
             .exec()
             .then((users) => {
-                resp = [1, users];
+
+                //console.log(users);
+                resp = [200, users];
             })
             .catch((err) => {
-                resp = [0, err];
+                //console.log(err);
+                resp = [500, err];
+
             });
 
         return resp;
@@ -62,10 +66,13 @@ const helpers = {
         let resp = [];
         await user.save()
             .then((result) => {
-                resp =  [1, result];
+
+                //console.log(result);
+                resp =  [200, result];
             })
             .catch((err) => {
-                resp =  [0, err];
+                //console.log(err);
+                resp =  [500, err];
             });
 
         return resp;
@@ -78,14 +85,18 @@ const helpers = {
         .exec()
         .then((user) => {
             if (user) {
-                resp = [1, user];
+
+                resp = [200, user];
+                //res.status(200).json(user);
             } else {
-                resp = [-1, {message: "No valid entry found for provided ID"}];
+                resp = [404, {message: "No valid entry found for provided ID"}];
+                //res.status(404).json({message: "No valid entry found for provided ID"});
             }
         })
         .catch((err) => {
-
-            resp = [0, err];
+            //console.log(err);
+            resp = [500, err];
+            //res.status(500).json({error: err});
         });
 
         return resp;
