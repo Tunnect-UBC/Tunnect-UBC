@@ -23,7 +23,7 @@ const helpers = {
               resp = 2;
             }
           });
-        } else {
+        }else {
            resp = 1;
          }
       })
