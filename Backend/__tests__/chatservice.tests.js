@@ -1,6 +1,6 @@
 const supertest = require("supertest");
-const app = require("../chatService/app");
-const request = supertest(app);
+const utils = require("../chatService/app");
+const request = supertest(utils.app);
 const helpers = require("../chatService/utils/chatServiceHelpers");
 
 
