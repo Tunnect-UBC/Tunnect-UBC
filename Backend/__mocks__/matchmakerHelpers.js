@@ -1,7 +1,3 @@
-const getScore = jest.fn((user1, user2) => {
-    console.log("We out here in mock !");
-    return userScores.find(o => o._id === user2);
-});
 
 const userScores = [
     {
@@ -25,5 +21,10 @@ const userScores = [
         "score": 10
     },
 ];
+
+const getScore = jest.fn((user1, user2) => {
+    return userScores.find(o => o._id === user2);
+});
+
 
 module.export = getScore;
