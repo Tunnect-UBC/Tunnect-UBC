@@ -23,8 +23,7 @@ const helpers = {
               resp = 2;
             }
           });
-        }
-        else {
+        } else {
            resp = 1;
          }
       })
@@ -98,11 +97,11 @@ async postMessage(senderid, senderName, receiverid, notifId, message, timeStamp)
     }
   };
   await Chat.updateOne({usrID1: senderid, usrID2: receiverid},
-           {$push: {messages : [{senderid: senderid, message: message, timeStamp: timeStamp}]},
+           {$push: {messages : [{senderid, message, timeStamp}]},
            $set: {lastMessage: message, lastTime: timeStamp}})
            .then(async (result) => {
              await Chat.updateOne({usrID1: receiverid, usrID2: senderid},
-           {$push: {messages : [{senderid: senderid, message: message, timeStamp: timeStamp}]},
+           {$push: {messages : [{ senderid, message, timeStamp}]},
            $set: {lastMessage: message, lastTime: timeStamp}});})
           .then(async (result) => {
             if(notifId !== "0"){
