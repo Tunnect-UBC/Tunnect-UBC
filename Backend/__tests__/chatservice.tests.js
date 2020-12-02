@@ -41,9 +41,9 @@ describe("DELETE/:userId endpoint", () => {
   });
 });
 
-const mockgetChats = jest.fn().mockReturnValueOnce(0)
-                              .mockReturnValueOnce(1)
-                              .mockReturnValueOnce(-1);
+const mockgetChats = jest.fn().mockReturnValueOnce([0])
+                              .mockReturnValueOnce([1,1,1])
+                              .mockReturnValueOnce([-1]);
 
 /////////////////////GET chatService/usrID
 //get test, getChats = 0
@@ -71,11 +71,11 @@ describe("GET/:userId endpoint", () => {
 });
 
 //////////////////////GET chatService/userid1/userId2
-const mockgetMessages = jest.fn().mockReturnValueOnce(0)
-                                 .mockReturnValueOnce(1)
-                                 .mockReturnValueOnce(-1);
+const mockgetMessages = jest.fn().mockReturnValueOnce([0])
+                                 .mockReturnValueOnce([1,1,1])
+                                 .mockReturnValueOnce([-1]);
 
-describe("GET/:userId endpoint", () => {
+describe("GET/:userId1/:userId2 endpoint", () => {
   it("Request to get messages", async () => {
     helpers.getMessages = mockgetMessages;
     const res = await request.get("/chatservice/123/456");
@@ -83,14 +83,14 @@ describe("GET/:userId endpoint", () => {
   });
 });
 
-describe("GET/:userId endpoint", () => {
+describe("GET/:userId/:userId2 endpoint", () => {
   it("Request to get messages", async () => {
     helpers.getMessages = mockgetMessages;
     const res = await request.get("/chatservice/456/789");
     expect(res.statusCode).toEqual(200);
   });
 });
-describe("GET/:userId endpoint", () => {
+describe("GET/:userId/:userId2 endpoint", () => {
   it("Request to get messages", async () => {
     helpers.getMessages = mockgetMessages;
     const res = await request.get("/chatservice/456/789");
@@ -100,9 +100,9 @@ describe("GET/:userId endpoint", () => {
 
 
 ///////////////////////POST chatService/receiverid
-const mockpostMessages = jest.fn().mockReturnValueOnce(0)
-                                 .mockReturnValueOnce(1)
-                                 .mockReturnValueOnce(-1);
+const mockpostMessages = jest.fn().mockReturnValueOnce([0])
+                                 .mockReturnValueOnce([1,1])
+                                 .mockReturnValueOnce([-1]);
 
 describe("POST/:userId endpoint", () => {
   it("Request to post a message", async () => {
@@ -133,7 +133,7 @@ const mockpostChat = jest.fn().mockReturnValueOnce(0)
                                .mockReturnValueOnce(2)
                                .mockReturnValueOnce(-1);
 
-describe("POST/:userId endpoint", () => {
+describe("POST/:userId/:userId2 endpoint", () => {
   it("Request to post a chat", async () => {
     helpers.postChat = mockpostChat;
     const res = await request.post("/chatservice/123/456");
@@ -141,7 +141,7 @@ describe("POST/:userId endpoint", () => {
   });
 });
 
-describe("POST/:userId endpoint", () => {
+describe("POST/:userId/:userId2 endpoint", () => {
   it("Request to post a chat", async () => {
     helpers.postChat = mockpostChat;
     const res = await request.post("/chatservice/456/78");
@@ -149,7 +149,7 @@ describe("POST/:userId endpoint", () => {
   });
 });
 
-describe("POST/:userId endpoint", () => {
+describe("POST/:userId/:userId2 endpoint", () => {
   it("Request to post a chat", async () => {
     helpers.postChat = mockpostChat;
     const res = await request.post("/chatservice/123/789");
@@ -157,7 +157,7 @@ describe("POST/:userId endpoint", () => {
   });
 });
 
-describe("POST/:userId endpoint", () => {
+describe("POST/:userId/:userId2 endpoint", () => {
   it("Request to post a chat", async () => {
     helpers.postChat = mockpostChat;
     const res = await request.post("/chatservice/123/789");
