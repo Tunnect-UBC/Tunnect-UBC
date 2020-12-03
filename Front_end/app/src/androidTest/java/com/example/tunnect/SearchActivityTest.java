@@ -1,17 +1,13 @@
 package com.example.tunnect;
 
-
-import android.app.Activity;
-import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 
 import androidx.test.espresso.ViewInteraction;
-import androidx.test.espresso.intent.rule.IntentsTestRule;
+import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.filters.LargeTest;
-import androidx.test.rule.ActivityTestRule;
 import androidx.test.runner.AndroidJUnit4;
 
 import org.hamcrest.Description;
@@ -25,13 +21,14 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.replaceText;
+
+
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.is;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
@@ -46,33 +43,23 @@ public class SearchActivityTest {
 
         onView(withId(R.id.profile_btn)).perform(click());
         onView(withId(R.id.add_songs)).perform(click());
-        onView(withId(R.id.search_bar)).perform(replaceText("Never gonna give you up"), closeSoftKeyboard());
-        Thread.sleep(3000);
+        onView(withId(R.id.search_bar)).perform(replaceText("dfghdfghdfghdfghdfh"), closeSoftKeyboard());
+        Thread.sleep(1000);
         onView(withId(R.id.search_button)).perform(click());
 
-        ViewInteraction appCompatButton4 = onView(allOf(withId(R.id.add_btn), withText("Add"), childAtPosition(childAtPosition(withId(R.id.song_list), 0), 3), isDisplayed()));
-        appCompatButton4.perform(click());
+        onView(withRecyclerView(R.id.song_list).atPosition(0))
+                .check(matches(hasDescendant(withText("No Search Results"))));
 
-        ViewInteraction button = onView(allOf(withId(R.id.add_btn), childAtPosition(childAtPosition(withId(R.id.song_list), 0), 3), isDisplayed()));
-        button.check(matches(isDisplayed()));
+        onView(withId(R.id.search_bar)).perform(replaceText("Never Gonna Give You Up"), closeSoftKeyboard());
+        Thread.sleep(1000);
+        onView(withId(R.id.search_button)).perform(click());
+        onView(withRecyclerView(R.id.song_list).atPosition(0))
+                .check(matches(hasDescendant(withText("Never Gonna Give You Up"))));
+        onView(withRecyclerView(R.id.song_list).atPosition(0))
+                .check(matches(hasDescendant(withText("Rick Astley"))));
     }
 
-    private static Matcher<View> childAtPosition(
-            final Matcher<View> parentMatcher, final int position) {
-
-        return new TypeSafeMatcher<View>() {
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("Child at position " + position + " in parent ");
-                parentMatcher.describeTo(description);
-            }
-
-            @Override
-            public boolean matchesSafely(View view) {
-                ViewParent parent = view.getParent();
-                return parent instanceof ViewGroup && parentMatcher.matches(parent)
-                        && view.equals(((ViewGroup) parent).getChildAt(position));
-            }
-        };
+    public static RecyclerViewMatcher withRecyclerView(final int recyclerViewId) {
+        return new RecyclerViewMatcher(recyclerViewId);
     }
 }
