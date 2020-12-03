@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private JSONObject currObject;
     private int currMatch;
     private User displayedUser;
+    private String currUsername;
 
     // Volley queues
     private RequestQueue userQueue;
@@ -60,6 +61,9 @@ public class MainActivity extends AppCompatActivity {
         // Setup Volley queues
         userQueue = Volley.newRequestQueue(getApplicationContext());
         matchQueue = Volley.newRequestQueue(getApplicationContext());
+
+        // Get the current users username
+        getCurrUser();
 
         try {
             getMatches(USER_ID);
@@ -292,8 +296,7 @@ public class MainActivity extends AppCompatActivity {
         String match_url2 = "http://52.188.167.58:3000/userstore/" + matchedUser.getUserId() + "/addMatch/" + USER_ID;
         JSONObject notifId1 = new JSONObject();
         notifId1.put("notifId", matchedUser.getNotifId());
-        //TODO: Wrong username
-        notifId1.put("username", matchedUser.getUsername());
+        notifId1.put("username", currUsername);
         JsonObjectRequest removeLikeRequest = new JsonObjectRequest(Request.Method.PATCH, like_url, notifId1, response -> {
         }, error -> {
             Toast.makeText(getApplicationContext(), "Could not connect to server", Toast.LENGTH_LONG).show();
@@ -331,6 +334,23 @@ public class MainActivity extends AppCompatActivity {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, chatUrl, user, response -> {
         }, error -> {
             Toast.makeText(getApplicationContext(), "Failed to create chat", Toast.LENGTH_LONG).show();
+        });
+        userQueue.add(jsonObjectRequest);
+    }
+
+    /*
+    * Fetches the current users username and places it in currUsername
+    */
+    private void getCurrUser() {
+        String get_url = "http://52.188.167.58:3000/userstore/" + USER_ID;
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, get_url, null, response -> {
+            try {
+                currUsername = response.getString("username");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error -> {
+            Toast.makeText(getApplicationContext(), "Could not connect to server", Toast.LENGTH_LONG).show();
         });
         userQueue.add(jsonObjectRequest);
     }
