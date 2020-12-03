@@ -41,7 +41,7 @@ public class EnterProfileTest {
 
     @Test
     public void NewUserEnterProfile() throws InterruptedException {
-        Thread.sleep(3000);
+        Thread.sleep(5000);
 
         // Profile activity opens up, check entries exist
         ViewInteraction saveButton = onView(withId(R.id.save_profile));
@@ -99,6 +99,11 @@ public class EnterProfileTest {
         enterName.perform(replaceText("Test"), closeSoftKeyboard());
         Thread.sleep(1000);
 
+        ViewInteraction searchBtn = onView(withId(R.id.search_button));
+        searchBtn.check(matches(isDisplayed()));
+        searchBtn.perform(click());
+        Thread.sleep(1000);
+
         ViewInteraction addSong1 = onView(allOf(withId(R.id.add_btn), withText("Add"),
                 childAtPosition(childAtPosition(withId(R.id.song_list), 0), 3), isDisplayed()));
         addSong1.perform(click());
@@ -140,53 +145,114 @@ public class EnterProfileTest {
 
     @Test
     public void ExistingUserEditProfile() throws InterruptedException {
-        Thread.sleep(3000);
+        Thread.sleep(5000);
 
         // Open up profile from main activity
         ViewInteraction messageButton = onView(withId(R.id.profile_btn));
         messageButton.check(matches(isDisplayed()));
         messageButton.perform(click());
+        Thread.sleep(1000);
 
+        // Profile activity opens up, check entries exist
         ViewInteraction saveButton = onView(withId(R.id.save_profile));
         saveButton.check(matches(isDisplayed()));
-        saveButton.perform(click());
-
-        // Check all elements in profile page exist
-        ViewInteraction button = onView(withId(R.id.save_profile));
-        button.check(matches(isDisplayed()));
-        ViewInteraction editText1 = onView(withId(R.id.enter_username));
-        editText1.check(matches(isDisplayed()));
-        //ViewInteraction editText2 = onView(withId(R.id.enter_favourite_artist));
-        //editText2.check(matches(isDisplayed()));
+        ViewInteraction addSongsBtn = onView(withId(R.id.add_songs));
+        addSongsBtn.check(matches(isDisplayed()));
+        ViewInteraction enterUsername = onView(withId(R.id.enter_username));
+        enterUsername.check(matches(isDisplayed()));
+        ViewInteraction enterGenre = onView(withId(R.id.enter_fav_genre));
+        enterGenre.check(matches(isDisplayed()));
         ViewInteraction enterColour = onView(withId(R.id.enter_colour));
         enterColour.check(matches(isDisplayed()));
 
-        // Try to enter in first field then press save
-        editText1.perform(replaceText("Test Name"), closeSoftKeyboard());
-        editText1.perform(pressImeActionButton());
-        Thread.sleep(2000);
+        // Enter new field for name and genre
+        enterUsername.perform(replaceText("New Name"), closeSoftKeyboard());
+        enterUsername.perform(pressImeActionButton());
+        Thread.sleep(1000);
+        enterGenre.perform(replaceText("Rock"), closeSoftKeyboard());
+        enterGenre.perform(pressImeActionButton());
+        Thread.sleep(1000);
 
         saveButton.perform(click());
-
-        // Try to enter in second field then press save
-        //editText2.perform(replaceText("Test Artist"), closeSoftKeyboard());
-        //editText2.perform(pressImeActionButton());
         Thread.sleep(2000);
+
+        // Go back into profile and assert the changes
+        enterUsername.check(matches(withText("New Name")));
+        enterGenre.check(matches(withText("Rock")));
+
+        Thread.sleep(2000);
+    }
+
+    @Test
+    public void EditSongs() throws InterruptedException {
+        Thread.sleep(5000);
+
+        // Open up profile from main activity
+        ViewInteraction messageButton = onView(withId(R.id.profile_btn));
+        messageButton.check(matches(isDisplayed()));
+        messageButton.perform(click());
+        Thread.sleep(1000);
+
+        // Profile activity opens up, check entries exist
+        ViewInteraction saveButton = onView(withId(R.id.save_profile));
+        saveButton.check(matches(isDisplayed()));
+        ViewInteraction addSongsBtn = onView(withId(R.id.add_songs));
+        addSongsBtn.check(matches(isDisplayed()));
+        ViewInteraction enterUsername = onView(withId(R.id.enter_username));
+        enterUsername.check(matches(isDisplayed()));
+        ViewInteraction enterGenre = onView(withId(R.id.enter_fav_genre));
+        enterGenre.check(matches(isDisplayed()));
+        ViewInteraction enterColour = onView(withId(R.id.enter_colour));
+        enterColour.check(matches(isDisplayed()));
+
+        // Delete 3 songs, then save which will do nothing
+        ViewInteraction deleteSong1 = onView(allOf(withId(R.id.dlt_btn), withText("Delete"),
+                childAtPosition(childAtPosition(withId(R.id.selectedSongs),0),3), isDisplayed()));
+        deleteSong1.perform(click());
+        Thread.sleep(1000);
+        ViewInteraction deleteSong2 = onView(allOf(withId(R.id.dlt_btn), withText("Delete"),
+                childAtPosition(childAtPosition(withId(R.id.selectedSongs),1),3), isDisplayed()));
+        deleteSong2.perform(click());
+        Thread.sleep(1000);
+        ViewInteraction deleteSong3 = onView(allOf(withId(R.id.dlt_btn), withText("Delete"),
+                childAtPosition(childAtPosition(withId(R.id.selectedSongs),2),3), isDisplayed()));
+        deleteSong3.perform(click());
+        Thread.sleep(1000);
 
         saveButton.perform(click());
+        Thread.sleep(1000);
 
-        editText1.check(matches(withText("Test Name")));
-        //editText2.check(matches(withText("Test Artist")));
-        Thread.sleep(2000);
+        // Select songs
+        addSongsBtn.perform(click());
+        Thread.sleep(1000);
 
-        // Select a colour then press save
-        enterColour.perform(click());
+        ViewInteraction enterName = onView(withId(R.id.search_bar));
+        enterName.perform(replaceText("Test"), closeSoftKeyboard());
+        Thread.sleep(1000);
 
-        ViewInteraction okColourBtn = onView(withId(R.id.okColorButton));
-        okColourBtn.perform(click());
-        Thread.sleep(2000);
+        ViewInteraction searchBtn = onView(withId(R.id.search_button));
+        searchBtn.check(matches(isDisplayed()));
+        searchBtn.perform(click());
+        Thread.sleep(1000);
 
+        ViewInteraction addSong1 = onView(allOf(withId(R.id.add_btn), withText("Add"),
+                childAtPosition(childAtPosition(withId(R.id.song_list), 0), 3), isDisplayed()));
+        addSong1.perform(click());
+        Thread.sleep(1000);
+
+        ViewInteraction addSong2 = onView(allOf(withId(R.id.add_btn), withText("Add"),
+                childAtPosition(childAtPosition(withId(R.id.song_list), 1), 3), isDisplayed()));
+        addSong2.perform(click());
+        Thread.sleep(1000);
+
+        ViewInteraction addSong3 = onView(allOf(withId(R.id.add_btn), withText("Add"),
+                childAtPosition(childAtPosition(withId(R.id.song_list), 2), 3), isDisplayed()));
+        addSong3.perform(click());
+        Thread.sleep(1000);
+
+        // Save changes onto account
         saveButton.perform(click());
+        Thread.sleep(1000);
     }
 
     private static Matcher<View> childAtPosition(
