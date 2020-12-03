@@ -55,7 +55,7 @@ const helpers = {
           }}).then(async(result) => {
               await Chat.find({usrID2: id}, "usrID1 usrColour1 usrName1 lastMessage lastTime", async function (err, result2) {
                if(err){
-                resp =[0, err];
+                chatResp =[0, err];
                }
                else {
                  chatResp[2] = result2;
