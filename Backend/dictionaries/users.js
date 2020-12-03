@@ -3,6 +3,90 @@
  *      - score.tests.js
  */
 
+const userDictionary = {
+    "user1": 
+    {
+        _id: "67guyh4i",
+        username: "nickham",
+        iconColour: "0xfff000",
+        notifId: "67guyh4i",
+        favGenre: "Rock",
+        songs: [
+            {
+                _id: "54htwg",
+                artist: "Mild Orange",
+                name: "Stranger",
+                genre: "RnB",
+                relatedArtists: [
+                    "Peach Pit",
+                    "Summer Salt",
+                    "Vacations"
+                ]
+            },
+            {
+                _id: "56y6hgf",
+                artist: "Cage the Elephant",
+                name: "Trouble",
+                genre: "Rock",
+                relatedArtists: [
+                    "The Black Keys",
+                    "Car Seat Headrest",
+                    "Radiohead"
+                ]
+            }
+        ],
+        matches: [],
+        likes: [],
+        dislikes: []
+    },
+    "user2": 
+    {
+        _id: "fgujrtyn",
+        username: "david",
+        iconColour: "0xffffff",
+        notifId: "fgujrtyn",
+        favGenre: "Pop",
+        songs: [],
+        matches: [],
+        likes: [],
+        dislikes: []
+    },
+    "user3": 
+    {
+        _id: "sdffihjw345",
+        username: "elise",
+        iconColour: "0x000000",
+        notifId: "sdffihjw345",
+        favGenre: "Rock",
+        songs: [{
+            _id: "54htwg",
+            artist: "Mild Orange",
+            name: "Stranger",
+            genre: "RnB",
+            relatedArtists: [
+                "Peach Pit",
+                "Summer Salt",
+                "Vacations"
+            ]
+        }],
+        matches: [],
+        likes: [],
+        dislikes: []
+    },
+    "user4": 
+    {
+        _id: "hysdfg",
+        username: "lance",
+        iconColour: "0xffffff",
+        notifId: "hysdfg",
+        favGenre: "Pop",
+        songs: [],
+        matches: [],
+        likes: [],
+        dislikes: []
+    },
+}
+
 const users = {
     "user1": 
         {
@@ -79,4 +163,4 @@ const users = {
         }
 };
 
-module.exports = users;
+module.exports = userDictionary;

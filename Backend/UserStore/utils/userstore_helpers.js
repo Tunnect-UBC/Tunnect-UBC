@@ -25,7 +25,7 @@ const helpers = {
         return resp;
     },
 
-    async get_50(hostId) {
+    async get50(hostId) {
         let resp = [];
 
         await User.findById(hostId)
@@ -109,14 +109,14 @@ const helpers = {
         .exec()
         .then((result) => {
             if (result.n > 0) {
-                resp = [1, result];
+                resp = [200, result];
             }
             else {
-                resp = [-1, {message: "No valid entry found for provided ID or propname"}];
+                resp = [404, {message: "No valid entry found for provided ID or propname"}];
             }
         })
         .catch((err) => {
-            resp = [0, err];
+            resp = [500, err];
         });
 
         return resp;
@@ -131,13 +131,13 @@ const helpers = {
             .exec()
             .then((result) => {
                 if (result.n > 0) {
-                    resp = [1, result];
+                    resp = [200, result];
                 } else {
-                    resp = [-1, {message: "No valid entry found for provided ID"}];
+                    resp = [404, {message: "No valid entry found for provided ID"}];
                 }
             })
             .catch((err) => {
-                resp = [0, err];
+                resp = [500, err];
             });
 
         return resp;
