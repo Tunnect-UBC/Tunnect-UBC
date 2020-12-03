@@ -22,13 +22,13 @@ import static junit.framework.TestCase.assertNotNull;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class SearchActivityTest {
+public class BadSearchTest {
 
     @Rule
     public ActivityScenarioRule<SplashActivity> activityRule = new ActivityScenarioRule<>(SplashActivity.class);
 
     @Test
-    public void searchActivityTest() throws InterruptedException {
+    public void badSearchTest() throws InterruptedException {
         Thread.sleep(5000);
 
         onView(withId(R.id.profile_btn)).perform(click());
@@ -37,16 +37,9 @@ public class SearchActivityTest {
         Thread.sleep(1000);
         onView(withId(R.id.search_button)).perform(click());
 
-        onView(withRecyclerView(R.id.song_list).atPosition(0))
-                .check(matches(hasDescendant(withText("No Search Results"))));
-
-        onView(withId(R.id.search_bar)).perform(replaceText("Never Gonna Give You Up"), closeSoftKeyboard());
-        Thread.sleep(1000);
-        onView(withId(R.id.search_button)).perform(click());
-        onView(withRecyclerView(R.id.song_list).atPosition(0))
-                .check(matches(hasDescendant(withText("Never Gonna Give You Up"))));
         assertNotNull(onView(withRecyclerView(R.id.song_list).atPosition(0))
-                .check(matches(hasDescendant(withText("Rick Astley")))));
+                .check(matches(hasDescendant(withText("No Search Results")))));
+
     }
 
     public static RecyclerViewMatcher withRecyclerView(final int recyclerViewId) {

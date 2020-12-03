@@ -1,16 +1,12 @@
 package com.example.tunnect;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.GestureDetectorCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.GestureDetector;
 import android.widget.Button;
-import android.view.MotionEvent;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,10 +26,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    private GestureDetectorCompat mDetector;
     private static String USER_ID;
     private TextView user_name;
-    private TextView score_view;
+    private TextView genre_view;
     private List<String> matches;
     private JSONObject currObject;
     private int currMatch;
@@ -54,9 +49,8 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        mDetector = new GestureDetectorCompat(this, new MyGestureListener());
         user_name = findViewById(R.id.user_name);
-        score_view = findViewById(R.id.user_info_button);
+        genre_view = findViewById(R.id.user_info_button);
 
         recyclerView = findViewById(R.id.match_list);
         recyclerView.setHasFixedSize(true);
@@ -76,15 +70,19 @@ public class MainActivity extends AppCompatActivity {
         // Like Button
         Button likeBtn = findViewById(R.id.like_btn);
         likeBtn.setOnClickListener(view -> {
-            like(displayedUser);
-            dispNextMatch();
+            if (!displayedUser.getUserId().equals("no_user")) {
+                like(displayedUser);
+                dispNextMatch();
+            }
         });
 
         // Dislike Button
         Button dislikeBtn = findViewById(R.id.dislike_btn);
         dislikeBtn.setOnClickListener(view -> {
-            dislike(displayedUser);
-            dispNextMatch();
+            if (!displayedUser.getUserId().equals("no_user")) {
+                dislike(displayedUser);
+                dispNextMatch();
+            }
         });
 
         // Messages Button
@@ -121,12 +119,11 @@ public class MainActivity extends AppCompatActivity {
         displayedUser = user;
         if (user.getUserId().equals("no_user")) {
             user_name.setText("No Matches Found!");
+            genre_view.setText("Try Again Later");
             return;
         }
-
         user_name.setText(user.getUsername());
-        // TODO: Change this from score_view to genre_view
-        score_view.setText("Prefers " + user.getFavGenre() + " Music");
+        genre_view.setText("Prefers " + user.getFavGenre() + " Music");
 
         List<Song> matchesSongs = user.getSongs();
         if (matchesSongs == null) {
@@ -186,7 +183,9 @@ public class MainActivity extends AppCompatActivity {
             }
 
         }, error -> {
-            Log.d("matches", "failure");
+            User no_user = new User();
+            no_user.updateUserId("no_user");
+            dispMatch(no_user);
         });
         matchQueue.add(jsonArrayRequest);
     }
@@ -334,94 +333,6 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Failed to create chat", Toast.LENGTH_LONG).show();
         });
         userQueue.add(jsonObjectRequest);
-    }
-
-    // TODO: Maybe delete the swiping
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        this.mDetector.onTouchEvent(event);
-        return super.onTouchEvent(event);
-    }
-
-    /*
-    * Class that handles swiping
-    */
-    class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
-        private static final String DEBUG_TAG = "Gestures";
-        public final static int SWIPE_UP = 1;
-        public final static int SWIPE_DOWN = 2;
-        public final static int SWIPE_LEFT = 3;
-        public final static int SWIPE_RIGHT = 4;
-
-        // Swipe distances
-        private int swipe_Min_Distance = 100;
-        private int swipe_Max_Distance = 2000;
-        private int swipe_Min_Velocity = 100;
-
-
-        @Override
-        public boolean onDown(MotionEvent event) {
-            Log.d(DEBUG_TAG,"onDown: " + event.toString());
-            return true;
-        }
-
-        /*
-        * Performs calculations to determine if a fling motion can be considered a swipe
-        */
-        @Override
-        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-            final float xDistance = Math.abs(e1.getX() - e2.getX());
-            final float yDistance = Math.abs(e1.getY() - e2.getY());
-            float absVelocityX;
-            float absVelocityY;
-
-            if (xDistance > this.swipe_Max_Distance
-                    || yDistance > this.swipe_Max_Distance)
-                return false;
-
-            absVelocityX = Math.abs(velocityX);
-            absVelocityY = Math.abs(velocityY);
-            boolean result = false;
-
-            if (absVelocityX > this.swipe_Min_Velocity
-                    && xDistance > this.swipe_Min_Distance) {
-                if (e1.getX() > e2.getX()) // right to left
-                    this.onSwipe(SWIPE_LEFT);
-                else
-                    this.onSwipe(SWIPE_RIGHT);
-
-                result = true;
-            } else if (absVelocityY > this.swipe_Min_Velocity
-                    && yDistance > this.swipe_Min_Distance) {
-                if (e1.getY() > e2.getY()) // bottom to up
-                    this.onSwipe(SWIPE_UP);
-                else
-                    this.onSwipe(SWIPE_DOWN);
-
-                result = true;
-            }
-
-            return result;
-        }
-
-        /*
-        * Handles swipes
-        */
-        private void onSwipe(int direction) {
-            switch (direction) {
-                case SWIPE_RIGHT:
-                    like(displayedUser);
-                    dispNextMatch();
-                    break;
-                case SWIPE_LEFT:
-                    dislike(displayedUser);
-                    dispNextMatch();
-                    break;
-                default:
-                    break;
-
-            }
-        }
     }
 
 }
