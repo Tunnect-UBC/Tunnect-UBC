@@ -9,7 +9,7 @@ const express = require("express");
 const router = new express.Router();
 const helpers = require("../utils/matchmakerHelpers");
 
-const axios = require(axios");
+const axios = require("axios");
 
 //const userstoreMock = require("../../Mocks/userstore.mock");
 
