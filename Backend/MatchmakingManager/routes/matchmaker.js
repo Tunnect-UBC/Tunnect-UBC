@@ -9,9 +9,11 @@ const express = require("express");
 const router = new express.Router();
 const helpers = require("../utils/matchmakerHelpers");
 
+const axios = require('axios');
+
 //const userstoreMock = require("../../Mocks/userstore.mock");
 
-const userStoreUrl = "http:/localhost:3000/userstore/";
+const userStoreUrl = "http://localhost:3000/userstore/";
 
 
 /**
@@ -22,7 +24,7 @@ const userStoreUrl = "http:/localhost:3000/userstore/";
  * 
  * User schema described in ../../models/Users
  */
-router.get("/:hostId", (req, res, next) => {
+router.get("/:hostId", async (req, res, next) => {
     //hostId is the id of the user who is looking for a match
     const hostId = req.params.hostId;
 
@@ -34,8 +36,31 @@ router.get("/:hostId", (req, res, next) => {
     //this is all code that relys on userstore.get, hence we can replace this
     //by a call to mock
 
+
+    await axios.get(userStoreUrl + hostId + "/matches", {params: {}})
+            .then(async (response) => {
+                //const jsonRankings = helpers.rank(JSON.parse(response.data), hostId);
+                const jsonRankings = helpers.rank(response.data, hostId);
+                let filteredRankings;
+                if (jsonRankings.length > 15) {
+                    filteredRankings = jsonRankings.slice(0, 15);
+                } else {
+                    filteredRankings = jsonRankings;
+                }
+                res.status(200).json(filteredRankings);
+            })
+            .catch(async (error) => {
+                console.log("we in err :/");
+                res.status(500).json({
+                    error: error
+                });
+            })
+
+
+
+
     //this is to get the list of all users, such that we can rank them
-    http.get(userStoreUrl + hostId + "/matches", (resp) => {
+    /*http.get(userStoreUrl + hostId + "/matches", (resp) => {
         let data = "";
 
         //A chunk of data has been received
@@ -62,7 +87,7 @@ router.get("/:hostId", (req, res, next) => {
                 error: err
             });
         });
-
+*/
 });
 
 module.exports = router;

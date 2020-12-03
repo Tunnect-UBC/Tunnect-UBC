@@ -5,41 +5,31 @@
 const helpers = {
     songScore(user1song, user2) {
 
-        let artistFlag = 0;
-        let relatedFlag = 0;
-        let genreFlag = 0;
+        let retval = 0
 
         for (let i = 0; i < user2.songs.length; i++) {
             if (user2.songs[i]._id === user1song._id) {
                 return 3;
             } else if (user2.songs[i].artist === user1song.artist) {
-                artistFlag = 1;
-            } else if (user2.songs[i].relatedArtists.includes(user1song.artist)) {
-                relatedFlag = 1;
-            } else if (user1song.genre === user2.favGenre) {
-                genreFlag = 1;
+                retval = 2;
+            } else if (user2.songs[i].relatedArtists.includes(user1song.artist) && retval < 1) {
+                retval = 1;
+            } else if (user1song.genre === user2.favGenre && retval < 0.5) {
+                retval = 0.5
             }
         }
 
-        if (artistFlag) {
-            return 2;
-        } else if (relatedFlag) {
-            return 1;
-        } else if (genreFlag) {
-            return 0.5;
-        } else {
-            return 0;
-        }
+        return retval;
     },
 
     getScore(user1, user2) {
         let score = 0;
 
-        user1.songs.forEach((song) => {
-            score += helpers.songScore(song, user2);
-        });
-
         if (user1.songs.length !== 0) {
+            user1.songs.forEach((song) => {
+                score += helpers.songScore(song, user2);
+            });
+
             score = score / user1.songs.length;
         }
 
