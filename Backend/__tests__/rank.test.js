@@ -1,3 +1,5 @@
+/*global jest*/
+
 const helpers = require("../MatchmakingManager/utils/matchmakerHelpers");
 
 
@@ -26,11 +28,8 @@ const userScores = [
 
 const getScoreMock = jest.fn((user1, user2) => {
     const returnUser = userScores.find((obj) => (obj._id === user2._id));
-    if (returnUser !== undefined) {
-        return returnUser.score;
-    } else {
-        return undefined;
-    }
+    return returnUser.score;
+    
 });
 
 

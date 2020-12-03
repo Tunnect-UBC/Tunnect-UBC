@@ -1,3 +1,5 @@
+/*global jest*/
+
 const helpers = require("../MatchmakingManager/utils/matchmakerHelpers");
 
 const userDictionary = require("../dictionaries/users");
