@@ -235,9 +235,8 @@ public class ProfileActivity extends AppCompatActivity {
                     int numMatches = jsonMatches.length();
                     matches.setText(Integer.toString(numMatches));
 
-                    Integer iconColour = (Integer) response.get("iconColour");
-                    DrawableCompat.setTint(wrappedIconImage, Integer.parseInt(iconColour.toString()));
-                    selectedColorRGB = Integer.parseInt(iconColour.toString());
+                    DrawableCompat.setTint(wrappedIconImage, (int) response.get("iconColour"));
+                    selectedColorRGB = (int) response.get("iconColour");
                     iconImage.setImageDrawable(wrappedIconImage);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -453,6 +452,7 @@ public class ProfileActivity extends AppCompatActivity {
                 mainIntent.putExtra("USER_ID", USER_ID);
                 startActivity(mainIntent);
             }, error -> {
+                // TODO: This adds the song correctly but it returns error for some reason, check it with Nick
                 Intent mainIntent = new Intent(ProfileActivity.this, MainActivity.class);
                 mainIntent.putExtra("USER_ID", USER_ID);
                 startActivity(mainIntent);

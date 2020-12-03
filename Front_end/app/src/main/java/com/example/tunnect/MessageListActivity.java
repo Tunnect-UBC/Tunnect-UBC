@@ -129,9 +129,9 @@ public class MessageListActivity extends AppCompatActivity {
                         for (int i = 0; i < response.length(); i++) {
                             JSONObject chat = response.getJSONObject(i);
                             if (chat.has("usrID1")) {
-                                chatsList.add(new Chat(chat.getString("usrID1"), chat.getString("usrName1"), chat.getString("lastMessage"), chat.getLong("lastTime"), Integer.parseInt((String) chat.get("usrColour1"))));
+                                chatsList.add(new Chat(chat.getString("usrID1"), chat.getString("usrName1"), chat.getString("lastMessage"), chat.getLong("lastTime"), (int) chat.get("usrColour1")));
                             } else {
-                                chatsList.add(new Chat(chat.getString("usrID2"), chat.getString("usrName2"), chat.getString("lastMessage"), chat.getLong("lastTime"), Integer.parseInt((String) chat.get("usrColour2"))));
+                                chatsList.add(new Chat(chat.getString("usrID2"), chat.getString("usrName2"), chat.getString("lastMessage"), chat.getLong("lastTime"), (int) chat.get("usrColour2")));
                             }
                         }
 
@@ -158,9 +158,9 @@ public class MessageListActivity extends AppCompatActivity {
                         for (int i = 0; i < response.length(); i++) {
                             JSONObject chat = response.getJSONObject(i);
                             if (chat.has("usrID1")) {
-                                chatsList.add(new Chat(chat.getString("usrID1"), chat.getString("usrName1"), chat.getString("lastMessage"), chat.getLong("lastTime"), Integer.parseInt((String) chat.get("usrColour1"))));
+                                chatsList.add(new Chat(chat.getString("usrID1"), chat.getString("usrName1"), chat.getString("lastMessage"), chat.getLong("lastTime"), (int) chat.get("usrColour1")));
                             } else {
-                                chatsList.add(new Chat(chat.getString("usrID2"), chat.getString("usrName2"), chat.getString("lastMessage"), chat.getLong("lastTime"), Integer.parseInt((String) chat.get("usrColour2"))));
+                                chatsList.add(new Chat(chat.getString("usrID2"), chat.getString("usrName2"), chat.getString("lastMessage"), chat.getLong("lastTime"), (int) chat.get("usrColour2")));
                             }
                         }
                         chatOptions.notifyAll();
