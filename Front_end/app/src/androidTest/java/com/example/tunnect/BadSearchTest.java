@@ -29,6 +29,7 @@ public class BadSearchTest {
 
     @Test
     public void badSearchTest() throws InterruptedException {
+        // Sleep until the login process is finished
         Thread.sleep(5000);
 
         onView(withId(R.id.profile_btn)).perform(click());

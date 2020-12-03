@@ -38,7 +38,8 @@ public class GoodSearchTest {
 
     @Test
     public void goodSearchTest() throws InterruptedException {
-        Thread.sleep(15000);
+        // Sleep until the login process is finished
+        Thread.sleep(5000);
 
         onView(withId(R.id.profile_btn)).perform(click());
         onView(withId(R.id.add_songs)).perform(click());
@@ -48,13 +49,8 @@ public class GoodSearchTest {
         onView(withId(R.id.search_button)).perform(click());
 
         ViewInteraction appCompatButton = onView(
-                allOf(withId(R.id.add_btn), withText("Add"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.song_list),
-                                        0),
-                                3),
-                        isDisplayed()));
+                allOf(withId(R.id.add_btn), withText("Add"), childAtPosition(
+                                childAtPosition(withId(R.id.song_list), 0), 3), isDisplayed()));
         appCompatButton.perform(click());
 
         onView(withContentDescription("Navigate up")).perform(click());
