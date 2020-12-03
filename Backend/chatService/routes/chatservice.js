@@ -67,6 +67,13 @@ router.get("/:userid1/:userid2", async (req, res, next) => {
 *put a message in the messagedb and update the corressponding chat's message list
 **/
 router.post("/:receiverid", async (req, res, next) => {
+     if(!req.body.hasOwnProperty("message") || !req.body.hasOwnProperty("timeStamp")
+                 || !req.body.hasOwnProperty("senderid")){
+       res.status(500).json({
+         message: "Bad request body"
+       });
+     }
+     else {
      const senderid = req.body.senderid;
      const receiverid = req.params.receiverid;
      const message = req.body.message;
@@ -94,12 +101,19 @@ router.post("/:receiverid", async (req, res, next) => {
          message: "unkown"
        });
       }
+    }
   });
 
 /**
 *add a chat to the chatsdb
 **/
 router.post("/:usrid1/:usrid2", async (req, res, next) => {
+   if(!req.body.hasOwnProperty("timeStamp")){
+     res.status(500).json({
+       message: "Bad request body"
+     });
+   }
+   else {
    const usrid1 = req.params.usrid1;
    const usrid2 = req.params.usrid2;
    const timeStamp = req.body.timeStamp;
@@ -144,7 +158,7 @@ router.post("/:usrid1/:usrid2", async (req, res, next) => {
         message: "unknown"
       })
     }
-
+  }
 });
 
 /**
