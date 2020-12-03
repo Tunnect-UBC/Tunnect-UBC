@@ -23,10 +23,10 @@ const Chat = require("../../models/chat");
 router.get("/:userId", async (req, res, next) => {
   const id = req.params.userId;
   const result = await helpers.getChats(id);
-  if(result[0] == 0){
+  if(result[0] === 0){
     res.status(500).json(result[1]);
   }
-  else if(result[0] == 1){
+  else if(result[0] === 1){
        res.status(200).json(result[1].concat(result[2]));
   }
   else{
@@ -47,11 +47,11 @@ router.get("/:userid1/:userid2", async (req, res, next) => {
    const id1 = req.params.userid1;
    const id2 = req.params.userid2;
 
-   result = await helpers.getMessages(id1, id2);
-   if(result[0] == 0){
+   const result = await helpers.getMessages(id1, id2);
+   if(result[0] === 0){
      res.status(500).json(result[1]);
    }
-   else if(result[0] == 1){
+   else if(result[0] === 1){
      res.status(200).json(result[1].concat(result[2]));
    }
    else{
@@ -67,6 +67,13 @@ router.get("/:userid1/:userid2", async (req, res, next) => {
 *put a message in the messagedb and update the corressponding chat's message list
 **/
 router.post("/:receiverid", async (req, res, next) => {
+     if(!req.body.hasOwnProperty("message") || !req.body.hasOwnProperty("timeStamp")
+                 || !req.body.hasOwnProperty("senderid")){
+       res.status(500).json({
+         message: "Bad request body"
+       });
+     }
+     else {
      const senderid = req.body.senderid;
      const receiverid = req.params.receiverid;
      const message = req.body.message;
@@ -82,7 +89,7 @@ router.post("/:receiverid", async (req, res, next) => {
           senderName = response2.data.username;
         });
      });
-     result = await helpers.postMessage(senderid, senderName, receiverid, notifId, message, timeStamp);
+     const result = await helpers.postMessage(senderid, senderName, receiverid, notifId, message, timeStamp);
      if(result[0] === 0){
        res.status(500).json(result[1]);
      }
@@ -94,12 +101,19 @@ router.post("/:receiverid", async (req, res, next) => {
          message: "unkown"
        });
       }
+    }
   });
 
 /**
 *add a chat to the chatsdb
 **/
 router.post("/:usrid1/:usrid2", async (req, res, next) => {
+   if(!req.body.hasOwnProperty("timeStamp")){
+     res.status(500).json({
+       message: "Bad request body"
+     });
+   }
+   else {
    const usrid1 = req.params.usrid1;
    const usrid2 = req.params.usrid2;
    const timeStamp = req.body.timeStamp;
@@ -125,7 +139,7 @@ router.post("/:usrid1/:usrid2", async (req, res, next) => {
      });
    });
    });
-   result = await helpers.postChat(chat, usrid1, usrid2);
+   const result = await helpers.postChat(chat, usrid1, usrid2);
    if(result[0] === 0){
       res.status(500).json({
         message: "db error"
@@ -144,7 +158,7 @@ router.post("/:usrid1/:usrid2", async (req, res, next) => {
         message: "unknown"
       })
     }
-
+  }
 });
 
 /**
@@ -154,16 +168,16 @@ router.delete("/:userId1/:userId2", async (req, res, next) => {
     const id1 = req.params.userId1;
     const id2 = req.params.userId2;
 
-    result = await helpers.deleteChat(id1, id2);
+    const result = await helpers.deleteChat(id1, id2);
     if(result == 0){
       res.status(500).json({
         message: "db error"
       });
     }
-    else if(result == 1){
+    else if(result === 1){
       res.status(200).json({});
     }
-    else if(result == 2){
+    else if(result === 2){
       res.status(404).json({
         message: "chat not found"
       });

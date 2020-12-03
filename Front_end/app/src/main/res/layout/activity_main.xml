@@ -14,7 +14,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
+        android:background="@color/colorPrimary"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme">
 
@@ -45,41 +45,15 @@
             android:text="@string/settings_btn" />
     </androidx.appcompat.widget.Toolbar>
 
-    <Button
-        android:id="@+id/test"
-        android:layout_width="269dp"
-        android:layout_height="21dp"
-        android:layout_marginStart="65dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginBottom="15dp"
-        android:background="@drawable/greenblue_grad_ovel"
-        android:fontFamily="sans-serif"
-        android:text="test"
-        android:textSize="18sp" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/hint_white" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/match_list"
-        android:layout_width="match_parent"
-        android:layout_height="289dp" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/hint_white" />
-
     <TextView
         android:id="@+id/user_name"
         android:layout_width="match_parent"
         android:layout_height="65dp"
         android:layout_weight="0"
+        android:background="@drawable/purple_grad"
         android:text="@string/user_name"
         android:textAlignment="center"
-        android:textColor="#673AB7"
+        android:textColor="@color/white"
         android:textSize="45sp" />
 
     <TextView
@@ -87,10 +61,16 @@
         android:layout_width="match_parent"
         android:layout_height="35dp"
         android:layout_weight="0"
+        android:background="@drawable/purple_grad"
         android:text="@string/user_info"
         android:textAlignment="center"
-        android:textColor="#673AB7"
+        android:textColor="@color/white"
         android:textSize="23sp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/match_list"
+        android:layout_width="match_parent"
+        android:layout_height="357dp" />
 
     <LinearLayout
         android:layout_width="match_parent"

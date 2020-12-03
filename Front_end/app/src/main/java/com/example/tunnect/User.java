@@ -21,6 +21,7 @@ public class User {
         this.likes = likes;
         this.dislikes = dislikes;
         this.favGenre = favGenre;
+        this.notifId = notifId;
     }
 
     public User() {

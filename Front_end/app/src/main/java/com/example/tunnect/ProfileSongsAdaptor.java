@@ -14,34 +14,34 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-public class SearchListAdaptor extends RecyclerView.Adapter<SearchListAdaptor.ViewHolder> {
+public class ProfileSongsAdaptor extends RecyclerView.Adapter<ProfileSongsAdaptor.ViewHolder> {
     private Context context;
     private List<Song> songs;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView songTitle;
         public TextView artist;
-        public Button add_btn;
+        public Button dlt_btn;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             songTitle = itemView.findViewById(R.id.song_title);
             artist = itemView.findViewById(R.id.artist);
-            add_btn = itemView.findViewById(R.id.add_btn);
+            dlt_btn = itemView.findViewById(R.id.dlt_btn);
         }
     }
 
-    public SearchListAdaptor(Context context, List<Song> songs) {
+    public ProfileSongsAdaptor(Context context, List<Song> songs) {
         this.context = context;
         this.songs = songs;
     }
 
     @Override
-    public SearchListAdaptor.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ProfileSongsAdaptor.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.search_layout, parent, false);
+        View view = inflater.inflate(R.layout.delete_layout, parent, false);
 
-        SearchListAdaptor.ViewHolder viewHolder = new SearchListAdaptor.ViewHolder(view);
+        ProfileSongsAdaptor.ViewHolder viewHolder = new ProfileSongsAdaptor.ViewHolder(view);
 
         return viewHolder;
     }
@@ -52,8 +52,8 @@ public class SearchListAdaptor extends RecyclerView.Adapter<SearchListAdaptor.Vi
         holder.songTitle.setText(song.getName());
         holder.artist.setText(song.getArtist());
 
-        holder.add_btn.setOnClickListener(view -> {
-            addSong(song.getId(), holder);
+        holder.dlt_btn.setOnClickListener(view -> {
+            deleteSong(song.getId(), holder);
         });
     }
 
@@ -65,11 +65,11 @@ public class SearchListAdaptor extends RecyclerView.Adapter<SearchListAdaptor.Vi
     /*
     * Adds a song to the users profile
     */
-    private void addSong(String song, ViewHolder holder) {
+    private void deleteSong(String song, ViewHolder holder) {
         Intent intent = new Intent("edited_song");
-        intent.putExtra("ADDED_SONG", song);
-        intent.putExtra("ADDING", "True");
-        holder.add_btn.setText("Added");
+        intent.putExtra("DELETED_SONG", song);
+        intent.putExtra("ADDING", "False");
+        holder.dlt_btn.setText("Deleted");
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 }

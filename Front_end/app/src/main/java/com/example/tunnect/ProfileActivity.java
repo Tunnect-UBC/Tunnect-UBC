@@ -3,15 +3,9 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
-import com.google.gson.JsonArray;
 import com.pes.androidmaterialcolorpickerdialog.ColorPicker;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
@@ -47,7 +41,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -69,12 +62,12 @@ public class ProfileActivity extends AppCompatActivity {
     private TextView matches;
     private TextView songs;
     private ColorPicker cp;
+    private Button saveBtn;
 
     private int selectedSongs;
     private boolean inUserStore;
     private RecyclerView recyclerView;
     private ArrayList<Song> selSongs;
-    private ArrayList<String> user_songs;
     private SharedPreferences sharedPreferences;
 
     @Override
@@ -85,8 +78,6 @@ public class ProfileActivity extends AppCompatActivity {
         queue = Volley.newRequestQueue(getApplicationContext());
         spotifyQueue = Volley.newRequestQueue(getApplicationContext());
 
-        // TODO: Test the field for genre
-        // TODO: Add a delete function for songs
         matches = findViewById(R.id.num_matches);
         songs = findViewById(R.id.num_songs);
         iconImage = findViewById(R.id.profile_icon);
@@ -102,7 +93,6 @@ public class ProfileActivity extends AppCompatActivity {
         USER_ID = Objects.requireNonNull(getIntent().getExtras()).getString("USER_ID");
         selectedSongs = 0;
         selSongs = new ArrayList<>();
-        user_songs = new ArrayList<>();
         RETRIEVE_URL = ADD_URL + USER_ID;
         sharedPreferences = this.getSharedPreferences("SPOTIFY", 0);
 
@@ -122,7 +112,7 @@ public class ProfileActivity extends AppCompatActivity {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         selSongs.add(new Song("", "You have no songs", "", "No Album", new ArrayList<String>(), ""));
-        RecyclerView.Adapter mAdapter = new SongListAdaptor(this, selSongs);
+        RecyclerView.Adapter mAdapter = new ProfileSongsAdaptor(this, selSongs);
         recyclerView.setAdapter(mAdapter);
         selSongs.remove(0);
 
@@ -141,7 +131,7 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
         // save changes into profile
-        Button saveBtn = findViewById(R.id.save_profile);
+        saveBtn = findViewById(R.id.save_profile);
         saveBtn.setOnClickListener(view -> {
             try {
                 saveProfileEntries();
@@ -161,7 +151,7 @@ public class ProfileActivity extends AppCompatActivity {
         loadProfileEntries();
 
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
-                new IntentFilter("added_song"));
+                new IntentFilter("edited_song"));
 
         // Must first check if device can send and receive messages
         if (ProfileActivity.this.checkGooglePlayServices()) {
@@ -183,12 +173,24 @@ public class ProfileActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             // Get extra data included in the Intent
-            Toast.makeText(context, "Song Added", Toast.LENGTH_LONG).show();
-            String song = intent.getStringExtra("ADDED_SONG");
-            selectedSongs ++;
-            songs.setText(Integer.toString(selectedSongs));
-            user_songs.add(song);
-            getSong(song);
+            String adding = intent.getStringExtra("ADDING");
+            if (adding.equals("True")) {
+                String song = intent.getStringExtra("ADDED_SONG");
+                if (containsSong(song)) {
+                    Toast.makeText(context, "Song Already Added", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(context, "Song Added", Toast.LENGTH_LONG).show();
+                    selectedSongs++;
+                    songs.setText(Integer.toString(selectedSongs));
+                    getSong(song);
+                }
+            } else {
+                Toast.makeText(context, "Song Deleted", Toast.LENGTH_LONG).show();
+                String song = intent.getStringExtra("DELETED_SONG");
+                selectedSongs--;
+                songs.setText(Integer.toString(selectedSongs));
+                deleteSong(song);
+            }
         }
     };
 
@@ -224,7 +226,7 @@ public class ProfileActivity extends AppCompatActivity {
                         selSongs.add(song);
                     }
                     if (numSongs > 0) {
-                        RecyclerView.Adapter mAdapter = new SongListAdaptor(this, selSongs);
+                        RecyclerView.Adapter mAdapter = new ProfileSongsAdaptor(this, selSongs);
                         recyclerView.setAdapter(mAdapter);
                     }
 
@@ -246,6 +248,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
         }, error -> {
             inUserStore = false;
+            saveBtn.setText("Create Profile");
         });
         queue.add(jsonObjectRequest);
     }
@@ -280,7 +283,7 @@ public class ProfileActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Error getting songs", Toast.LENGTH_SHORT).show();
             Toast.makeText(getApplicationContext(), song_id, Toast.LENGTH_SHORT).show();
             selSongs.add(new Song("", "This user has no songs", "", "", new ArrayList<>(), ""));
-            RecyclerView.Adapter mAdapter = new SongListAdaptor(this, selSongs);
+            RecyclerView.Adapter mAdapter = new ProfileSongsAdaptor(this, selSongs);
             recyclerView.setAdapter(mAdapter);
         }) {
             @Override
@@ -312,6 +315,8 @@ public class ProfileActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
             selSongs.add(song);
+            RecyclerView.Adapter mAdapter = new ProfileSongsAdaptor(this, selSongs);
+            recyclerView.setAdapter(mAdapter);
 
         }, error -> {
             Toast.makeText(getApplicationContext(), "Could not fetch related artists", Toast.LENGTH_LONG).show();
@@ -326,6 +331,31 @@ public class ProfileActivity extends AppCompatActivity {
             }
         };
         spotifyQueue.add(jsonObjectRequest);
+    }
+
+    /*
+    * Deletes a song from selSongs given the songId
+    */
+    private void deleteSong(String songId) {
+        for (int i = 0; i < selSongs.size(); i++) {
+            if (songId.equals(selSongs.get(i).getId())) {
+                selSongs.remove(i);
+                break;
+            }
+        }
+    }
+
+    /*
+    * Returns true if selSongs contains the given songId
+    * returns false otherwise
+    */
+    private boolean containsSong(String songId) {
+        for (int i = 0; i < selSongs.size(); i++) {
+            if (songId.equals(selSongs.get(i).getId())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /*
@@ -423,6 +453,9 @@ public class ProfileActivity extends AppCompatActivity {
                 startActivity(mainIntent);
             }, error -> {
                 // TODO: This adds the song correctly but it returns error for some reason, check it with Nick
+                Intent mainIntent = new Intent(ProfileActivity.this, MainActivity.class);
+                mainIntent.putExtra("USER_ID", USER_ID);
+                startActivity(mainIntent);
             });
             queue.add(jsonArrayRequest);
         }

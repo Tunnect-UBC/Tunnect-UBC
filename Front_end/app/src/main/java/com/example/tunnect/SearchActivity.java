@@ -1,7 +1,5 @@
 package com.example.tunnect;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -109,7 +107,14 @@ public class SearchActivity extends AppCompatActivity {
 
     // Displays the Search Results
     private void dispSongs() {
-        RecyclerView.Adapter mAdapter = new SearchListAdaptor(this, search_songs, USER_ID);
-        recyclerView.setAdapter(mAdapter);
+        if (search_songs.isEmpty()) {
+            search_songs.add(new Song("", "No Search Results", "Please Refine Your Search", "", new ArrayList<>(), ""));
+            RecyclerView.Adapter mAdapter = new SongListAdaptor(this, search_songs);
+            recyclerView.setAdapter(mAdapter);
+        }
+        else {
+            RecyclerView.Adapter mAdapter = new SearchListAdaptor(this, search_songs);
+            recyclerView.setAdapter(mAdapter);
+        }
     }
 }

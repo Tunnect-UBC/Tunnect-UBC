@@ -1,13 +1,13 @@
 const User = require("../../models/users");
 const {admin} = require("../../firebase-config");
 
-const notif_opt = {
+const notifOpt = {
   priority: "high",
   timeToLive: 60 * 60 * 24
 };
 
 const helpers = {
-    async get_all() {
+    async getAll() {
         let resp = [];
         await User.find()
             .exec()
@@ -61,7 +61,7 @@ const helpers = {
         return resp;
     },
 
-    async post_user(user) {
+    async postUser(user) {
         //stores this in the database
         let resp = [];
         await user.save()
@@ -78,7 +78,7 @@ const helpers = {
         return resp;
     },
 
-    async get_user(userId) {
+    async getUser(userId) {
         let resp = [];
 
         await User.findById(userId)
@@ -102,7 +102,7 @@ const helpers = {
         return resp;
     },
 
-    async patch_user(userId, updateOps) {
+    async patchUser(userId, updateOps) {
         let resp = [];
 
         await User.updateOne({ _id: userId }, { $set: updateOps })
@@ -122,7 +122,7 @@ const helpers = {
         return resp;
     },
 
-    async delete_user(userId) {
+    async deleteUser(userId) {
         let resp = [];
 
         await User.deleteOne({
@@ -182,8 +182,8 @@ const helpers = {
                         await User.updateOne({_id: userId1 }, { $set : {matches: userStatus} })
                             .exec()
                             .then(async (result) => {
-                              if(notifId != "0"){
-                                await admin.messaging().sendToDevice(notifId, matchNotif, notif_opt);
+                              if(notifId !== "0"){
+                                await admin.messaging().sendToDevice(notifId, matchNotif, notifOpt);
                               }
                               resp = [200, result];
                             })
@@ -199,9 +199,6 @@ const helpers = {
             .catch((err) => {
                 resp = [500, err];
             });
-
-        console.log(resp);
-
         return resp;
     },
 

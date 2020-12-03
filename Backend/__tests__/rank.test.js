@@ -1,14 +1,5 @@
 const helpers = require("../MatchmakingManager/utils/matchmakerHelpers");
 
-const getScoreMock = jest.fn((user1, user2) => {
-    const returnUser = userScores.find(obj => (obj._id === user2._id));
-    console.log(returnUser);
-    if (returnUser != undefined) {
-        return returnUser.score;
-    } else {
-        return undefined;
-    }
-});
 
 const userScores = [
     {
@@ -32,6 +23,16 @@ const userScores = [
         "score": 10
     },
 ];
+
+const getScoreMock = jest.fn((user1, user2) => {
+    const returnUser = userScores.find((obj) => (obj._id === user2._id));
+    if (returnUser !== undefined) {
+        return returnUser.score;
+    } else {
+        return undefined;
+    }
+});
+
 
 const allUsers = [
     {
@@ -58,7 +59,7 @@ const allUsers = [
 
 describe("test that ranking works with mocked users", () => {
     it("calling rank", () => {
-        
+
         helpers.getScore = getScoreMock;
         const rankings = helpers.rank(allUsers, "12345");
 
@@ -79,8 +80,7 @@ describe("test that ranking works with mocked users", () => {
             {
                 "_id": "xA-12",
                 "score": 0
-            }   
-        ])
-    })
+            }
+        ]);
+    });
 });
-
