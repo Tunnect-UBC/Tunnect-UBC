@@ -22,12 +22,12 @@ const Chat = require("../../models/chat");
 
 router.get("/:userId", async (req, res, next) => {
   const id = req.params.userId;
-  const result = await helpers.getChats(id);
-  if(result[0] === 0){
-    res.status(500).json(result[1]);
+  const chatResult = await helpers.getChats(id);
+  if(chatResult[0] === 0){
+    res.status(500).json(chatResult[1]);
   }
-  else if(result[0] === 1){
-       res.status(200).json(result[1].concat(result[2]));
+  else if(chatResult[0] === 1){
+       res.status(200).json(chatResult[1].concat(chatResult[2]));
   }
   else{
     res.status(400).json({
@@ -47,12 +47,12 @@ router.get("/:userid1/:userid2", async (req, res, next) => {
    const id1 = req.params.userid1;
    const id2 = req.params.userid2;
 
-   const result = await helpers.getMessages(id1, id2);
-   if(result[0] === 0){
-     res.status(500).json(result[1]);
+   const messResult = await helpers.getMessages(id1, id2);
+   if(messResult[0] === 0){
+     res.status(500).json(messResult[1]);
    }
-   else if(result[0] === 1){
-     res.status(200).json(result[1].concat(result[2]));
+   else if(messResult[0] === 1){
+     res.status(200).json(messResult[1].concat(messResult[2]));
    }
    else{
      res.status(400).json({
@@ -89,11 +89,11 @@ router.post("/:receiverid", async (req, res, next) => {
           senderName = response2.data.username;
         });
      });
-     const result = await helpers.postMessage(senderid, senderName, receiverid, notifId, message, timeStamp);
-     if(result[0] === 0){
-       res.status(500).json(result[1]);
+     const pmessResult = await helpers.postMessage(senderid, senderName, receiverid, notifId, message, timeStamp);
+     if(pmessResult[0] === 0){
+       res.status(500).json(pmessResult[1]);
      }
-     else if(result[0] === 1){
+     else if(pmessResult[0] === 1){
        res.status(200).json({});
      }
      else{
@@ -139,16 +139,16 @@ router.post("/:usrid1/:usrid2", async (req, res, next) => {
      });
    });
    });
-   const result = await helpers.postChat(chat, usrid1, usrid2);
-   if(result[0] === 0){
+   const pchatResult = await helpers.postChat(chat, usrid1, usrid2);
+   if(pchatResult[0] === 0){
       res.status(500).json({
         message: "db error"
       });
    }
-   else if(result[0] === 1){
+   else if(pchatResult[0] === 1){
      res.status(200).json({});
    }
-   else if(result[0] === 2){
+   else if(pchatResult[0] === 2){
      res.status(300).json({
        message: "Chat already exists"
      });
