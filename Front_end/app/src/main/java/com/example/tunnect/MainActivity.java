@@ -149,6 +149,7 @@ public class MainActivity extends AppCompatActivity {
             RecyclerView.Adapter mAdapter = new SongListAdaptor(this, new ArrayList<>());
             recyclerView.setAdapter(mAdapter);
             user_name.setText("No Matches Left!");
+            genre_view.setText("Try Again Later");
         } else {
             getUser(matches.get(currMatch));
         }
@@ -210,16 +211,22 @@ public class MainActivity extends AppCompatActivity {
                 user.setNotifId((String) user_info.get("notifId"));
                 user.setFavGenre((String) user_info.get("favGenre"));
                 JSONArray jsonMatches = user_info.optJSONArray("matches");
-                for (int i = 0; i < jsonMatches.length(); i++) {
-                    user.addMatch(jsonMatches.get(i).toString());
+                if (jsonMatches != null) {
+                    for (int i = 0; i < jsonMatches.length(); i++) {
+                        user.addMatch(jsonMatches.get(i).toString());
+                    }
                 }
                 JSONArray jsonLikes = user_info.optJSONArray("likes");
-                for (int i = 0; i < jsonLikes.length(); i++) {
-                    user.addLike(jsonLikes.get(i).toString());
+                if (jsonLikes != null) {
+                    for (int i = 0; i < jsonLikes.length(); i++) {
+                        user.addLike(jsonLikes.get(i).toString());
+                    }
                 }
                 JSONArray jsonDislikes = user_info.optJSONArray("dislikes");
-                for (int i = 0; i < jsonDislikes.length(); i++) {
-                    user.addDislike(jsonDislikes.get(i).toString());
+                if (jsonDislikes != null) {
+                    for (int i = 0; i < jsonDislikes.length(); i++) {
+                        user.addDislike(jsonDislikes.get(i).toString());
+                    }
                 }
             } catch (JSONException e) {
                 e.printStackTrace();

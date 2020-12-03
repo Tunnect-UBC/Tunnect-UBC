@@ -22,14 +22,11 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.replaceText;
-import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
+import static androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
-import static junit.framework.Assert.fail;
-import static junit.framework.TestCase.assertNotNull;
 import static org.hamcrest.Matchers.allOf;
 
 @LargeTest
@@ -43,7 +40,8 @@ public class SimplicityTest {
     public void SimplicityTest() throws InterruptedException {
         int buttonCount = 0;
 
-        Thread.sleep(15000);
+        // Sleep until the login process is finished
+        Thread.sleep(5000);
 
         // Test Liking/Disliking
         buttonCount++;
@@ -67,9 +65,6 @@ public class SimplicityTest {
             TestCase.fail("Too many button presses");
         buttonCount = 0;
 
-        // Navigate to the main screen
-        onView(withContentDescription("Navigate up")).perform(click());
-
         // Test adding a song
         buttonCount++;
         onView(withId(R.id.profile_btn)).perform(click());
@@ -79,24 +74,55 @@ public class SimplicityTest {
         Thread.sleep(1000);
         buttonCount++;
         onView(withId(R.id.search_button)).perform(click());
-        ViewInteraction appCompatButton = onView(
-                allOf(withId(R.id.add_btn), withText("Add"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.song_list),
-                                        0),
-                                3),
-                        isDisplayed()));
+        ViewInteraction appCompatButton = onView(allOf(withId(R.id.add_btn), withText("Add"),
+                childAtPosition(childAtPosition(withId(R.id.song_list), 0), 3), isDisplayed()));
         appCompatButton.perform(click());
         if (buttonCount > 4)
             TestCase.fail("Too many button presses");
         buttonCount = 0;
 
+        // Navigate to the main screen
+        onView(withContentDescription("Navigate up")).perform(click());
+        onView(withContentDescription("Navigate up")).perform(click());
+
+        // Test sending a message
+        buttonCount++;
+        onView(withId(R.id.messages_btn)).perform(click());
+        ViewInteraction recyclerView = onView(withId(R.id.chatOptions));
+        buttonCount++;
+        recyclerView.perform(actionOnItemAtPosition(0, click()));
+        buttonCount++;
+        onView(withId(R.id.send_btn)).perform(click());
+        if (buttonCount > 4)
+            TestCase.fail("Too many button presses");
+        buttonCount = 0;
+
+        // Navigate to the main screen
+        onView(withContentDescription("Navigate up")).perform(click());
+        onView(withContentDescription("Navigate up")).perform(click());
+
+        // Test deleting a song
+        buttonCount++;
+        onView(withId(R.id.profile_btn)).perform(click());
+        buttonCount++;
+        ViewInteraction appCompatButton2 = onView(
+                allOf(withId(R.id.dlt_btn), withText("Delete"), childAtPosition(
+                        childAtPosition(withId(R.id.selectedSongs), 0), 3), isDisplayed()));
+        appCompatButton2.perform(click());
+        buttonCount++;
+        onView(withId(R.id.save_profile)).perform(click());
+        if (buttonCount > 4)
+            TestCase.fail("Too many button presses");
+        buttonCount = 0;
+
+
         // Test deleting account
         buttonCount++;
-        //onView(withId(R.id.settings_btn)).perform(click());
+        onView(withId(R.id.settings_btn)).perform(click());
         buttonCount++;
-        //onView(withId(R.id.delete_account)).perform(click());
+        // We don't actually hit the delete account button so the test can be run multiple times
+        if (buttonCount > 4)
+            TestCase.fail("Too many button presses");
 
     }
 
