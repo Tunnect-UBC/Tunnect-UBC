@@ -2,15 +2,15 @@ const supertest = require("supertest");
 const app = require("../MatchmakingManager/app.js");
 const request = supertest(app);
 
-const axios = require('axios');
+const axios = require("axios");
 
-jest.mock('axios');
+jest.mock("axios");
 
 const helpers = require("../UserStore/utils/userstore_helpers");
 
 describe("GET/:hostId endpoint", () => {
   it("Request ranked matches, where user1.song.length == 0, genre is the same for user1, and different for user2", async () => {
-      
+
     //mock
     axios.get.mockResolvedValue({
       data: [
@@ -45,10 +45,10 @@ describe("GET/:hostId endpoint", () => {
           dislikes: []
         }
       ]
-    })
-                          
+    });
+
     const res = await request.get("/matchmaker/h75fvg");
-    
+
     expect(res.statusCode).toEqual(200);
     expect(JSON.parse(res.text)).toEqual([
       {
@@ -59,7 +59,7 @@ describe("GET/:hostId endpoint", () => {
         _id: "35trf",
         score: 0
       }
-    ])
+    ]);
   });
 });
 
@@ -68,7 +68,7 @@ describe("GET/:hostId endpoint", () => {
 
 describe("GET/:hostId endpoint", () => {
   it("Request ranked matches, where user1.song.length != 0, genre is the same for user1, and different for user2", async () => {
-      
+
     //mock
     axios.get.mockResolvedValue({
       data: [
@@ -167,9 +167,9 @@ describe("GET/:hostId endpoint", () => {
         }
       ]
     })
-                          
+
     const res = await request.get("/matchmaker/h75fvg");
-    
+
     expect(res.statusCode).toEqual(200);
     expect(JSON.parse(res.text)).toEqual([
       {
@@ -199,7 +199,7 @@ describe("GET/:hostId endpoint", () => {
 
 describe("GET/:hostId endpoint", () => {
   it("Request ranked matches, where user1.song.length == 0, genre is the same for user1, and different for user2,", async () => {
-      
+
     //mock
     axios.get.mockResolvedValue({
       data: [
@@ -386,9 +386,9 @@ describe("GET/:hostId endpoint", () => {
         },
       ]
     })
-                          
+
     const res = await request.get("/matchmaker/h75fvg");
-    
+
     expect(res.statusCode).toEqual(200);
     expect(JSON.parse(res.text)).toEqual([
       {
@@ -451,7 +451,7 @@ describe("GET/:hostId endpoint", () => {
         "_id": "8ujn",
         "score": 0,
      },
-   
+
     ])
   });
 });

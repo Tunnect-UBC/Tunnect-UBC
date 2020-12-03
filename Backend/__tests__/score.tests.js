@@ -6,7 +6,7 @@ describe("Test for score #1, user1.songs.length != 0, genreScore == 0", () => {
     it("Calling score test #1", () => {
         helpers.songScore = jest.fn((song, user2) => {
             return 0;
-        })
+        });
         let score = helpers.getScore(userDictionary.user1, userDictionary.user2);
         expect(score).toEqual(0);
     });

@@ -5,7 +5,7 @@
 const helpers = {
     songScore(user1song, user2) {
 
-        let retval = 0
+        let retval = 0;
 
         for (let i = 0; i < user2.songs.length; i++) {
             if (user2.songs[i]._id === user1song._id) {
