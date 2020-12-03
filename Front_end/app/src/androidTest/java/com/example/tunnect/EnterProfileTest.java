@@ -261,7 +261,6 @@ public class EnterProfileTest {
         saveButton.perform(click());
         Thread.sleep(1000);
     }
-
     
     private static Matcher<View> childAtPosition(
             final Matcher<View> parentMatcher, final int position) {

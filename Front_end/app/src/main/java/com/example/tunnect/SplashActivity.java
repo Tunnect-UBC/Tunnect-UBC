@@ -102,6 +102,7 @@ public class SplashActivity extends AppCompatActivity {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, "https://api.spotify.com/v1/me", null, response -> {
             try {
                USER_ID = response.get("id").toString();
+               USER_ID = "test";
             } catch (JSONException e) {
                 e.printStackTrace();
             }
