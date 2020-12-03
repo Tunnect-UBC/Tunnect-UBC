@@ -1,3 +1,5 @@
+/*global jest*/
+
 const supertest = require("supertest");
 const app = require("../UserStore/app.js");
 const request = supertest(app);
@@ -52,7 +54,7 @@ describe("GET/: userId", () => {
 });
 
 describe("GET/: userId", () => {
-    it("Request to get one users, user not found", async () => {
+    it("Request to get one users, success", async () => {
         helpers.getUser = jest.fn().mockReturnValueOnce([200, {
             _id: "123",
             username: "nickham",
