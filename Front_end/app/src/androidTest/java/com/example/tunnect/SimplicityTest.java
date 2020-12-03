@@ -9,8 +9,6 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.filters.LargeTest;
 import androidx.test.runner.AndroidJUnit4;
 
-import junit.framework.TestCase;
-
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
@@ -28,6 +26,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
+import static org.junit.Assert.assertTrue;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
@@ -37,7 +36,7 @@ public class SimplicityTest {
     public ActivityScenarioRule<SplashActivity> activityRule = new ActivityScenarioRule<>(SplashActivity.class);
 
     @Test
-    public void SimplicityTest() throws InterruptedException {
+    public void simplicityTest() throws InterruptedException {
         int buttonCount = 0;
 
         // Sleep until the login process is finished
@@ -46,14 +45,12 @@ public class SimplicityTest {
         // Test Liking/Disliking
         buttonCount++;
         onView(withId(R.id.like_btn)).perform(click());
-        if (buttonCount > 4)
-            TestCase.fail("Too many button presses");
+        assertTrue(buttonCount < 4);
         buttonCount = 0;
 
         buttonCount++;
         onView(withId(R.id.dislike_btn)).perform(click());
-        if (buttonCount > 4)
-            TestCase.fail("Too many button presses");
+        assertTrue(buttonCount < 4);
         buttonCount = 0;
 
         // Test editing profile info
@@ -61,8 +58,7 @@ public class SimplicityTest {
         onView(withId(R.id.profile_btn)).perform(click());
         buttonCount++;
         onView(withId(R.id.save_profile)).perform(click());
-        if (buttonCount > 4)
-            TestCase.fail("Too many button presses");
+        assertTrue(buttonCount < 4);
         buttonCount = 0;
 
         // Test adding a song
@@ -77,8 +73,7 @@ public class SimplicityTest {
         ViewInteraction appCompatButton = onView(allOf(withId(R.id.add_btn), withText("Add"),
                 childAtPosition(childAtPosition(withId(R.id.song_list), 0), 3), isDisplayed()));
         appCompatButton.perform(click());
-        if (buttonCount > 4)
-            TestCase.fail("Too many button presses");
+        assertTrue(buttonCount < 4);
         buttonCount = 0;
 
         // Navigate to the main screen
@@ -93,8 +88,7 @@ public class SimplicityTest {
         recyclerView.perform(actionOnItemAtPosition(0, click()));
         buttonCount++;
         onView(withId(R.id.send_btn)).perform(click());
-        if (buttonCount > 4)
-            TestCase.fail("Too many button presses");
+        assertTrue(buttonCount < 4);
         buttonCount = 0;
 
         // Navigate to the main screen
@@ -104,6 +98,7 @@ public class SimplicityTest {
         // Test deleting a song
         buttonCount++;
         onView(withId(R.id.profile_btn)).perform(click());
+        Thread.sleep(1000);
         buttonCount++;
         ViewInteraction appCompatButton2 = onView(
                 allOf(withId(R.id.dlt_btn), withText("Delete"), childAtPosition(
@@ -111,8 +106,7 @@ public class SimplicityTest {
         appCompatButton2.perform(click());
         buttonCount++;
         onView(withId(R.id.save_profile)).perform(click());
-        if (buttonCount > 4)
-            TestCase.fail("Too many button presses");
+        assertTrue(buttonCount < 4);
         buttonCount = 0;
 
 
@@ -121,8 +115,7 @@ public class SimplicityTest {
         onView(withId(R.id.settings_btn)).perform(click());
         buttonCount++;
         // We don't actually hit the delete account button so the test can be run multiple times
-        if (buttonCount > 4)
-            TestCase.fail("Too many button presses");
+        assertTrue(buttonCount < 4);
 
     }
 
