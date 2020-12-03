@@ -18,6 +18,7 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static junit.framework.TestCase.assertNotNull;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
@@ -44,9 +45,8 @@ public class SearchActivityTest {
         onView(withId(R.id.search_button)).perform(click());
         onView(withRecyclerView(R.id.song_list).atPosition(0))
                 .check(matches(hasDescendant(withText("Never Gonna Give You Up"))));
-        onView(withRecyclerView(R.id.song_list).atPosition(0))
-                .check(matches(hasDescendant(withText("Rick Astley"))));
-        assert(true);
+        assertNotNull(onView(withRecyclerView(R.id.song_list).atPosition(0))
+                .check(matches(hasDescendant(withText("Rick Astley")))));
     }
 
     public static RecyclerViewMatcher withRecyclerView(final int recyclerViewId) {

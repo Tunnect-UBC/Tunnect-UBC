@@ -59,10 +59,10 @@ public class RecyclerViewMatcher {
                 }
 
                 if (targetViewId == -1) {
-                    return view == childView;
+                    return view.equals(childView);
                 } else {
                     View targetView = childView.findViewById(targetViewId);
-                    return view == targetView;
+                    return view.equals(targetView);
                 }
 
             }
