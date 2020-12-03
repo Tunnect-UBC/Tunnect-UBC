@@ -25,7 +25,7 @@ const helpers = {
         return resp;
     },
 
-    async get_50(hostId) {
+    async get50(hostId) {
         let resp = [];
 
         await User.findById(hostId)
