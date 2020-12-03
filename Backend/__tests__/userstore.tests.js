@@ -1,4 +1,4 @@
-/*global someFunction, a*/
+/*global jest*/
 
 const supertest = require("supertest");
 const app = require("../UserStore/app.js");
