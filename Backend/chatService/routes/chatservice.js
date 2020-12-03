@@ -133,7 +133,7 @@ router.post("/:usrid1/:usrid2", async (req, res, next) => {
       usrID2: usrid2,
       usrColour2: response2.data.iconColour,
       usrName2: response2.data.username,
-      messages: [{senderid: "tunnect", message: "Congrats: you've tunnected! Start a chat and say hi :)", timeStamp: timeStamp}],
+      messages: [{senderid: "tunnect", message: "Congrats: you've tunnected! Start a chat and say hi :)", timeStamp}],
       lastMessage: "Congrats: you've tunnected! Start a chat and say hi :)",
       lastTime: timeStamp
      });
@@ -156,7 +156,7 @@ router.post("/:usrid1/:usrid2", async (req, res, next) => {
     else{
       res.status(400).json({
         message: "unknown"
-      })
+      });
     }
   }
 });
@@ -169,7 +169,7 @@ router.delete("/:userId1/:userId2", async (req, res, next) => {
     const id2 = req.params.userId2;
 
     const result = await helpers.deleteChat(id1, id2);
-    if(result == 0){
+    if(result === 0){
       res.status(500).json({
         message: "db error"
       });

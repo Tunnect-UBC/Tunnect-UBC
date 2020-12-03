@@ -178,7 +178,7 @@ const mockpostChat = jest.fn().mockReturnValueOnce([0])
                                .mockReturnValueOnce([2])
                                .mockReturnValueOnce([-1]);
 
-describe("POST/:userId/:userId2 endpoint", () => {
+describe("POST/:userId1/:userId2 endpoint", () => {
   it("Request to post a chat failed", async () => {
     axios.get.mockResolvedValue({
        data: {
