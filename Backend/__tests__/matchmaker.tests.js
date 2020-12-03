@@ -168,7 +168,7 @@ describe("GET/:hostId endpoint", () => {
           dislikes: []
         }
       ]
-    })
+    });
 
     const res = await request.get("/matchmaker/h75fvg");
 
@@ -182,7 +182,7 @@ describe("GET/:hostId endpoint", () => {
         _id: "35trf",
         score: 3.5
       }
-    ])
+    ]);
   });
 });
 
