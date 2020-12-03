@@ -262,6 +262,7 @@ public class EnterProfileTest {
         Thread.sleep(1000);
     }
 
+    
     private static Matcher<View> childAtPosition(
             final Matcher<View> parentMatcher, final int position) {
 
