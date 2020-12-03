@@ -27,6 +27,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Instrumented test, which will execute on an Android device.
@@ -40,20 +41,20 @@ public class EnterProfileTest {
     public ActivityScenarioRule<SplashActivity> activityRule = new ActivityScenarioRule<>(SplashActivity.class);
 
     @Test
-    public void NewUserEnterProfile() throws InterruptedException {
+    public void newUserEnterProfile() throws InterruptedException {
         Thread.sleep(5000);
 
         // Profile activity opens up, check entries exist
         ViewInteraction saveButton = onView(withId(R.id.save_profile));
-        saveButton.check(matches(isDisplayed()));
+        assertNotNull(saveButton);
         ViewInteraction addSongsBtn = onView(withId(R.id.add_songs));
-        addSongsBtn.check(matches(isDisplayed()));
+        assertNotNull(addSongsBtn);
         ViewInteraction enterUsername = onView(withId(R.id.enter_username));
-        enterUsername.check(matches(isDisplayed()));
+        assertNotNull(enterUsername);
         ViewInteraction enterGenre = onView(withId(R.id.enter_fav_genre));
-        enterGenre.check(matches(isDisplayed()));
+        assertNotNull(enterGenre);
         ViewInteraction enterColour = onView(withId(R.id.enter_colour));
-        enterColour.check(matches(isDisplayed()));
+        assertNotNull(enterColour);
 
         // Case check for null username
         saveButton.perform(click());
@@ -144,7 +145,7 @@ public class EnterProfileTest {
     }
 
     @Test
-    public void ExistingUserEditProfile() throws InterruptedException {
+    public void existingUserEditProfile() throws InterruptedException {
         Thread.sleep(5000);
 
         // Open up profile from main activity
@@ -155,15 +156,15 @@ public class EnterProfileTest {
 
         // Profile activity opens up, check entries exist
         ViewInteraction saveButton = onView(withId(R.id.save_profile));
-        saveButton.check(matches(isDisplayed()));
+        assertNotNull(saveButton);
         ViewInteraction addSongsBtn = onView(withId(R.id.add_songs));
-        addSongsBtn.check(matches(isDisplayed()));
+        assertNotNull(addSongsBtn);
         ViewInteraction enterUsername = onView(withId(R.id.enter_username));
-        enterUsername.check(matches(isDisplayed()));
+        assertNotNull(enterUsername);
         ViewInteraction enterGenre = onView(withId(R.id.enter_fav_genre));
-        enterGenre.check(matches(isDisplayed()));
+        assertNotNull(enterGenre);
         ViewInteraction enterColour = onView(withId(R.id.enter_colour));
-        enterColour.check(matches(isDisplayed()));
+        assertNotNull(enterColour);
 
         // Enter new field for name and genre
         enterUsername.perform(replaceText("New Name"), closeSoftKeyboard());
@@ -186,7 +187,7 @@ public class EnterProfileTest {
     }
 
     @Test
-    public void EditSongs() throws InterruptedException {
+    public void editSongs() throws InterruptedException {
         Thread.sleep(5000);
 
         // Open up profile from main activity
@@ -197,15 +198,15 @@ public class EnterProfileTest {
 
         // Profile activity opens up, check entries exist
         ViewInteraction saveButton = onView(withId(R.id.save_profile));
-        saveButton.check(matches(isDisplayed()));
+        assertNotNull(saveButton);
         ViewInteraction addSongsBtn = onView(withId(R.id.add_songs));
-        addSongsBtn.check(matches(isDisplayed()));
+        assertNotNull(addSongsBtn);
         ViewInteraction enterUsername = onView(withId(R.id.enter_username));
-        enterUsername.check(matches(isDisplayed()));
+        assertNotNull(enterUsername);
         ViewInteraction enterGenre = onView(withId(R.id.enter_fav_genre));
-        enterGenre.check(matches(isDisplayed()));
+        assertNotNull(enterGenre);
         ViewInteraction enterColour = onView(withId(R.id.enter_colour));
-        enterColour.check(matches(isDisplayed()));
+        assertNotNull(enterColour);
 
         // Delete 3 songs, then save which will do nothing
         ViewInteraction deleteSong1 = onView(allOf(withId(R.id.dlt_btn), withText("Delete"),

@@ -21,6 +21,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Instrumented test, which will execute on an Android device.
@@ -35,16 +36,16 @@ public class MessageUserTest {
     public ActivityTestRule<SplashActivity> activityRule = new ActivityTestRule<>(SplashActivity.class);
 
     @Test
-    public void MessageAnotherUser() throws InterruptedException {
+    public void messageAnotherUser() throws InterruptedException {
         Thread.sleep(5000);
 
         // Open up a chat from main activity
         ViewInteraction messageButton = onView(withId(R.id.messages_btn));
-        messageButton.check(matches(isDisplayed()));
+        assertNotNull(messageButton);
         messageButton.perform(click());
 
         ViewInteraction recyclerView = onView(withId(R.id.chatOptions));
-        recyclerView.perform(actionOnItemAtPosition(0, click()));
+        recyclerView.perform(actionOnItemAtPosition(1, click()));
 
         // Try sending an empty message, then send an actual message
         ViewInteraction sendButton = onView(withId(R.id.send_btn));
@@ -58,6 +59,7 @@ public class MessageUserTest {
 
         Thread.sleep(2000);
         sendButton.perform(click());
+        Thread.sleep(2000);
         ViewInteraction sentM = onView(withId(R.id.sent_message));
         sentM.check(matches(withText("Test Message")));
 
@@ -65,8 +67,10 @@ public class MessageUserTest {
         Thread.sleep(2000);
         ViewInteraction return1 = onView(withContentDescription("Navigate up"));
         return1.perform(click());
+        Thread.sleep(1000);
         ViewInteraction return2 = onView(withContentDescription("Navigate up"));
         return2.perform(click());
+        Thread.sleep(1000);
     }
 
 }
