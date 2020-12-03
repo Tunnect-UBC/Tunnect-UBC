@@ -152,9 +152,9 @@ router.patch("/:userId", async (req, res, next) => {
 
     const result = await helpers.patchUser(userId, updateOps);
 
-    if (result[0] === 1) {
+    if (result[0] === 200) {
         res.status(200).json(result[1]);
-    } else if (result[0] === 0) {
+    } else if (result[0] === 500) {
         res.status(500).json({
             error: result[1]
         });
@@ -270,9 +270,9 @@ router.delete("/:userId", async (req, res, next) => {
     const result = await helpers.deleteUser(userId);
 
 
-    if (result[0] === 1) {
+    if (result[0] === 200) {
         res.status(200).json(result[1]);
-    } else if (result[0] === 0) {
+    } else if (result[0] === 500) {
         res.status(500).json({
             error: result[1]
         });

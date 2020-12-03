@@ -48,8 +48,8 @@ public class EnterProfileTest {
         button.check(matches(isDisplayed()));
         ViewInteraction editText1 = onView(withId(R.id.enter_username));
         editText1.check(matches(isDisplayed()));
-        ViewInteraction editText2 = onView(withId(R.id.enter_favourite_artist));
-        editText2.check(matches(isDisplayed()));
+        //ViewInteraction editText2 = onView(withId(R.id.enter_favourite_artist));
+        //editText2.check(matches(isDisplayed()));
         ViewInteraction enterColour = onView(withId(R.id.enter_colour));
         enterColour.check(matches(isDisplayed()));
 
@@ -61,14 +61,14 @@ public class EnterProfileTest {
         saveButton.perform(click());
 
         // Try to enter in second field then press save
-        editText2.perform(replaceText("Test Artist"), closeSoftKeyboard());
-        editText2.perform(pressImeActionButton());
+        //editText2.perform(replaceText("Test Artist"), closeSoftKeyboard());
+        //editText2.perform(pressImeActionButton());
         Thread.sleep(2000);
 
         saveButton.perform(click());
 
         editText1.check(matches(withText("Test Name")));
-        editText2.check(matches(withText("Test Artist")));
+        //editText2.check(matches(withText("Test Artist")));
         Thread.sleep(2000);
 
         // Select a colour then press save

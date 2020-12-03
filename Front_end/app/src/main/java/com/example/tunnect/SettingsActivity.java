@@ -53,7 +53,8 @@ public class SettingsActivity extends AppCompatActivity {
 
     // Deletes the account information for a user
     public void deleteUserAccount() {
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.DELETE, DELETE_URL+USER_ID, null, response -> {
+        String URL = DELETE_URL+USER_ID;
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.DELETE, URL, null, response -> {
             Toast.makeText(getApplicationContext(), "Your account has been deleted!", Toast.LENGTH_LONG).show();
             Intent profileIntent = new Intent(SettingsActivity.this, SplashActivity.class);
             startActivity(profileIntent);
@@ -65,7 +66,8 @@ public class SettingsActivity extends AppCompatActivity {
 
     // Deletes all existing chats with this user, then calls deleteMatches
     private void deleteChats() {
-        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, SC_URL+USER_ID, null,
+        String URL = SC_URL+USER_ID;
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, URL, null,
                 response -> {
                     try {
                         JsonObjectRequest jsonObjectRequest;
@@ -119,12 +121,13 @@ public class SettingsActivity extends AppCompatActivity {
 
                                         JSONObject songObject = new JSONObject();
                                         songObject.put("propName", "matches");
-                                        songObject.put("value", newMatches);
+                                        if (newMatches.size() == 0) {
+                                            songObject.put("value", null);
+                                        } 
                                         patchArray.put(songObject);
                                         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.PATCH, DELETE_URL+userID, patchArray, r -> {
                                         }, error -> {
-                                            // TODO: This adds the song correctly but it returns error for some reason, check it with Nick
-                                            Toast.makeText(getApplicationContext(), "Failed to patch match!", Toast.LENGTH_LONG).show();
+                                            // TODO: This removes the match correctly but it returns error for some reason, check it with Nick
                                         });
                                         queue.add(jsonArrayRequest);
                                     }
