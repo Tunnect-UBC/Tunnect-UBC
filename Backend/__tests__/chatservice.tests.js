@@ -105,13 +105,12 @@ describe("GET/:userId/:userId2 endpoint", () => {
 const mockpostMessages = jest.fn().mockReturnValueOnce([0])
                                  .mockReturnValueOnce([1,[1],[1]])
                                  .mockReturnValueOnce([-1]);
-
+  axios.get.mockResolvedValue({
+                                data: { notifId: "123", username: "123"}
+                              });
 
 describe("POST/:userId endpoint", () => {
   it("Request to post a message failed", async () => {
-    axios.get.mockResolvedValue({
-       data: { notifId: "123", username: "123"}
-     });
     helpers.postMessage = mockpostMessages;
     const res = await request.post("/chatservice/123")
                              .type("json")
@@ -126,9 +125,6 @@ describe("POST/:userId endpoint", () => {
 
 describe("POST/:userId endpoint", () => {
   it("post new chat, Bad request body failure", async () => {
-    axios.get.mockResolvedValue({
-       data: { notifId: "123", username: "123"}
-     });
     helpers.postMessage = mockpostMessages;
     const res = await request.post("/chatservice/123")
                              .type("json")
@@ -141,9 +137,6 @@ describe("POST/:userId endpoint", () => {
 
 describe("POST/:userId endpoint", () => {
   it("Request to post a message success", async () => {
-    axios.get.mockResolvedValue( {
-       data: { notifId: "123", username: "456"}
-     });
     helpers.postMessage = mockpostMessages;
     const res = await request.post("/chatservice/456")
                             .type("json")
@@ -157,9 +150,6 @@ describe("POST/:userId endpoint", () => {
 });
 describe("POST/:userId endpoint", () => {
   it("Request to post a message unexpected result", async () => {
-    axios.get.mockResolvedValue({
-       data: { notifId: "123", username: "456"}
-     });
     helpers.postMessage = mockpostMessages;
     const res = await request.post("/chatservice/789")
                              .type("json")
@@ -177,21 +167,14 @@ const mockpostChat = jest.fn().mockReturnValueOnce([0])
                                .mockReturnValueOnce([1,[1],[1]])
                                .mockReturnValueOnce([2])
                                .mockReturnValueOnce([-1]);
-
+    axios.get.mockResolvedValue({
+                                  data: {
+                                   username : "123",
+                                   iconColour : "yellow"
+                                  }
+                                });
 describe("POST/:userId1/:userId2 endpoint", () => {
   it("Request to post a chat failed", async () => {
-    axios.get.mockResolvedValue({
-       data: {
-        username : "123",
-        iconColour : "yellow"
-       }
-     }).mockResolvedValue({
-            data: {
-              username: "456",
-              iconColour : "green"
-            }
-          }
-        );
     helpers.postChat = mockpostChat;
     const res = await request.post("/chatservice/123/456")
                             .type("json")
@@ -204,18 +187,6 @@ describe("POST/:userId1/:userId2 endpoint", () => {
 
 describe("POST/:userId/:userId2 endpoint", () => {
   it("Request to post a chat bady body request", async () => {
-    axios.get.mockResolvedValue({
-       data: {
-        username : "123",
-        iconColour : "yellow"
-       }
-     }).mockResolvedValue({
-            data: {
-              username: "456",
-              iconColour : "green"
-            }
-          }
-        );
     helpers.postChat = mockpostChat;
     const res = await request.post("/chatservice/123/456");
     expect(res.statusCode).toEqual(500);
@@ -224,18 +195,6 @@ describe("POST/:userId/:userId2 endpoint", () => {
 
 describe("POST/:userId/:userId2 endpoint", () => {
   it("Request to post a chat success", async () => {
-    axios.get.mockResolvedValue({
-       data: {
-         username : "123",
-         iconColour : "yellow"
-       }
-     }).mockResolvedValue( {
-            data: {
-              username: "456",
-              iconColour : "green"
-            }
-          }
-        );
     helpers.postChat = mockpostChat;
     const res = await request.post("/chatservice/456/789")
                              .type("json")
@@ -248,18 +207,6 @@ describe("POST/:userId/:userId2 endpoint", () => {
 
 describe("POST/:userId/:userId2 endpoint", () => {
   it("Request to post a chat chat already exists", async () => {
-    axios.get.mockResolvedValue({
-       data: {
-         username : "123",
-         iconColour : "yellow"
-       }
-     }).mockResolvedValue({
-            data: {
-              username: "456",
-              iconColour : "green"
-            }
-          }
-        );
     helpers.postChat = mockpostChat;
     const res = await request.post("/chatservice/123/789")
                              .type("json")
@@ -272,19 +219,6 @@ describe("POST/:userId/:userId2 endpoint", () => {
 
 describe("POST/:userId/:userId2 endpoint", () => {
   it("Request to post a chat unexpected result", async () => {
-    axios.get.mockResolvedValue( {
-       data: {
-         username : "123",
-         iconColour : "yellow"
-       }
-     }
-   ).mockResolvedValue({
-            data: {
-              username: "456",
-              iconColour : "green"
-            }
-          }
-        );
     helpers.postChat = mockpostChat;
     const res = await request.post("/chatservice/123/789")
                               .type("json")
