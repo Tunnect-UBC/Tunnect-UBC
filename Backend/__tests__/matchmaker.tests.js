@@ -1,3 +1,5 @@
+/*global jest*/
+
 const supertest = require("supertest");
 const app = require("../MatchmakingManager/app.js");
 const request = supertest(app);
