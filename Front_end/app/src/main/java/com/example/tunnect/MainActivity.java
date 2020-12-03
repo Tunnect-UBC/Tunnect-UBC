@@ -76,15 +76,19 @@ public class MainActivity extends AppCompatActivity {
         // Like Button
         Button likeBtn = findViewById(R.id.like_btn);
         likeBtn.setOnClickListener(view -> {
-            like(displayedUser);
-            dispNextMatch();
+            if (!displayedUser.getUserId().equals("no_user")) {
+                like(displayedUser);
+                dispNextMatch();
+            }
         });
 
         // Dislike Button
         Button dislikeBtn = findViewById(R.id.dislike_btn);
         dislikeBtn.setOnClickListener(view -> {
-            dislike(displayedUser);
-            dispNextMatch();
+            if (!displayedUser.getUserId().equals("no_user")) {
+                dislike(displayedUser);
+                dispNextMatch();
+            }
         });
 
         // Messages Button
@@ -121,9 +125,9 @@ public class MainActivity extends AppCompatActivity {
         displayedUser = user;
         if (user.getUserId().equals("no_user")) {
             user_name.setText("No Matches Found!");
+            score_view.setText("Try Again Later");
             return;
         }
-
         user_name.setText(user.getUsername());
         // TODO: Change this from score_view to genre_view
         score_view.setText("Prefers " + user.getFavGenre() + " Music");
@@ -186,7 +190,9 @@ public class MainActivity extends AppCompatActivity {
             }
 
         }, error -> {
-            Log.d("matches", "failure");
+            User no_user = new User();
+            no_user.updateUserId("no_user");
+            dispMatch(no_user);
         });
         matchQueue.add(jsonArrayRequest);
     }
@@ -410,12 +416,16 @@ public class MainActivity extends AppCompatActivity {
         private void onSwipe(int direction) {
             switch (direction) {
                 case SWIPE_RIGHT:
-                    like(displayedUser);
-                    dispNextMatch();
+                    if (!displayedUser.getUserId().equals("no_user")) {
+                        like(displayedUser);
+                        dispNextMatch();
+                    }
                     break;
                 case SWIPE_LEFT:
-                    dislike(displayedUser);
-                    dispNextMatch();
+                    if (!displayedUser.getUserId().equals("no_user")) {
+                        dislike(displayedUser);
+                        dispNextMatch();
+                    }
                     break;
                 default:
                     break;

@@ -23,7 +23,6 @@ import java.util.Objects;
 
 public class SearchActivity extends AppCompatActivity {
 
-    private String USER_ID;
     // RecyclerView definition
     private RecyclerView recyclerView;
     // Song service used to access spotify
@@ -52,8 +51,6 @@ public class SearchActivity extends AppCompatActivity {
         songService = new SongService(getApplicationContext());
         EditText search_bar = (EditText) findViewById(R.id.search_bar);
         Button search_button = (Button) findViewById(R.id.search_button);
-
-        USER_ID = Objects.requireNonNull(getIntent().getExtras()).getString("USER_ID");
 
         // Search button functionality
         search_button.setOnClickListener(new View.OnClickListener() {
