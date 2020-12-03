@@ -19,7 +19,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class SearchActivity extends AppCompatActivity {
 

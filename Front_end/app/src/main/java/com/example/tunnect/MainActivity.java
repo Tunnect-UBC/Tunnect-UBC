@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private GestureDetectorCompat mDetector;
     private static String USER_ID;
     private TextView user_name;
-    private TextView score_view;
+    private TextView genre_view;
     private List<String> matches;
     private JSONObject currObject;
     private int currMatch;
@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
         mDetector = new GestureDetectorCompat(this, new MyGestureListener());
         user_name = findViewById(R.id.user_name);
-        score_view = findViewById(R.id.user_info_button);
+        genre_view = findViewById(R.id.user_info_button);
 
         recyclerView = findViewById(R.id.match_list);
         recyclerView.setHasFixedSize(true);
@@ -125,12 +125,11 @@ public class MainActivity extends AppCompatActivity {
         displayedUser = user;
         if (user.getUserId().equals("no_user")) {
             user_name.setText("No Matches Found!");
-            score_view.setText("Try Again Later");
+            genre_view.setText("Try Again Later");
             return;
         }
         user_name.setText(user.getUsername());
-        // TODO: Change this from score_view to genre_view
-        score_view.setText("Prefers " + user.getFavGenre() + " Music");
+        genre_view.setText("Prefers " + user.getFavGenre() + " Music");
 
         List<Song> matchesSongs = user.getSongs();
         if (matchesSongs == null) {

@@ -28,7 +28,7 @@ public class BadSearchTest {
     public ActivityScenarioRule<SplashActivity> activityRule = new ActivityScenarioRule<>(SplashActivity.class);
 
     @Test
-    public void BadSearchTest() throws InterruptedException {
+    public void badSearchTest() throws InterruptedException {
         Thread.sleep(5000);
 
         onView(withId(R.id.profile_btn)).perform(click());

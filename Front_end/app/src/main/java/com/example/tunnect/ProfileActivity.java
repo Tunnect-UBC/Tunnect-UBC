@@ -453,7 +453,6 @@ public class ProfileActivity extends AppCompatActivity {
                 mainIntent.putExtra("USER_ID", USER_ID);
                 startActivity(mainIntent);
             }, error -> {
-                // TODO: This adds the song correctly but it returns error for some reason, check it with Nick
                 Intent mainIntent = new Intent(ProfileActivity.this, MainActivity.class);
                 mainIntent.putExtra("USER_ID", USER_ID);
                 startActivity(mainIntent);
