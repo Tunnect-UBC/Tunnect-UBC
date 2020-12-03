@@ -1,3 +1,5 @@
+/*global jest*/
+
 const supertest = require("supertest");
 const utils = require("../chatService/app");
 const request = supertest(utils.app);

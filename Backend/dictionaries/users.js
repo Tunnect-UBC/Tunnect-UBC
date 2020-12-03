@@ -4,7 +4,7 @@
  */
 
 const userDictionary = {
-    "user1": 
+    "user1":
     {
         _id: "67guyh4i",
         username: "nickham",
@@ -39,7 +39,7 @@ const userDictionary = {
         likes: [],
         dislikes: []
     },
-    "user2": 
+    "user2":
     {
         _id: "fgujrtyn",
         username: "david",
@@ -51,7 +51,7 @@ const userDictionary = {
         likes: [],
         dislikes: []
     },
-    "user3": 
+    "user3":
     {
         _id: "sdffihjw345",
         username: "elise",
@@ -73,7 +73,7 @@ const userDictionary = {
         likes: [],
         dislikes: []
     },
-    "user4": 
+    "user4":
     {
         _id: "hysdfg",
         username: "lance",
@@ -85,10 +85,10 @@ const userDictionary = {
         likes: [],
         dislikes: []
     },
-}
+};
 
 const users = {
-    "user1": 
+    "user1":
         {
             _id: "67guyh4i",
             username: "nickham",
@@ -99,7 +99,7 @@ const users = {
                 "Pretty Girl"
             ]
         },
-    "user2": 
+    "user2":
         {
             _id: "9876yh",
             username: "david0",
@@ -113,7 +113,7 @@ const users = {
             ]
         },
 
-    "user3": 
+    "user3":
         {
             _id: "5443erwf",
             username: "elises",
@@ -125,7 +125,7 @@ const users = {
             ]
         },
 
-    "user4": 
+    "user4":
         {
             _id: "ertete",
             username: "james",
@@ -137,7 +137,7 @@ const users = {
             ]
         },
 
-    "user5": 
+    "user5":
         {
             _id: "hgt54ef",
             username: "rapper",
@@ -149,7 +149,7 @@ const users = {
             ]
         },
 
-    "user6": 
+    "user6":
         {
             _id: "hgfcbht54e",
             username: "drakefan11",

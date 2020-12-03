@@ -381,8 +381,6 @@ public class ProfileActivity extends AppCompatActivity {
             return;
         }
 
-        JSONObject user = new JSONObject();
-        JsonObjectRequest jsonObjectRequest;
         JSONArray songs = new JSONArray();
         JSONObject song;
         JSONArray relatedArtists;
@@ -400,67 +398,85 @@ public class ProfileActivity extends AppCompatActivity {
             songs.put(i, song);
         }
         if(!inUserStore) { // Add the user to the server
-            try {
-                user.put("_id", USER_ID);
-                user.put("username", selectedUsername);
-                user.put("favGenre", selectedGenre);
-                user.put("iconColour", Integer.toString(selectedColorRGB));
-                user.put("songs", songs);
-                user.put("notifId", token);
-            } catch (JSONException e) {
-                Toast.makeText(getApplicationContext(), "Failed to add profile to the server!", Toast.LENGTH_LONG).show();
-            }
-            jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, ADD_URL, user, response -> {
-                Intent mainIntent = new Intent(ProfileActivity.this, MainActivity.class);
-                mainIntent.putExtra("USER_ID", USER_ID);
-                startActivity(mainIntent);
-            }, error -> {
-                Toast.makeText(getApplicationContext(), "Failed to connect to the server!", Toast.LENGTH_LONG).show();
-            });
-            queue.add(jsonObjectRequest);
-
+            createProfile(selectedUsername, selectedGenre, songs);
         } else { // If modifying profile then use patch requests
-            JSONArray patchArray = new JSONArray();
-            try {
-                user.put("propName", "username");
-                user.put("value", selectedUsername);
-            } catch (JSONException e) {
-                Toast.makeText(getApplicationContext(), "Failed to add profile to the server!", Toast.LENGTH_LONG).show();
-            }
-            patchArray.put(user);
-            user = new JSONObject();
-            try {
-                user.put("propName", "favGenre");
-                user.put("value", selectedGenre);
-            } catch (JSONException e) {
-                Toast.makeText(getApplicationContext(), "Failed to add profile to the server!", Toast.LENGTH_LONG).show();
-            }
-            patchArray.put(user);
-            user = new JSONObject();
-            try {
-                user.put("propName", "iconColour");
-                user.put("value", selectedColorRGB);
-            } catch (JSONException e) {
-                Toast.makeText(getApplicationContext(), "Failed to add profile to the server!", Toast.LENGTH_LONG).show();
-            }
-            patchArray.put(user);
+            patchProfile(selectedUsername, selectedGenre, songs);
+        }
+    }
 
-            JSONObject songObject = new JSONObject();
+    /*
+    * Sends a request to userstore to create a profile
+    */
+    private void createProfile(String selectedUsername, String selectedGenre, JSONArray songs) {
+        JSONObject user = new JSONObject();
+        try {
+            user.put("_id", USER_ID);
+            user.put("username", selectedUsername);
+            user.put("favGenre", selectedGenre);
+            user.put("iconColour", Integer.toString(selectedColorRGB));
+            user.put("songs", songs);
+            user.put("notifId", token);
+        } catch (JSONException e) {
+            Toast.makeText(getApplicationContext(), "Failed to add profile to the server!", Toast.LENGTH_LONG).show();
+        }
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, ADD_URL, user, response -> {
+            Intent mainIntent = new Intent(ProfileActivity.this, MainActivity.class);
+            mainIntent.putExtra("USER_ID", USER_ID);
+            startActivity(mainIntent);
+        }, error -> {
+            Toast.makeText(getApplicationContext(), "Failed to connect to the server!", Toast.LENGTH_LONG).show();
+        });
+        queue.add(jsonObjectRequest);
+    }
+
+    /*
+    * Sends a request to update the profile in userstore
+    */
+    private void patchProfile(String selectedUsername, String selectedGenre, JSONArray songs) {
+        JSONObject user = new JSONObject();
+        JSONArray patchArray = new JSONArray();
+        try {
+            user.put("propName", "username");
+            user.put("value", selectedUsername);
+        } catch (JSONException e) {
+            Toast.makeText(getApplicationContext(), "Failed to add profile to the server!", Toast.LENGTH_LONG).show();
+        }
+        patchArray.put(user);
+        user = new JSONObject();
+        try {
+            user.put("propName", "favGenre");
+            user.put("value", selectedGenre);
+        } catch (JSONException e) {
+            Toast.makeText(getApplicationContext(), "Failed to add profile to the server!", Toast.LENGTH_LONG).show();
+        }
+        patchArray.put(user);
+        user = new JSONObject();
+        try {
+            user.put("propName", "iconColour");
+            user.put("value", selectedColorRGB);
+        } catch (JSONException e) {
+            Toast.makeText(getApplicationContext(), "Failed to add profile to the server!", Toast.LENGTH_LONG).show();
+        }
+        patchArray.put(user);
+
+        JSONObject songObject = new JSONObject();
+        try {
             songObject.put("propName", "songs");
             songObject.put("value", songs);
-            patchArray.put(songObject);
-            JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.PATCH, ADD_URL + USER_ID, patchArray, response -> {
-                Intent mainIntent = new Intent(ProfileActivity.this, MainActivity.class);
-                mainIntent.putExtra("USER_ID", USER_ID);
-                startActivity(mainIntent);
-            }, error -> {
-                // TODO: This adds the song correctly but it returns error for some reason, check it with Nick
-                Intent mainIntent = new Intent(ProfileActivity.this, MainActivity.class);
-                mainIntent.putExtra("USER_ID", USER_ID);
-                startActivity(mainIntent);
-            });
-            queue.add(jsonArrayRequest);
+        } catch (JSONException e) {
+            Toast.makeText(getApplicationContext(), "Failed to add profile to the server!", Toast.LENGTH_LONG).show();
         }
+        patchArray.put(songObject);
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.PATCH, ADD_URL + USER_ID, patchArray, response -> {
+            Intent mainIntent = new Intent(ProfileActivity.this, MainActivity.class);
+            mainIntent.putExtra("USER_ID", USER_ID);
+            startActivity(mainIntent);
+        }, error -> {
+            Intent mainIntent = new Intent(ProfileActivity.this, MainActivity.class);
+            mainIntent.putExtra("USER_ID", USER_ID);
+            startActivity(mainIntent);
+        });
+        queue.add(jsonArrayRequest);
     }
 
     /*

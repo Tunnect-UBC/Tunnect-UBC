@@ -1,15 +1,15 @@
 /**
  * This file handles all the API requests and different routes for the userstore
- * 
+ *
  * The api supports:
  *      GET    localhost:3001/matchmaker - Gets all users in the database (line 26)
  */
-const http = require("http"); 
+const http = require("http");
 const express = require("express");
 const router = new express.Router();
 const helpers = require("../utils/matchmakerHelpers");
 
-const axios = require('axios');
+const axios = require("axios");
 
 //const userstoreMock = require("../../Mocks/userstore.mock");
 
@@ -18,24 +18,15 @@ const userStoreUrl = "http://localhost:3000/userstore/";
 
 /**
  * GET localhost:3001/ - Gets all users in the database
- * 
+ *
  * If list of users is not empty, response is an array of json Users,
  * or a json error with status 500 on error.
- * 
+ *
  * User schema described in ../../models/Users
  */
 router.get("/:hostId", async (req, res, next) => {
     //hostId is the id of the user who is looking for a match
     const hostId = req.params.hostId;
-
-    console.log(userStoreUrl + hostId + "/matches");
-    
-    /*const jsonRankings = helpers.rank(userstoreMock(), hostId);
-    console.log(jsonRankings);
-    res.status(200).json(jsonRankings);*/
-    //this is all code that relys on userstore.get, hence we can replace this
-    //by a call to mock
-
 
     await axios.get(userStoreUrl + hostId + "/matches", {params: {}})
             .then(async (response) => {
@@ -50,11 +41,10 @@ router.get("/:hostId", async (req, res, next) => {
                 res.status(200).json(filteredRankings);
             })
             .catch(async (error) => {
-                console.log("we in err :/");
                 res.status(500).json({
-                    error: error
+                    error
                 });
-            })
+            });
 
 
 

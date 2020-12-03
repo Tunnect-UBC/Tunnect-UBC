@@ -1,3 +1,5 @@
+/*global jest*/
+
 const supertest = require("supertest");
 const app = require("../UserStore/app.js");
 const request = supertest(app);
@@ -7,7 +9,7 @@ const helpers = require("../UserStore/utils/userstore_helpers");
 
 describe("GET/: endpoint", () => {
     it("Request to get all users, error", async () => {
-        helpers.getAll = jest.fn().mockReturnValueOnce([500, undefined]);
+        helpers.getAll = jest.fn().mockReturnValueOnce([500, {error: "Invalid Query"}]);
 
         const res = await request.get("/userstore");
 
@@ -33,7 +35,7 @@ describe("GET/: endpoint", () => {
 
 describe("GET/: userId", () => {
     it("Request to get one users, database failure", async () => {
-        helpers.getUser = jest.fn().mockReturnValueOnce([500, undefined]);
+        helpers.getUser = jest.fn().mockReturnValueOnce([500, {error: "Invalid Query"}]);
 
         const res = await request.get("/userstore/123");
 
@@ -52,7 +54,7 @@ describe("GET/: userId", () => {
 });
 
 describe("GET/: userId", () => {
-    it("Request to get one users, user not found", async () => {
+    it("Request to get one users, success", async () => {
         helpers.getUser = jest.fn().mockReturnValueOnce([200, {
             _id: "123",
             username: "nickham",

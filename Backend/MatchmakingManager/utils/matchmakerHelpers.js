@@ -5,7 +5,7 @@
 const helpers = {
     songScore(user1song, user2) {
 
-        let retval = 0
+        let retval = 0;
 
         for (let i = 0; i < user2.songs.length; i++) {
             if (user2.songs[i]._id === user1song._id) {
@@ -15,7 +15,7 @@ const helpers = {
             } else if (user2.songs[i].relatedArtists.includes(user1song.artist) && retval < 1) {
                 retval = 1;
             } else if (user1song.genre === user2.favGenre && retval < 0.5) {
-                retval = 0.5
+                retval = 0.5;
             }
         }
 

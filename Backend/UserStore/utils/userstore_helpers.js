@@ -8,25 +8,25 @@ const notifOpt = {
 
 const helpers = {
     async getAll() {
-        let resp = [];
+        let allResp = [];
         await User.find()
             .exec()
             .then((users) => {
 
                 //console.log(users);
-                resp = [200, users];
+                allResp = [200, users];
             })
             .catch((err) => {
                 //console.log(err);
-                resp = [500, err];
+                allResp = [500, err];
 
             });
 
-        return resp;
+        return allResp;
     },
 
     async get50(hostId) {
-        let resp = [];
+        let g50Resp = [];
 
         await User.findById(hostId)
             .exec()
@@ -43,87 +43,87 @@ const helpers = {
                             .exec()
                             .then((users) => {
                                 users.push(user);
-                                resp = [200, users];
+                                g50Resp = [200, users];
                             })
                             .catch((err) => {
-                                resp = [500, err];
+                                g50Resp = [500, err];
                             });
 
 
                 } else {
-                    resp = [404, {message: "No valid entry found for provided ID"}];
+                    g50Resp = [404, {message: "No valid entry found for provided ID"}];
                 }
             })
             .catch((err) => {
-                resp = [500, err];
+                g50Resp = [500, err];
             });
 
-        return resp;
+        return g50Resp;
     },
 
     async postUser(user) {
         //stores this in the database
-        let resp = [];
+        let pUserResp = [];
         await user.save()
             .then((result) => {
 
                 //console.log(result);
-                resp =  [200, result];
+                pUserResp =  [200, result];
             })
             .catch((err) => {
                 //console.log(err);
-                resp =  [500, err];
+                pUserResp =  [500, err];
             });
 
-        return resp;
+        return pUserResp;
     },
 
     async getUser(userId) {
-        let resp = [];
+        let gUserResp = [];
 
         await User.findById(userId)
         .exec()
         .then((user) => {
             if (user) {
 
-                resp = [200, user];
+                gUserResp = [200, user];
                 //res.status(200).json(user);
             } else {
-                resp = [404, {message: "No valid entry found for provided ID"}];
+                gUserResp = [404, {message: "No valid entry found for provided ID"}];
                 //res.status(404).json({message: "No valid entry found for provided ID"});
             }
         })
         .catch((err) => {
             //console.log(err);
-            resp = [500, err];
+            gUserResp = [500, err];
             //res.status(500).json({error: err});
         });
 
-        return resp;
+        return gUserResp;
     },
 
     async patchUser(userId, updateOps) {
-        let resp = [];
+        let patResp = [];
 
         await User.updateOne({ _id: userId }, { $set: updateOps })
         .exec()
         .then((result) => {
             if (result.n > 0) {
-                resp = [200, result];
+                patResp = [200, result];
             }
             else {
-                resp = [404, {message: "No valid entry found for provided ID or propname"}];
+                patResp = [404, {message: "No valid entry found for provided ID or propname"}];
             }
         })
         .catch((err) => {
-            resp = [500, err];
+            patResp = [500, err];
         });
 
-        return resp;
+        return patResp;
     },
 
     async deleteUser(userId) {
-        let resp = [];
+        let dResp = [];
 
         await User.deleteOne({
             _id: userId
@@ -131,20 +131,20 @@ const helpers = {
             .exec()
             .then((result) => {
                 if (result.n > 0) {
-                    resp = [200, result];
+                    dResp = [200, result];
                 } else {
-                    resp = [404, {message: "No valid entry found for provided ID"}];
+                    dResp = [404, {message: "No valid entry found for provided ID"}];
                 }
             })
             .catch((err) => {
-                resp = [500, err];
+                dResp = [500, err];
             });
 
-        return resp;
+        return dResp;
     },
 
     async addStatus(userId1, userId2, username, notifId, status) {
-        let resp = [];
+        let aResp = [];
         var message = "Say hi to " + username + "!";
         const matchNotif = {
           notification: {
@@ -164,19 +164,19 @@ const helpers = {
                         await User.updateOne({_id: userId1 }, { $set : {likes: userStatus} })
                             .exec()
                             .then(async (result) => {
-                                resp = [200, result];
+                                aResp = [200, result];
                             })
                             .catch((err) => {
-                                resp = [500, err];
+                                aResp = [500, err];
                             });
                     } else if (status === "dislikes") {
                         await User.updateOne({_id: userId1 }, { $set : {dislikes: userStatus} })
                             .exec()
                             .then(async (result) => {
-                                resp = [200, result];
+                                aResp = [200, result];
                             })
                             .catch((err) => {
-                                resp = [500, err];
+                                aResp = [500, err];
                             });
                     } else {
                         await User.updateOne({_id: userId1 }, { $set : {matches: userStatus} })
@@ -185,25 +185,25 @@ const helpers = {
                               if(notifId !== "0"){
                                 await admin.messaging().sendToDevice(notifId, matchNotif, notifOpt);
                               }
-                              resp = [200, result];
+                              aResp = [200, result];
                             })
                             .catch((err) => {
-                                resp = [500, err];
+                                aResp = [500, err];
                             });
                     }
 
                 } else {
-                    resp = [404, {message: "No valid entry found for provided ID"}];
+                    aResp = [404, {message: "No valid entry found for provided ID"}];
                 }
             })
             .catch((err) => {
-                resp = [500, err];
+                aResp = [500, err];
             });
-        return resp;
+        return aResp;
     },
 
     async removeStatus(userId1, userId2, status) {
-        let resp = [];
+        let rResp = [];
 
         await User.findById(userId1)
             .exec()
@@ -214,42 +214,40 @@ const helpers = {
                         await User.updateOne({_id: userId1 }, { $pull : {likes: userId2} })
                             .exec()
                             .then((result) => {
-                                resp = [200, result];
+                                rResp = [200, result];
                             })
                             .catch((err) => {
-                                resp = [500, err];
+                                rResp = [500, err];
                             });
                     } else if (status === "dislikes") {
                         await User.updateOne({_id: userId1 }, { $pull : {dislikes: userId2} })
                             .exec()
                             .then((result) => {
-                                resp = [200, result];
+                                rResp = [200, result];
                             })
                             .catch((err) => {
-                                resp = [500, err];
+                                rResp = [500, err];
                             });
                     } else {
                         await User.updateOne({_id: userId1 }, { $pull : {matches: userId2} })
                             .exec()
                             .then((result) => {
-                                resp = [200, result];
+                                rResp = [200, result];
                             })
                             .catch((err) => {
-                                resp = [500, err];
+                                rResp = [500, err];
                             });
                     }
 
                 } else {
-                    resp = [404, {message: "No valid entry found for provided ID"}];
+                    rResp = [404, {message: "No valid entry found for provided ID"}];
                 }
             })
             .catch((err) => {
-                resp = [500, err];
+                rResp = [500, err];
             });
 
-        console.log(resp);
-
-        return resp;
+        return rResp;
     }
 };
 
