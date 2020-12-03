@@ -108,7 +108,7 @@ router.get("/:userId", async (req, res, next) => {
 
     if (result[0] === 200) {
         res.status(200).json(result[1]);
-    } else if (result[0] == 500) {
+    } else if (result[0] === 500) {
         res.status(500).json({
             error: result[1]
         });
