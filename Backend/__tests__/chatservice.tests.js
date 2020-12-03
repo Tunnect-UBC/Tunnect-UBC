@@ -43,7 +43,7 @@ describe("DELETE/:userId/:userId2 endpoint", () => {
   });
 });
 
-const mockgetChats = jest.fn().mockReturnValueOnce([0])
+const mockgetChats = jest.fn().mockReturnValueOnce([0,"err"])
                               .mockReturnValueOnce([1,[1],[1]])
                               .mockReturnValueOnce([-1]);
 
@@ -54,6 +54,7 @@ const mockgetChats = jest.fn().mockReturnValueOnce([0])
     helpers.getChats = mockgetChats;
     const res = await request.get("/chatservice/123");
     expect(res.statusCode).toEqual(500);
+    expect(res.body).toEqual("err");
   });
 });
 //get test, getChats = 1
@@ -62,6 +63,7 @@ const mockgetChats = jest.fn().mockReturnValueOnce([0])
     helpers.getChats = mockgetChats;
     const res = await request.get("/chatservice/456");
     expect(res.statusCode).toEqual(200);
+    expect(res.body).toEqual([1,1]);
   });
 });
 describe("GET/:userId endpoint", () => {
@@ -73,7 +75,7 @@ describe("GET/:userId endpoint", () => {
 });
 
 //////////////////////GET chatService/userid1/userId2
-const mockgetMessages = jest.fn().mockReturnValueOnce([0])
+const mockgetMessages = jest.fn().mockReturnValueOnce([0,"err"])
                                  .mockReturnValueOnce([1,[1],[1]])
                                  .mockReturnValueOnce([-1]);
 
@@ -82,6 +84,7 @@ describe("GET/:userId1/:userId2 endpoint", () => {
     helpers.getMessages = mockgetMessages;
     const res = await request.get("/chatservice/123/456");
     expect(res.statusCode).toEqual(500);
+    expect(res.body).toEqual("err");
   });
 });
 
@@ -90,6 +93,7 @@ describe("GET/:userId/:userId2 endpoint", () => {
     helpers.getMessages = mockgetMessages;
     const res = await request.get("/chatservice/456/789");
     expect(res.statusCode).toEqual(200);
+    expect(res.body).toEqual([1,1]);
   });
 });
 describe("GET/:userId/:userId2 endpoint", () => {
@@ -102,16 +106,15 @@ describe("GET/:userId/:userId2 endpoint", () => {
 
 
 ///////////////////////POST chatService/receiverid
-const mockpostMessages = jest.fn().mockReturnValueOnce([0])
+const mockpostMessages = jest.fn().mockReturnValueOnce([0, "err"])
                                  .mockReturnValueOnce([1,[1],[1]])
                                  .mockReturnValueOnce([-1]);
-
+  axios.get.mockResolvedValue({
+                                data: { notifId: "123", username: "123"}
+                              });
 
 describe("POST/:userId endpoint", () => {
   it("Request to post a message failed", async () => {
-    axios.get.mockResolvedValue({
-       data: { notifId: "123", username: "123"}
-     });
     helpers.postMessage = mockpostMessages;
     const res = await request.post("/chatservice/123")
                              .type("json")
@@ -121,14 +124,12 @@ describe("POST/:userId endpoint", () => {
                                timeStamp : 0
                              });
     expect(res.statusCode).toEqual(500);
+    expect(res.body).toEqual("err");
   });
 });
 
 describe("POST/:userId endpoint", () => {
   it("post new chat, Bad request body failure", async () => {
-    axios.get.mockResolvedValue({
-       data: { notifId: "123", username: "123"}
-     });
     helpers.postMessage = mockpostMessages;
     const res = await request.post("/chatservice/123")
                              .type("json")
@@ -136,14 +137,12 @@ describe("POST/:userId endpoint", () => {
                                senderid : "123",
                              });
     expect(res.statusCode).toEqual(500);
+    expect(res.body.message).toEqual("Bad request body");
   });
 });
 
 describe("POST/:userId endpoint", () => {
   it("Request to post a message success", async () => {
-    axios.get.mockResolvedValue( {
-       data: { notifId: "123", username: "456"}
-     });
     helpers.postMessage = mockpostMessages;
     const res = await request.post("/chatservice/456")
                             .type("json")
@@ -157,9 +156,6 @@ describe("POST/:userId endpoint", () => {
 });
 describe("POST/:userId endpoint", () => {
   it("Request to post a message unexpected result", async () => {
-    axios.get.mockResolvedValue({
-       data: { notifId: "123", username: "456"}
-     });
     helpers.postMessage = mockpostMessages;
     const res = await request.post("/chatservice/789")
                              .type("json")
@@ -177,21 +173,14 @@ const mockpostChat = jest.fn().mockReturnValueOnce([0])
                                .mockReturnValueOnce([1,[1],[1]])
                                .mockReturnValueOnce([2])
                                .mockReturnValueOnce([-1]);
-
-describe("POST/:userId/:userId2 endpoint", () => {
-  it("Request to post a chat failed", async () => {
     axios.get.mockResolvedValue({
-       data: {
-        username : "123",
-        iconColour : "yellow"
-       }
-     }).mockResolvedValue({
-            data: {
-              username: "456",
-              iconColour : "green"
-            }
-          }
-        );
+                                  data: {
+                                   username : "123",
+                                   iconColour : "yellow"
+                                  }
+                                });
+describe("POST/:userId1/:userId2 endpoint", () => {
+  it("Request to post a chat failed", async () => {
     helpers.postChat = mockpostChat;
     const res = await request.post("/chatservice/123/456")
                             .type("json")
@@ -199,43 +188,21 @@ describe("POST/:userId/:userId2 endpoint", () => {
                                timeStamp : 0
                              });
     expect(res.statusCode).toEqual(500);
+    expect(res.body.message).toEqual("db error");
   });
 });
 
 describe("POST/:userId/:userId2 endpoint", () => {
   it("Request to post a chat bady body request", async () => {
-    axios.get.mockResolvedValue({
-       data: {
-        username : "123",
-        iconColour : "yellow"
-       }
-     }).mockResolvedValue({
-            data: {
-              username: "456",
-              iconColour : "green"
-            }
-          }
-        );
     helpers.postChat = mockpostChat;
     const res = await request.post("/chatservice/123/456");
     expect(res.statusCode).toEqual(500);
+    expect(res.body.message).toEqual("Bad request body");
   });
 });
 
 describe("POST/:userId/:userId2 endpoint", () => {
   it("Request to post a chat success", async () => {
-    axios.get.mockResolvedValue({
-       data: {
-         username : "123",
-         iconColour : "yellow"
-       }
-     }).mockResolvedValue( {
-            data: {
-              username: "456",
-              iconColour : "green"
-            }
-          }
-        );
     helpers.postChat = mockpostChat;
     const res = await request.post("/chatservice/456/789")
                              .type("json")
@@ -248,18 +215,6 @@ describe("POST/:userId/:userId2 endpoint", () => {
 
 describe("POST/:userId/:userId2 endpoint", () => {
   it("Request to post a chat chat already exists", async () => {
-    axios.get.mockResolvedValue({
-       data: {
-         username : "123",
-         iconColour : "yellow"
-       }
-     }).mockResolvedValue({
-            data: {
-              username: "456",
-              iconColour : "green"
-            }
-          }
-        );
     helpers.postChat = mockpostChat;
     const res = await request.post("/chatservice/123/789")
                              .type("json")
@@ -267,29 +222,17 @@ describe("POST/:userId/:userId2 endpoint", () => {
                                timeStamp: 0
                              });
     expect(res.statusCode).toEqual(300);
+    expect(res.body.message).toEqual("Chat already exists");
   });
 });
 
 describe("POST/:userId/:userId2 endpoint", () => {
   it("Request to post a chat unexpected result", async () => {
-    axios.get.mockResolvedValue( {
-       data: {
-         username : "123",
-         iconColour : "yellow"
-       }
-     }
-   ).mockResolvedValue({
-            data: {
-              username: "456",
-              iconColour : "green"
-            }
-          }
-        );
     helpers.postChat = mockpostChat;
-    const res = await request.post("/chatservice/123/789")
+    const res = await request.post("/chatservice/123/456")
                               .type("json")
                               .send({
-                                timeStamp: 0
+                                timeStamp: 1
                               });
     expect(res.statusCode).toEqual(400);
   });
