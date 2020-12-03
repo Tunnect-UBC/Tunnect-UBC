@@ -93,7 +93,7 @@ public class EnterProfileTest {
 
         // Select songs
         addSongsBtn.perform(click());
-        Thread.sleep(1000);
+        Thread.sleep(2000);
 
         ViewInteraction enterName = onView(withId(R.id.search_bar));
         enterName.perform(replaceText("Test"), closeSoftKeyboard());
@@ -148,10 +148,10 @@ public class EnterProfileTest {
         Thread.sleep(5000);
 
         // Open up profile from main activity
-        ViewInteraction messageButton = onView(withId(R.id.profile_btn));
-        messageButton.check(matches(isDisplayed()));
-        messageButton.perform(click());
-        Thread.sleep(1000);
+        ViewInteraction profileButton = onView(withId(R.id.profile_btn));
+        profileButton.check(matches(isDisplayed()));
+        profileButton.perform(click());
+        Thread.sleep(2000);
 
         // Profile activity opens up, check entries exist
         ViewInteraction saveButton = onView(withId(R.id.save_profile));
@@ -177,10 +177,12 @@ public class EnterProfileTest {
         Thread.sleep(2000);
 
         // Go back into profile and assert the changes
+        profileButton.perform(click());
+        Thread.sleep(1000);
         enterUsername.check(matches(withText("New Name")));
         enterGenre.check(matches(withText("Rock")));
 
-        Thread.sleep(2000);
+        Thread.sleep(1000);
     }
 
     @Test
@@ -188,10 +190,10 @@ public class EnterProfileTest {
         Thread.sleep(5000);
 
         // Open up profile from main activity
-        ViewInteraction messageButton = onView(withId(R.id.profile_btn));
-        messageButton.check(matches(isDisplayed()));
-        messageButton.perform(click());
-        Thread.sleep(1000);
+        ViewInteraction profileButton = onView(withId(R.id.profile_btn));
+        profileButton.check(matches(isDisplayed()));
+        profileButton.perform(click());
+        Thread.sleep(2000);
 
         // Profile activity opens up, check entries exist
         ViewInteraction saveButton = onView(withId(R.id.save_profile));
@@ -209,22 +211,22 @@ public class EnterProfileTest {
         ViewInteraction deleteSong1 = onView(allOf(withId(R.id.dlt_btn), withText("Delete"),
                 childAtPosition(childAtPosition(withId(R.id.selectedSongs),0),3), isDisplayed()));
         deleteSong1.perform(click());
-        Thread.sleep(1000);
+        Thread.sleep(2000);
         ViewInteraction deleteSong2 = onView(allOf(withId(R.id.dlt_btn), withText("Delete"),
-                childAtPosition(childAtPosition(withId(R.id.selectedSongs),1),3), isDisplayed()));
+                childAtPosition(childAtPosition(withId(R.id.selectedSongs),0),3), isDisplayed()));
         deleteSong2.perform(click());
-        Thread.sleep(1000);
+        Thread.sleep(2000);
         ViewInteraction deleteSong3 = onView(allOf(withId(R.id.dlt_btn), withText("Delete"),
-                childAtPosition(childAtPosition(withId(R.id.selectedSongs),2),3), isDisplayed()));
+                childAtPosition(childAtPosition(withId(R.id.selectedSongs),0),3), isDisplayed()));
         deleteSong3.perform(click());
-        Thread.sleep(1000);
+        Thread.sleep(2000);
 
         saveButton.perform(click());
         Thread.sleep(1000);
 
         // Select songs
         addSongsBtn.perform(click());
-        Thread.sleep(1000);
+        Thread.sleep(2000);
 
         ViewInteraction enterName = onView(withId(R.id.search_bar));
         enterName.perform(replaceText("Test"), closeSoftKeyboard());
@@ -248,6 +250,10 @@ public class EnterProfileTest {
         ViewInteraction addSong3 = onView(allOf(withId(R.id.add_btn), withText("Add"),
                 childAtPosition(childAtPosition(withId(R.id.song_list), 2), 3), isDisplayed()));
         addSong3.perform(click());
+        Thread.sleep(1000);
+        ViewInteraction appCompatImageButton = onView(allOf(withContentDescription("Navigate up"),
+                childAtPosition(allOf(withId(R.id.action_bar), childAtPosition(withId(R.id.action_bar_container), 0)), 1), isDisplayed()));
+        appCompatImageButton.perform(click());
         Thread.sleep(1000);
 
         // Save changes onto account
