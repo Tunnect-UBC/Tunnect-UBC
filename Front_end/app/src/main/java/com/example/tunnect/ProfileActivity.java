@@ -340,6 +340,8 @@ public class ProfileActivity extends AppCompatActivity {
         for (int i = 0; i < selSongs.size(); i++) {
             if (songId.equals(selSongs.get(i).getId())) {
                 selSongs.remove(i);
+                RecyclerView.Adapter mAdapter = new ProfileSongsAdaptor(this, selSongs);
+                recyclerView.setAdapter(mAdapter);
                 break;
             }
         }
