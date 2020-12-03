@@ -34,58 +34,58 @@ const helpers = {
    },
 
    async getChats(id) {
-     var resp = [];
+     var chatResp = [];
        if (id === "all"){
          await Chat.find({}, async function(err, result){
            if(err){
-             resp = [0, err];
+             chatResp = [0, err];
            }
            else {
-             resp = [1, result];
+             chatResp = [1, result];
            }
          });
        }
        else {
           await Chat.find({usrID1: id}, "usrID2 usrColour2 usrName2 lastMessage lastTime", async function(err, result1){
            if(err){
-             resp = [0, err];
+             chatResp = [0, err];
            }
            else {
-             resp = [1, result1];
+             chatResp = [1, result1];
           }}).then(async(result) => {
               await Chat.find({usrID2: id}, "usrID1 usrColour1 usrName1 lastMessage lastTime", async function (err, result2) {
                if(err){
                 resp =[0, err];
                }
                else {
-                 resp[2] = result2;
+                 chatResp[2] = result2;
                }
              });
            });
        }
-       return resp;
+       return chatResp;
    },
 
    async getMessages(userid1, userid2){
-     var resp = [];
+     var messResp = [];
      await Chat.find({usrID1: userid1, usrID2: userid2}, "messages", async function (err, result1) {
        if (err){
-         resp = [0, err];
+         messResp = [0, err];
        }
        else {
-         resp = [1, result1];
+         messResp = [1, result1];
        }
      }).then(async(res) => {
         await Chat.find({usrID1: userid2, usrID2: userid1}, "messages", async function (err, result2) {
           if(err){
-           resp = [0, err];
+           messResp = [0, err];
           }
           else {
-           resp[2] = result2;
+           messResp[2] = result2;
           }
         });
       });
-     return resp;
+     return messResp;
    },
 
 async postMessage(senderid, senderName, receiverid, notifId, message, timeStamp) {
