@@ -5,3 +5,4 @@ users will see samples of other users music interests that will be provided usin
 be matched and given the opportunity to message each other and share tracks, albums, and artists with each other. The target demographic will primarily be 
 young adults who are looking to make friends through music or are simply trying to expand their musical horizons. However, the app has the potential to be 
 used by individuals of all ages seeing as interest in music is not defined by age.
+
